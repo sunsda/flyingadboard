@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>화이트패스 — 6월 말 목표 스케줄</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page{max-width:1080px;margin:0 auto;padding:2.5rem 2rem 4rem}
+
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:2px solid #1C1C1A;flex-wrap:wrap;gap:12px}
+.title{font-size:24px;font-weight:600;letter-spacing:-0.03em}
+.subtitle{font-size:12px;color:#888880;margin-top:3px;font-family:'DM Mono',monospace}
+.today-badge{font-family:'DM Mono',monospace;font-size:11px;background:#E24B4A;color:#fff;padding:4px 10px;border-radius:3px}
+
+/* Chart area */
+#gantt{position:relative;background:#fff;border:1px solid #DDD9D0;border-radius:10px;overflow:hidden}
+
+/* Ruler row */
+#ruler-row{display:flex;border-bottom:2px solid #DDD9D0;background:#FAFAF8}
+#ruler-label{width:300px;flex-shrink:0;padding:8px 14px;border-right:1px solid #DDD9D0;font-size:10px;font-weight:600;letter-spacing:0.05em;color:#888880;text-transform:uppercase;display:flex;align-items:center}
+#ruler-tl{flex:1;position:relative;height:36px}
+
+/* Month band label */
+.month-band{position:absolute;top:0;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid #E0DDD6}
+/* Week tick */
+.week-tick{position:absolute;top:16px;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
+.week-tick-line{position:absolute;top:0;width:1px;height:100%;background:#E8E5DD}
+.week-tick-label{font-family:'DM Mono',monospace;font-size:10px;color:#AAA89E;position:relative;z-index:1;white-space:nowrap}
+.week-tick-label.mon{color:#555550;font-weight:500}
+.week-tick-label.jun{color:#1D9E75;font-weight:600}
+
+/* Cat section */
+.cat-section{border-bottom:1px solid #E8E5DD}
+.cat-section:last-child{border-bottom:none}
+
+/* Cat header */
+.cat-head{display:flex;align-items:stretch;cursor:pointer;background:#FAFAF8;border-bottom:1px solid #E8E5DD}
+.cat-head:hover{background:#F5F4F0}
+.cat-label-col{width:300px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:10px 14px;border-right:1px solid #DDD9D0}
+.cat-color-bar{width:4px;height:30px;border-radius:2px;flex-shrink:0}
+.cat-num{font-family:'DM Mono',monospace;font-size:10px;color:#AAA89E;display:block;line-height:1}
+.cat-name{font-size:13px;font-weight:600;color:#1C1C1A;line-height:1.3;margin-top:2px}
+.cat-tl{flex:1;position:relative;min-height:44px}
+.cat-chevron{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#AAA89E;transition:transform .2s}
+.cat-chevron.open{transform:translateY(-50%) rotate(180deg)}
+
+/* Task rows */
+.task-list{display:none}
+.task-list.open{display:block}
+.task-row{display:flex;align-items:stretch;border-bottom:1px solid #F2EFE8}
+.task-row:last-child{border-bottom:none}
+.task-row:hover{background:#FDFCFA}
+.task-label-col{width:300px;flex-shrink:0;padding:10px 14px 10px 30px;border-right:1px solid #E8E5DD;display:flex;flex-direction:column;justify-content:center;gap:3px}
+.task-name{font-size:12px;color:#2A2A28;font-weight:600;line-height:1.4;display:block}
+.task-detail{font-size:11px;color:#7A7A72;line-height:1.4;display:block}
+.task-date-label{font-family:'DM Mono',monospace;font-size:10px;color:#B0AEA8;display:block;margin-top:1px}
+.task-tl{flex:1;position:relative;min-height:42px}
+.chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
+.chip{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:2px 6px;border-radius:3px;border:1px solid;line-height:1.4;white-space:nowrap}
+.cat-members{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+
+/* Bars */
+.bar{position:absolute;top:50%;transform:translateY(-50%);height:20px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;white-space:nowrap;z-index:2}
+.cat-bar{height:24px;opacity:0.9}
+
+/* Grid lines inside timeline cells */
+.grid-v{position:absolute;top:0;bottom:0;width:1px;z-index:1;pointer-events:none}
+
+/* Today line */
+#today-line{position:absolute;top:0;bottom:0;width:2px;background:#E24B4A;z-index:30;pointer-events:none}
+#today-line::after{content:'▼';position:absolute;top:-2px;left:50%;transform:translateX(-50%);font-size:10px;color:#E24B4A;line-height:1}
+
+/* Goals / summary */
+.goals-section{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.goal-card{background:#fff;border:1px solid #DDD9D0;border-radius:8px;padding:14px 16px}
+.goal-card-title{font-size:10px;font-weight:600;letter-spacing:0.06em;color:#888880;margin-bottom:10px;text-transform:uppercase}
+.goal-tags{display:flex;flex-wrap:wrap;gap:6px}
+.goal-tag{font-size:11px;padding:4px 10px;border-radius:4px;border:1px solid;font-weight:500}
+.dir-row{font-size:12px;color:#4A4A44;padding:5px 0;border-bottom:1px solid #F0EDE6;display:flex;gap:8px;align-items:baseline}
+.dir-row:last-child{border-bottom:none}
+.dir-dot{width:4px;height:4px;border-radius:50%;background:#C0BEB6;flex-shrink:0;margin-top:6px}
+.summary-strip{margin-top:12px;display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.sum-card{background:#fff;border:1px solid #DDD9D0;border-radius:8px;padding:11px 13px}
+.sum-accent{height:3px;border-radius:2px;margin-bottom:8px}
+.sum-name{font-size:10px;font-weight:600;letter-spacing:0.04em;color:#888880;margin-bottom:5px;text-transform:uppercase}
+.sum-items{font-size:11px;color:#4A4A44;line-height:1.7}
+.footer{margin-top:2rem;padding-top:1rem;border-top:1px solid #DDD9D0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
+.footer-l{font-size:11px;color:#AAA89E;font-family:'DM Mono',monospace}
+.footer-r{display:flex;gap:12px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#6A6A62}
+.leg-dot{width:8px;height:8px;border-radius:2px}
+
+@media print{
+  body{background:#fff}
+  .page{padding:1.5rem}
+  .task-list{display:block!important}
+  .cat-chevron{display:none}
+}
+</style>
+</head>
+<body>
+<div class="page">
+
+<div class="hdr">
+  <div>
+    <div class="title">화이트패스 운영 목표 스케줄</div>
+    <div class="subtitle">WHITE PASS · 2025.05.22(목) — 2025.06.30(월) · 평일 기준 28일</div>
+  </div>
+  <span class="today-badge">TODAY 2025.05.22 (목)</span>
+</div>
+
+<div id="gantt">
+  <div id="ruler-row">
+    <div id="ruler-label">태스크</div>
+    <div id="ruler-tl"></div>
+  </div>
+  <div id="today-line" style="display:none"></div>
+  <div id="cat-container"></div>
+</div>
+
+<div class="goals-section">
+  <div class="goal-card">
+    <div class="goal-card-title">6월 말 최종 목표</div>
+    <div class="goal-tags">
+      <span class="goal-tag" style="border-color:#378ADD;color:#185FA5;background:#EBF3FD">📱 모바일 테스트 완료</span>
+      <span class="goal-tag" style="border-color:#1D9E75;color:#0F6E56;background:#E1F5EE">⚙️ 주요 기능 안정화</span>
+      <span class="goal-tag" style="border-color:#BA7517;color:#633806;background:#FAEEDA">🤝 제휴처 운영 구조 정리 완료</span>
+    </div>
+  </div>
+  <div class="goal-card">
+    <div class="goal-card-title">공통 운영 방향</div>
+    <div class="dir-row"><span class="dir-dot"></span>운영 목적: 화이트패스 사용 편의성 개선 및 실제 이용 확대</div>
+    <div class="dir-row"><span class="dir-dot"></span>주요 목표: 제휴처 확대 / 모바일 사용성 강화 / 운영 안정화</div>
+    <div class="dir-row"><span class="dir-dot"></span>운영 구조: 시스템·기능·제휴처·CS 대응 통합 진행</div>
+  </div>
+</div>
+
+<div class="summary-strip">
+  <div class="sum-card"><div class="sum-accent" style="background:#378ADD"></div><div class="sum-name">① 사이트 기능</div><div class="sum-items">UI/UX 개선<br>제휴처 정보 반영<br>기능 안정화</div></div>
+  <div class="sum-card"><div class="sum-accent" style="background:#1D9E75"></div><div class="sum-name">② 모바일화</div><div class="sum-items">테스트 2종<br>시스템 구현<br>우선 점포 적용</div></div>
+  <div class="sum-card"><div class="sum-accent" style="background:#BA7517"></div><div class="sum-name">③ 제휴처 확장</div><div class="sum-items">기존 현황 체크<br>신규 점포 검토<br>리스트업·협의</div></div>
+  <div class="sum-card"><div class="sum-accent" style="background:#D4537E"></div><div class="sum-name">④ 기존 업체 관리</div><div class="sum-items">매장 안내 체크<br>동선 점검<br>CS 대응·개선</div></div>
+</div>
+
+<div style="margin-top:14px;background:#fff;border:1px solid #DDD9D0;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+  <span style="font-size:10px;font-weight:600;letter-spacing:0.06em;color:#888880;text-transform:uppercase;flex-shrink:0">담당자</span>
+  <div style="display:flex;gap:8px;flex-wrap:wrap">
+    <span class="chip" style="background:#E6F1FB;color:#0C447C;border-color:#85B7EB;font-size:11px;padding:3px 9px">HAM</span>
+    <span class="chip" style="background:#EEEDFE;color:#3C3489;border-color:#AFA9EC;font-size:11px;padding:3px 9px">LEE</span>
+    <span class="chip" style="background:#E1F5EE;color:#085041;border-color:#5DCAA5;font-size:11px;padding:3px 9px">KIM</span>
+    <span class="chip" style="background:#FAEEDA;color:#633806;border-color:#EF9F27;font-size:11px;padding:3px 9px">MEI</span>
+    <span class="chip" style="background:#FBEAF0;color:#4B1528;border-color:#ED93B1;font-size:11px;padding:3px 9px">TSUJII</span>
+    <span class="chip" style="background:#F1EFE8;color:#444441;border-color:#B4B2A9;font-size:11px;padding:3px 9px">JEON</span>
+  </div>
+  <span style="font-size:11px;color:#B0AEA8;margin-left:auto">각 태스크 우측에 담당자 표시</span>
+</div>
+<div class="footer">
+  <span class="footer-l">WHITE PASS · 2025.05.22 — 2025.06.30 · 평일 기준</span>
+  <div class="footer-r">
+    <span class="leg-item"><span class="leg-dot" style="background:#378ADD"></span>사이트 기능</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#1D9E75"></span>모바일화</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#BA7517"></span>제휴처 확장</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#D4537E"></span>업체 관리</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#E24B4A;border-radius:50%"></span>오늘(5/22)</span>
+  </div>
+</div>
+
+</div><!-- .page -->
+
+<script>
+// ─── 평일만 배열로 관리 ───────────────────────────────
+function mkDate(y,m,d){ return new Date(y,m-1,d); }
+function isWeekday(d){ return d.getDay()>=1 && d.getDay()<=5; }
+
+const START_DATE = mkDate(2025,5,22);
+const END_DATE   = mkDate(2025,6,30);
+const TODAY_DATE = mkDate(2025,5,22);
+
+// 평일 전체 배열 생성
+const WEEKDAYS = [];
+let cur = new Date(START_DATE);
+while(cur <= END_DATE){
+  if(isWeekday(cur)) WEEKDAYS.push(new Date(cur));
+  cur.setDate(cur.getDate()+1);
+}
+const TOTAL_WD = WEEKDAYS.length; // 28
+
+function wdIndex(date){
+  // 가장 가까운 평일 인덱스 (주말이면 다음 월요일)
+  let t = new Date(date);
+  while(!isWeekday(t)) t.setDate(t.getDate()+1);
+  for(let i=0;i<WEEKDAYS.length;i++){
+    if(WEEKDAYS[i].toDateString()===t.toDateString()) return i;
+  }
+  return WEEKDAYS.length-1;
+}
+
+function pctL(date){
+  return (wdIndex(date)/TOTAL_WD*100).toFixed(3)+'%';
+}
+function pctW(s,e){
+  const si = wdIndex(s);
+  let ei = wdIndex(e);
+  // e가 평일이면 그날 포함
+  let t = new Date(e);
+  if(!isWeekday(t)){
+    // 이전 평일
+    t.setDate(t.getDate()-1);
+    while(!isWeekday(t)) t.setDate(t.getDate()-1);
+    ei = wdIndex(t);
+  }
+  const w = Math.max((ei-si+1)/TOTAL_WD*100, 2.5);
+  return w.toFixed(3)+'%';
+}
+
+function d(m,day){ return mkDate(2025,m,day); }
+
+// ─── 멤버 색상 팔레트 ─────────────────────────────────
+const MEMBER_COLORS = {
+  HAM:   {bg:'#E6F1FB', text:'#0C447C', border:'#85B7EB'},
+  LEE:   {bg:'#EEEDFE', text:'#3C3489', border:'#AFA9EC'},
+  KIM:   {bg:'#E1F5EE', text:'#085041', border:'#5DCAA5'},
+  MEI:   {bg:'#FAEEDA', text:'#633806', border:'#EF9F27'},
+  TSUJII:{bg:'#FBEAF0', text:'#4B1528', border:'#ED93B1'},
+  JEON:  {bg:'#F1EFE8', text:'#444441', border:'#B4B2A9'},
+};
+
+// ─── 카테고리 데이터 ─────────────────────────────────
+const CATS = [
+  {
+    num:'01', name:'사이트 기능 운영', color:'#378ADD',
+    lb:'#EBF3FD', lt:'#185FA5',
+    members:['HAM','LEE','KIM'],
+    span:[d(5,26),d(6,30)],
+    tasks:[
+      {name:'제휴처 정보 업데이트 진행',           detail:'제휴처별 최신 정보 수집 및 사이트 반영', dl:'5/26(월)~5/30(금)', m:['HAM','LEE'], s:d(5,26), e:d(5,30)},
+      {name:'내부 UI/UX 개선사항 반영',             detail:'고객 이용 흐름 기준 레이아웃 개선 적용',  dl:'5/26(월)~5/30(금)', m:['KIM','HAM'], s:d(5,26), e:d(5,30)},
+      {name:'제휴처 운영 정보 취합·내부 검토',      detail:'운영에 필요한 정보 취합 후 내부 정리',    dl:'5/28(수)~5/30(금)', m:['HAM','LEE','KIM'], s:d(5,28), e:d(5,30)},
+      {name:'검토 완료 내용 사이트 반영·운영 적용', detail:'검토된 내용 실제 사이트에 최종 적용',     dl:'6/2(월)~6/6(금)',   m:['KIM','HAM'], s:d(6,2),  e:d(6,6) },
+      {name:'기능 업데이트 및 애로사항 수정 대응',  detail:'운영 중 발생하는 문제 즉시 수정 대응',    dl:'6/9(월)~6/30(월)',  m:['KIM','LEE'], s:d(6,9),  e:d(6,30)},
+    ]
+  },
+  {
+    num:'02', name:'모바일화 운영', color:'#1D9E75',
+    lb:'#E1F5EE', lt:'#0F6E56',
+    members:['KIM','HAM'],
+    span:[d(6,9),d(6,30)],
+    tasks:[
+      {name:'모바일 패스 테스트 (실물 미사용)',      detail:'실물 화이트패스 없이 모바일 QR 기반 테스트', dl:'6/9(월)~6/13(금)',  m:['KIM','HAM'], s:d(6,9),  e:d(6,13)},
+      {name:'모바일 화면 기반 사용 동선 테스트',     detail:'실제 이용자 관점의 화면 흐름 및 UX 점검',   dl:'6/9(월)~6/13(금)',  m:['HAM','KIM'], s:d(6,9),  e:d(6,13)},
+      {name:'모바일 시스템 구현 진행',               detail:'백엔드·프론트엔드 모바일 시스템 개발',       dl:'6/16(월)~6/27(금)', m:['KIM'],       s:d(6,16), e:d(6,27)},
+      {name:'우나기 우시큐/카키큐 우선 적용',        detail:'시범 제휴처 2곳 대상 모바일 시스템 론칭',    dl:'6/23(월)~6/30(월)', m:['KIM','HAM'], s:d(6,23), e:d(6,30)},
+    ]
+  },
+  {
+    num:'03', name:'제휴처 확장 운영', color:'#BA7517',
+    lb:'#FAEEDA', lt:'#633806',
+    members:['MEI','TSUJII'],
+    span:[d(5,26),d(6,30)],
+    tasks:[
+      {name:'기존 제휴처 진척 상황 체크',            detail:'현재 제휴 진행 중인 점포별 현황 파악',      dl:'5/26(월)~5/30(금)', m:['MEI','TSUJII'], s:d(5,26), e:d(5,30)},
+      {name:'제휴 현황 정리 및 운영 방향 검토',       detail:'진척 부진 점포 파악 및 대응 방향 수립',     dl:'5/28(수)~5/30(금)', m:['MEI','TSUJII'], s:d(5,28), e:d(5,30)},
+      {name:'신규 제휴 점포 검토 진행',               detail:'진척 부족 시 신규 후보 점포 발굴·평가',     dl:'6/2(월)~6/6(금)',   m:['TSUJII'],       s:d(6,2),  e:d(6,6) },
+      {name:'신규 점포 리스트업 및 운영 협의',        detail:'최종 후보 점포 선정 및 제휴 조건 협의',     dl:'6/9(월)~6/30(월)',  m:['MEI','TSUJII'], s:d(6,9),  e:d(6,30)},
+    ]
+  },
+  {
+    num:'04', name:'기존 업체 운영 관리', color:'#D4537E',
+    lb:'#FBEAF0', lt:'#4B1528',
+    members:['MEI','JEON'],
+    span:[d(5,26),d(6,30)],
+    tasks:[
+      {name:'스티커 부착 및 매장 안내 상태 체크',    detail:'화이트패스 안내물 부착 여부 및 상태 점검',  dl:'5/26(월)~5/30(금)', m:['JEON','MEI'], s:d(5,26), e:d(5,30)},
+      {name:'실제 운영 상태 및 고객 동선 점검',      detail:'현장 방문 통한 고객 이용 흐름 직접 확인',   dl:'6/2(월)~6/6(금)',   m:['MEI','JEON'], s:d(6,2),  e:d(6,6) },
+      {name:'CS 발생 여부 및 이용 불편 사항 체크',   detail:'고객 문의·불편 현황 집계 및 원인 파악',     dl:'6/9(월)~6/27(금)',  m:['JEON'],       s:d(6,9),  e:d(6,27)},
+      {name:'확인된 문제사항 수정·운영 개선 반영',   detail:'수집된 CS 및 현장 이슈 즉시 개선 적용',     dl:'6/16(월)~6/30(월)', m:['MEI','JEON'], s:d(6,16), e:d(6,30)},
+    ]
+  }
+];
+
+// ─── 격자선 공통 주입 ──────────────────────────────────
+function injectGrid(tl){
+  // 월요일 및 6/2 기준 세로선
+  WEEKDAYS.forEach((wd,i)=>{
+    if(wd.getDay()!==1) return;
+    const gl=document.createElement('div');
+    gl.className='grid-v';
+    const isMon6=wd.getMonth()===5; // June
+    gl.style.cssText=`left:${(i/TOTAL_WD*100).toFixed(3)}%;background:${isMon6?'#B8DDD0':'#E8E5DD'};opacity:${isMon6?1:0.8}`;
+    tl.appendChild(gl);
+  });
+}
+
+// ─── 루러 빌드 ────────────────────────────────────────
+function buildRuler(){
+  const tl=document.getElementById('ruler-tl');
+
+  // 월 밴드
+  const mayPct = (wdIndex(d(5,22))/TOTAL_WD*100).toFixed(1);
+  // 6/2가 첫 6월 평일
+  const junIdx = wdIndex(d(6,2));
+  const junPct = (junIdx/TOTAL_WD*100).toFixed(1);
+  const mayW   = ((junIdx)/TOTAL_WD*100).toFixed(1);
+  const junW   = ((TOTAL_WD-junIdx)/TOTAL_WD*100).toFixed(1);
+
+  const mayBand=document.createElement('div');
+  mayBand.className='month-band';
+  mayBand.style.cssText=`left:${mayPct}%;width:${mayW}%;background:#F7F6F2;color:#888880;border-right:2px dashed #D0CCC4;border-bottom:1px solid #E0DDD6;`;
+  mayBand.textContent='5월 MAY';
+  tl.appendChild(mayBand);
+
+  const junBand=document.createElement('div');
+  junBand.className='month-band';
+  junBand.style.cssText=`left:${junPct}%;width:${junW}%;background:#F0FAF5;color:#1D9E75;border-bottom:1px solid #A8DEC6;`;
+  junBand.textContent='6월 JUN';
+  tl.appendChild(junBand);
+
+  // 주 눈금 (월요일 + 5/22 첫날)
+  const tickDates = WEEKDAYS.filter(wd=>wd.getDay()===1 || wd.toDateString()===START_DATE.toDateString());
+  tickDates.forEach((wd,i)=>{
+    const idx=wdIndex(wd);
+    const lPct=(idx/TOTAL_WD*100).toFixed(3)+'%';
+    const isJun=wd.getMonth()===5;
+    const isFirst=wd.toDateString()===START_DATE.toDateString();
+    const mm=wd.getMonth()+1;
+    const dd=wd.getDate();
+    const dayNames=['일','월','화','수','목','금','토'];
+    const dayKor=dayNames[wd.getDay()];
+    const label=`${mm}/${dd}(${dayKor})`;
+
+    const tick=document.createElement('div');
+    tick.className='week-tick';
+    tick.style.cssText=`left:${lPct};transform:translateX(-50%);position:absolute;top:16px;bottom:0;display:flex;align-items:center;justify-content:center;`;
+
+    const line=document.createElement('div');
+    line.className='week-tick-line';
+    line.style.background=isJun?'#A8DEC6':'#E0DDD6';
+
+    const lbl=document.createElement('span');
+    lbl.style.cssText=`font-family:'DM Mono',monospace;font-size:${isFirst?'10':'10'}px;color:${isJun?'#1D9E75':isFirst?'#E24B4A':'#888880'};font-weight:${isJun||isFirst?'600':'400'};position:relative;z-index:1;white-space:nowrap;padding:0 2px;background:${isJun?'#F0FAF5':'#FAFAF8'}`;
+    lbl.textContent=label;
+
+    tick.appendChild(line);
+    tick.appendChild(lbl);
+    tl.appendChild(tick);
+  });
+}
+
+// ─── 카테고리 빌드 ────────────────────────────────────
+function buildCats(){
+  const cont=document.getElementById('cat-container');
+
+  CATS.forEach(cat=>{
+    const section=document.createElement('div');
+    section.className='cat-section';
+
+    // ── 헤더 ──
+    const head=document.createElement('div');
+    head.className='cat-head';
+
+    const labelCol=document.createElement('div');
+    labelCol.className='cat-label-col';
+    const memberChips = (cat.members||[]).map(m=>{
+      const c=MEMBER_COLORS[m]||{bg:'#eee',text:'#333',border:'#ccc'};
+      return `<span class="chip" style="background:${c.bg};color:${c.text};border-color:${c.border}">${m}</span>`;
+    }).join('');
+    labelCol.innerHTML=`<div class="cat-color-bar" style="background:${cat.color}"></div>
+      <div><span class="cat-num">${cat.num}</span><span class="cat-name">${cat.name}</span><div class="cat-members">${memberChips}</div></div>`;
+    head.appendChild(labelCol);
+
+    const catTl=document.createElement('div');
+    catTl.className='cat-tl';
+    injectGrid(catTl);
+
+    // 카테고리 요약바
+    const cbar=document.createElement('div');
+    cbar.className='bar cat-bar';
+    cbar.style.cssText=`left:${pctL(cat.span[0])};width:${pctW(cat.span[0],cat.span[1])};background:${cat.lb};color:${cat.lt};border:1px solid ${cat.color}55;`;
+    cbar.textContent=`${cat.tasks.length}개 태스크`;
+    catTl.appendChild(cbar);
+
+    const chev=document.createElement('div');
+    chev.className='cat-chevron open';
+    chev.textContent='▾';
+    catTl.appendChild(chev);
+    head.appendChild(catTl);
+    section.appendChild(head);
+
+    // ── 태스크 목록 ──
+    const taskList=document.createElement('div');
+    taskList.className='task-list open';
+
+    cat.tasks.forEach(task=>{
+      const row=document.createElement('div');
+      row.className='task-row';
+
+      const lc=document.createElement('div');
+      lc.className='task-label-col';
+      lc.innerHTML=`<span class="task-name">${task.name}</span>${task.detail?`<span class="task-detail">${task.detail}</span>`:''}<span class="task-date-label">${task.dl}</span>`;
+      row.appendChild(lc);
+
+      const ttl=document.createElement('div');
+      ttl.className='task-tl';
+      injectGrid(ttl);
+
+      const bar=document.createElement('div');
+      bar.className='bar';
+      bar.style.cssText=`left:${pctL(task.s)};width:${pctW(task.s,task.e)};background:${cat.color};color:#fff;`;
+      const si=wdIndex(task.s), ei=wdIndex(task.e);
+      if(ei-si>=2) bar.textContent=task.dl;
+      ttl.appendChild(bar);
+
+      row.appendChild(ttl);
+      taskList.appendChild(row);
+    });
+
+    section.appendChild(taskList);
+
+    // 토글
+    head.addEventListener('click',()=>{
+      const open=taskList.classList.contains('open');
+      taskList.classList.toggle('open',!open);
+      chev.classList.toggle('open',!open);
+    });
+
+    cont.appendChild(section);
+  });
+}
+
+// ─── TODAY LINE ───────────────────────────────────────
+function buildTodayLine(){
+  const gantt=document.getElementById('gantt');
+  const tl=document.getElementById('today-line');
+  const labelW=300; // px
+  const todayIdx=wdIndex(TODAY_DATE);
+  const fraction=todayIdx/TOTAL_WD;
+  tl.style.display='block';
+  tl.style.left=`calc(${labelW}px + (100% - ${labelW}px) * ${fraction.toFixed(4)})`;
+}
+
+buildRuler();
+buildCats();
+buildTodayLine();
+</script>
+</body>
+</html>
