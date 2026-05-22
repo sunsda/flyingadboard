@@ -3,9 +3,28 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>화이트패스 — 6월 말 목표 스케줄</title>
+<title>화이트패스 — 운영 대시보드</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
+/* ── 공통 리셋 ── */
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
+
+/* ── 네비게이션 ── */
+.gnav{background:#1C1C1A;position:sticky;top:0;z-index:999}
+.gnav-inner{max-width:1080px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between}
+.gnav-logo{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:#F4F3EF;padding:14px 0;letter-spacing:0.02em}
+.gnav-tabs{display:flex;gap:4px;padding:8px 0}
+.gnav-tab{font-size:12px;font-weight:500;color:rgba(255,255,255,0.6);text-decoration:none;padding:6px 16px;border-radius:5px;cursor:pointer;border:none;background:transparent;transition:all .15s}
+.gnav-tab:hover{color:#fff;background:rgba(255,255,255,0.08)}
+.gnav-tab.active{color:#fff;background:rgba(255,255,255,0.15)}
+
+/* ── 페이지 전환 ── */
+.view{display:none}
+.view.active{display:block}
+
+/* ── 스케줄 CSS ── */
+
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
 .page{max-width:1080px;margin:0 auto;padding:2.5rem 2rem 4rem}
@@ -99,9 +118,89 @@ body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font
   .task-list{display:block!important}
   .cat-chevron{display:none}
 }
+
+
+/* ── 캘린더 CSS (충돌 방지 prefix 없이 그대로 — 공통 클래스 같으므로 OK) ── */
+
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
+.page{max-width:1080px;margin:0 auto;padding:2.5rem 2rem 4rem}
+
+/* Header */
+.hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:2px solid #1C1C1A;flex-wrap:wrap;gap:12px}
+.title{font-size:24px;font-weight:600;letter-spacing:-0.03em}
+.subtitle{font-size:12px;color:#888880;margin-top:3px;font-family:'DM Mono',monospace}
+.today-badge{font-family:'DM Mono',monospace;font-size:11px;background:#E24B4A;color:#fff;padding:4px 10px;border-radius:3px}
+
+/* Nav */
+.nav{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;justify-content:space-between}
+.nav-left{display:flex;align-items:center;gap:8px}
+.nav-btn{background:#fff;border:1px solid #DDD9D0;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;color:#4A4A44}
+.nav-btn:hover{background:#F5F4F0}
+.week-label{font-size:14px;font-weight:600;color:#1C1C1A;min-width:180px;text-align:center;font-family:'DM Mono',monospace}
+.nav-right{display:flex;gap:6px;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#6A6A62}
+.leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
+
+/* Week grid */
+.week-grid{background:#fff;border:1px solid #DDD9D0;border-radius:10px;overflow:hidden}
+
+/* Day header row */
+.day-header-row{display:grid;grid-template-columns:80px repeat(5,1fr);border-bottom:2px solid #DDD9D0}
+.day-header-spacer{background:#FAFAF8;border-right:1px solid #DDD9D0}
+.day-header{padding:10px 10px 8px;text-align:center;border-right:1px solid #E8E5DD;background:#FAFAF8}
+.day-header:last-child{border-right:none}
+.day-name{font-size:11px;font-weight:600;letter-spacing:0.04em;color:#888880;text-transform:uppercase}
+.day-date{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:#1C1C1A;margin-top:2px}
+.day-date.today{color:#E24B4A;font-weight:700}
+.day-header.today-col{background:#FFF8F8}
+
+/* Cat rows */
+.cat-row{display:grid;grid-template-columns:80px repeat(5,1fr);border-bottom:1px solid #EAE7DF;min-height:52px}
+.cat-row:last-child{border-bottom:none}
+.cat-label{display:flex;flex-direction:column;justify-content:center;padding:8px 10px;border-right:1px solid #DDD9D0;background:#FAFAF8}
+.cat-label-bar{width:3px;height:100%;border-radius:2px;position:absolute;left:0;top:0}
+.cat-num{font-family:'DM Mono',monospace;font-size:9px;color:#AAA89E}
+.cat-name-short{font-size:10px;font-weight:600;color:#2A2A28;line-height:1.3;margin-top:1px}
+
+/* Day cell */
+.day-cell{border-right:1px solid #E8E5DD;padding:5px 5px;position:relative;display:flex;flex-direction:column;gap:3px}
+.day-cell:last-child{border-right:none}
+.day-cell.today-col{background:#FFFAF9}
+.day-cell.weekend{background:#F9F8F5}
+
+/* Task chip in cell */
+.task-chip{border-radius:4px;padding:3px 7px;font-size:10px;font-weight:500;line-height:1.4;cursor:default;position:relative}
+.task-chip:hover .chip-tooltip{display:block}
+.chip-tooltip{display:none;position:absolute;left:0;top:100%;margin-top:4px;background:#1C1C1A;color:#fff;font-size:11px;padding:6px 10px;border-radius:5px;white-space:nowrap;z-index:100;line-height:1.5;min-width:180px;max-width:260px;white-space:normal}
+
+/* Empty cell indicator */
+.no-task{display:flex;align-items:center;justify-content:center;height:100%;min-height:40px;font-size:18px;color:#E8E5DD}
+
+/* Month divider */
+.month-divider{padding:8px 14px;background:#F0FAF5;border-bottom:1px solid #A8DEC6;font-size:10px;font-weight:600;letter-spacing:0.08em;color:#1D9E75;text-transform:uppercase;grid-column:1/-1}
+
+/* Footer */
+.footer{margin-top:1.5rem;padding-top:1rem;border-top:1px solid #DDD9D0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.footer-l{font-size:11px;color:#AAA89E;font-family:'DM Mono',monospace}
+.footer-r{display:flex;gap:12px;flex-wrap:wrap}
+
 </style>
 </head>
 <body>
+
+<nav class="gnav">
+  <div class="gnav-inner">
+    <span class="gnav-logo">WHITE PASS</span>
+    <div class="gnav-tabs">
+      <button class="gnav-tab active" onclick="switchTab('schedule', this)">📋 스케줄</button>
+      <button class="gnav-tab" onclick="switchTab('calendar', this)">📅 주간 캘린더</button>
+    </div>
+  </div>
+</nav>
+
+<!-- 스케줄 뷰 -->
+<div class="view active" id="view-schedule">
 <div class="page">
 
 <div class="hdr">
@@ -445,5 +544,236 @@ buildRuler();
 buildCats();
 buildTodayLine();
 </script>
+</div>
+
+<!-- 캘린더 뷰 -->
+<div class="view" id="view-calendar">
+<div class="page">
+
+<div class="hdr">
+  <div>
+    <div class="title">화이트패스 주간 캘린더</div>
+    <div class="subtitle">WHITE PASS · 2025.05.22 — 2025.06.30</div>
+  </div>
+  <span class="today-badge">TODAY 2025.05.22 (목)</span>
+</div>
+
+<div class="nav">
+  <div class="nav-left">
+    <button class="nav-btn" onclick="prevWeek()">◀ 이전 주</button>
+    <div class="week-label" id="week-label"></div>
+    <button class="nav-btn" onclick="nextWeek()">다음 주 ▶</button>
+  </div>
+  <div class="nav-right">
+    <span class="leg-item"><span class="leg-dot" style="background:#378ADD"></span>사이트 기능</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#1D9E75"></span>모바일화</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#BA7517"></span>제휴처 확장</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#D4537E"></span>업체 관리</span>
+  </div>
+</div>
+
+<div class="week-grid" id="week-grid"></div>
+
+<div class="footer">
+  <span class="footer-l">WHITE PASS · 2025.05.22 — 2025.06.30 · 평일 기준</span>
+  <div class="footer-r">
+    <span class="leg-item"><span class="leg-dot" style="background:#378ADD"></span>사이트 기능 (HAM·LEE·KIM)</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#1D9E75"></span>모바일화 (KIM·HAM)</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#BA7517"></span>제휴처 확장 (MEI·TSUJII)</span>
+    <span class="leg-item"><span class="leg-dot" style="background:#D4537E"></span>업체 관리 (MEI·JEON)</span>
+  </div>
+</div>
+
+</div>
+
+<script>
+function d(m,day){return new Date(2025,m-1,day);}
+
+const CATS = [
+  {
+    num:'01', name:'사이트\n기능', color:'#378ADD', bg:'#EBF3FD', text:'#0C447C',
+    members:'HAM·LEE·KIM',
+    tasks:[
+      {name:'제휴처 정보 업데이트',     detail:'제휴처별 최신 정보 수집 및 사이트 반영', s:d(5,26), e:d(5,30)},
+      {name:'UI/UX 개선사항 반영',      detail:'고객 이용 흐름 기준 레이아웃 개선 적용',  s:d(5,26), e:d(5,30)},
+      {name:'운영 정보 취합·검토',      detail:'운영에 필요한 정보 취합 후 내부 정리',    s:d(5,28), e:d(5,30)},
+      {name:'사이트 반영·운영 적용',    detail:'검토된 내용 실제 사이트에 최종 적용',     s:d(6,2),  e:d(6,6) },
+      {name:'기능 업데이트·수정 대응',  detail:'운영 중 발생하는 문제 즉시 수정 대응',    s:d(6,9),  e:d(6,30)},
+    ]
+  },
+  {
+    num:'02', name:'모바일화', color:'#1D9E75', bg:'#E1F5EE', text:'#085041',
+    members:'KIM·HAM',
+    tasks:[
+      {name:'모바일 패스 테스트',        detail:'실물 없이 모바일 QR 기반 테스트',          s:d(6,9),  e:d(6,13)},
+      {name:'사용 동선 테스트',          detail:'이용자 관점의 화면 흐름 및 UX 점검',        s:d(6,9),  e:d(6,13)},
+      {name:'모바일 시스템 구현',        detail:'백엔드·프론트엔드 모바일 시스템 개발',      s:d(6,16), e:d(6,27)},
+      {name:'우나기/카키큐 우선 적용',   detail:'시범 제휴처 2곳 대상 모바일 시스템 론칭',   s:d(6,23), e:d(6,30)},
+    ]
+  },
+  {
+    num:'03', name:'제휴처\n확장', color:'#BA7517', bg:'#FAEEDA', text:'#633806',
+    members:'MEI·TSUJII',
+    tasks:[
+      {name:'제휴처 진척 상황 체크',     detail:'현재 제휴 진행 중인 점포별 현황 파악',     s:d(5,26), e:d(5,30)},
+      {name:'현황 정리·방향 검토',       detail:'진척 부진 점포 파악 및 대응 방향 수립',    s:d(5,28), e:d(5,30)},
+      {name:'신규 점포 검토',            detail:'진척 부족 시 신규 후보 점포 발굴·평가',    s:d(6,2),  e:d(6,6) },
+      {name:'리스트업·운영 협의',        detail:'최종 후보 점포 선정 및 제휴 조건 협의',    s:d(6,9),  e:d(6,30)},
+    ]
+  },
+  {
+    num:'04', name:'업체\n관리', color:'#D4537E', bg:'#FBEAF0', text:'#4B1528',
+    members:'MEI·JEON',
+    tasks:[
+      {name:'매장 안내 상태 체크',       detail:'화이트패스 안내물 부착 여부 및 상태 점검', s:d(5,26), e:d(5,30)},
+      {name:'운영 상태·동선 점검',       detail:'현장 방문 통한 고객 이용 흐름 직접 확인',  s:d(6,2),  e:d(6,6) },
+      {name:'CS·불편 사항 체크',         detail:'고객 문의·불편 현황 집계 및 원인 파악',    s:d(6,9),  e:d(6,27)},
+      {name:'문제사항 수정·개선 반영',   detail:'수집된 CS 및 현장 이슈 즉시 개선 적용',   s:d(6,16), e:d(6,30)},
+    ]
+  }
+];
+
+// 주 단위 시작일 계산 (월요일 기준, 5/22 첫 주는 5/22 목요일부터)
+const WEEKS = [
+  { start: d(5,22), label:'1주차 — 5/22(목)~5/23(금)', days:[d(5,22),d(5,23),null,null,null] }, // 단 이틀
+];
+// 이후 주는 월~금
+let cur = d(5,26);
+let wn = 2;
+while(cur <= d(6,30)){
+  const days=[];
+  for(let i=0;i<5;i++){
+    const dd=new Date(cur);
+    dd.setDate(cur.getDate()+i);
+    days.push(dd<=d(6,30)?dd:null);
+  }
+  WEEKS.push({start:new Date(cur), label:`${wn}주차`, days});
+  cur.setDate(cur.getDate()+7);
+  wn++;
+}
+
+// 첫 주 days 수정 (목~금만)
+WEEKS[0].days = [null, null, null, d(5,22), d(5,23)]; // 월화수 = null, 목금 = 5/22,23
+
+let currentWeekIdx = 0;
+
+function isInRange(date, s, e){
+  if(!date) return false;
+  const t=date.getTime();
+  return t>=s.getTime() && t<=e.getTime();
+}
+
+function isSameDay(a,b){
+  return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
+}
+
+const TODAY = d(5,22);
+const DAY_NAMES = ['월','화','수','목','금'];
+
+function render(){
+  const week = WEEKS[currentWeekIdx];
+  const grid = document.getElementById('week-grid');
+  grid.innerHTML='';
+
+  // Week label
+  const days = week.days;
+  const validDays = days.filter(Boolean);
+  const first = validDays[0], last = validDays[validDays.length-1];
+  const fmt = dd=>`${dd.getMonth()+1}/${dd.getDate()}`;
+  document.getElementById('week-label').textContent =
+    `${first.getMonth()+1}월 ${fmt(first)} — ${fmt(last)}`;
+
+  // Check if june starts this week
+  const hasJun = days.some(dd=>dd&&dd.getMonth()===5);
+  const hasMay = days.some(dd=>dd&&dd.getMonth()===4);
+
+  // Day header
+  const headerRow = document.createElement('div');
+  headerRow.className='day-header-row';
+  const spacer=document.createElement('div');
+  spacer.className='day-header-spacer';
+  headerRow.appendChild(spacer);
+
+  days.forEach((dd,i)=>{
+    const cell=document.createElement('div');
+    cell.className='day-header'+(dd&&isSameDay(dd,TODAY)?' today-col':'');
+    if(dd){
+      const isToday=isSameDay(dd,TODAY);
+      cell.innerHTML=`<div class="day-name">${DAY_NAMES[i]}</div>
+        <div class="day-date${isToday?' today':''}">${dd.getMonth()+1}/${dd.getDate()}</div>`;
+    } else {
+      cell.innerHTML=`<div class="day-name">${DAY_NAMES[i]}</div><div class="day-date" style="color:#D0CEC8">—</div>`;
+    }
+    headerRow.appendChild(cell);
+  });
+  grid.appendChild(headerRow);
+
+  // Month boundary notice
+  if(hasJun && hasMay){
+    const divRow=document.createElement('div');
+    divRow.style.cssText='display:grid;grid-template-columns:80px repeat(5,1fr);background:#F0FAF5;border-bottom:1px solid #A8DEC6;';
+    divRow.innerHTML=`<div style="border-right:1px solid #DDD9D0;background:#FAFAF8"></div><div style="grid-column:2/-1;padding:5px 12px;font-size:10px;font-weight:600;letter-spacing:0.08em;color:#1D9E75">🗓 6월 시작 — 6월 태스크 시작됩니다</div>`;
+    grid.appendChild(divRow);
+  }
+
+  // Cat rows
+  CATS.forEach(cat=>{
+    const row=document.createElement('div');
+    row.className='cat-row';
+
+    // Label
+    const label=document.createElement('div');
+    label.className='cat-label';
+    label.style.cssText=`position:relative;border-left:3px solid ${cat.color};padding-left:8px;`;
+    label.innerHTML=`<span class="cat-num">${cat.num}</span>
+      <span class="cat-name-short">${cat.name.replace('\n','<br>')}</span>
+      <span style="font-size:9px;color:#AAA89E;margin-top:2px">${cat.members}</span>`;
+    row.appendChild(label);
+
+    // Day cells
+    days.forEach(dd=>{
+      const cell=document.createElement('div');
+      cell.className='day-cell'+(dd&&isSameDay(dd,TODAY)?' today-col':'');
+      if(!dd){ cell.className+=' weekend'; row.appendChild(cell); return; }
+
+      const activeTasks = cat.tasks.filter(t=>isInRange(dd,t.s,t.e));
+      if(activeTasks.length===0){
+        cell.innerHTML='';
+      } else {
+        activeTasks.forEach(t=>{
+          const chip=document.createElement('div');
+          chip.className='task-chip';
+          chip.style.cssText=`background:${cat.bg};color:${cat.text};border:1px solid ${cat.color}40;`;
+          chip.innerHTML=`${t.name}<div class="chip-tooltip"><strong>${t.name}</strong><br>${t.detail}</div>`;
+          cell.appendChild(chip);
+        });
+      }
+      row.appendChild(cell);
+    });
+
+    grid.appendChild(row);
+  });
+}
+
+function prevWeek(){ if(currentWeekIdx>0){currentWeekIdx--;render();} }
+function nextWeek(){ if(currentWeekIdx<WEEKS.length-1){currentWeekIdx++;render();} }
+
+// Start at current week (5/22 = week 0)
+render();
+</script>
+</div>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.gnav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name).classList.add('active');
+  btn.classList.add('active');
+  window.scrollTo(0, 0);
+  // 캘린더 탭 클릭 시 렌더
+  if(name === 'calendar' && typeof render === 'function') render();
+}
+</script>
+
 </body>
 </html>
