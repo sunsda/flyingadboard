@@ -6,56 +6,41 @@
 <title>화이트패스 — 운영 대시보드</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-/* ── 공통 리셋 ── */
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.page{max-width:1080px;margin:0 auto;padding:2rem 2rem 4rem}
 
-/* ── 네비게이션 ── */
+/* NAV */
 .gnav{background:#1C1C1A;position:sticky;top:0;z-index:999}
 .gnav-inner{max-width:1080px;margin:0 auto;padding:0 2rem;display:flex;align-items:center;justify-content:space-between}
 .gnav-logo{font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:#F4F3EF;padding:14px 0;letter-spacing:0.02em}
 .gnav-tabs{display:flex;gap:4px;padding:8px 0}
-.gnav-tab{font-size:12px;font-weight:500;color:rgba(255,255,255,0.6);text-decoration:none;padding:6px 16px;border-radius:5px;cursor:pointer;border:none;background:transparent;transition:all .15s}
+.gnav-tab{font-size:12px;font-weight:500;color:rgba(255,255,255,0.55);padding:6px 16px;border-radius:5px;cursor:pointer;border:none;background:transparent;transition:all .15s;font-family:'Noto Sans KR',sans-serif}
 .gnav-tab:hover{color:#fff;background:rgba(255,255,255,0.08)}
 .gnav-tab.active{color:#fff;background:rgba(255,255,255,0.15)}
 
-/* ── 페이지 전환 ── */
+/* VIEW SWITCH */
 .view{display:none}
 .view.active{display:block}
 
-/* ── 스케줄 CSS ── */
-
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased}
-.page{max-width:1080px;margin:0 auto;padding:2.5rem 2rem 4rem}
-
+/* COMMON HEADER */
 .hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:2px solid #1C1C1A;flex-wrap:wrap;gap:12px}
-.title{font-size:24px;font-weight:600;letter-spacing:-0.03em}
-.subtitle{font-size:12px;color:#888880;margin-top:3px;font-family:'DM Mono',monospace}
-.today-badge{font-family:'DM Mono',monospace;font-size:11px;background:#E24B4A;color:#fff;padding:4px 10px;border-radius:3px}
+.pg-title{font-size:24px;font-weight:600;letter-spacing:-0.03em}
+.pg-sub{font-size:12px;color:#888880;margin-top:3px;font-family:'DM Mono',monospace}
+.today-badge{font-family:'DM Mono',monospace;font-size:11px;background:#E24B4A;color:#fff;padding:4px 10px;border-radius:3px;flex-shrink:0}
 
-/* Chart area */
+/* ═══════════════════════════════
+   SCHEDULE PAGE
+═══════════════════════════════ */
 #gantt{position:relative;background:#fff;border:1px solid #DDD9D0;border-radius:10px;overflow:hidden}
-
-/* Ruler row */
 #ruler-row{display:flex;border-bottom:2px solid #DDD9D0;background:#FAFAF8}
 #ruler-label{width:300px;flex-shrink:0;padding:8px 14px;border-right:1px solid #DDD9D0;font-size:10px;font-weight:600;letter-spacing:0.05em;color:#888880;text-transform:uppercase;display:flex;align-items:center}
 #ruler-tl{flex:1;position:relative;height:36px}
-
-/* Month band label */
 .month-band{position:absolute;top:0;height:16px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:600;letter-spacing:0.08em;text-transform:uppercase;border-bottom:1px solid #E0DDD6}
-/* Week tick */
 .week-tick{position:absolute;top:16px;bottom:0;display:flex;flex-direction:column;align-items:center;justify-content:center}
 .week-tick-line{position:absolute;top:0;width:1px;height:100%;background:#E8E5DD}
-.week-tick-label{font-family:'DM Mono',monospace;font-size:10px;color:#AAA89E;position:relative;z-index:1;white-space:nowrap}
-.week-tick-label.mon{color:#555550;font-weight:500}
-.week-tick-label.jun{color:#1D9E75;font-weight:600}
-
-/* Cat section */
 .cat-section{border-bottom:1px solid #E8E5DD}
 .cat-section:last-child{border-bottom:none}
-
-/* Cat header */
 .cat-head{display:flex;align-items:stretch;cursor:pointer;background:#FAFAF8;border-bottom:1px solid #E8E5DD}
 .cat-head:hover{background:#F5F4F0}
 .cat-label-col{width:300px;flex-shrink:0;display:flex;align-items:center;gap:8px;padding:10px 14px;border-right:1px solid #DDD9D0}
@@ -65,8 +50,6 @@ body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font
 .cat-tl{flex:1;position:relative;min-height:44px}
 .cat-chevron{position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:#AAA89E;transition:transform .2s}
 .cat-chevron.open{transform:translateY(-50%) rotate(180deg)}
-
-/* Task rows */
 .task-list{display:none}
 .task-list.open{display:block}
 .task-row{display:flex;align-items:stretch;border-bottom:1px solid #F2EFE8}
@@ -77,22 +60,14 @@ body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font
 .task-detail{font-size:11px;color:#7A7A72;line-height:1.4;display:block}
 .task-date-label{font-family:'DM Mono',monospace;font-size:10px;color:#B0AEA8;display:block;margin-top:1px}
 .task-tl{flex:1;position:relative;min-height:42px}
+.bar{position:absolute;top:50%;transform:translateY(-50%);height:20px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;white-space:nowrap;z-index:2}
+.cat-bar{height:24px;opacity:0.9}
+.grid-v{position:absolute;top:0;bottom:0;width:1px;z-index:1;pointer-events:none}
+#today-line{position:absolute;top:0;bottom:0;width:2px;background:#E24B4A;z-index:30;pointer-events:none}
+#today-line::after{content:'▼';position:absolute;top:-2px;left:50%;transform:translateX(-50%);font-size:10px;color:#E24B4A;line-height:1}
 .chips{display:flex;flex-wrap:wrap;gap:3px;margin-top:3px}
 .chip{font-family:'DM Mono',monospace;font-size:10px;font-weight:500;padding:2px 6px;border-radius:3px;border:1px solid;line-height:1.4;white-space:nowrap}
 .cat-members{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
-
-/* Bars */
-.bar{position:absolute;top:50%;transform:translateY(-50%);height:20px;border-radius:4px;display:flex;align-items:center;padding:0 8px;font-family:'DM Mono',monospace;font-size:10px;font-weight:500;white-space:nowrap;z-index:2}
-.cat-bar{height:24px;opacity:0.9}
-
-/* Grid lines inside timeline cells */
-.grid-v{position:absolute;top:0;bottom:0;width:1px;z-index:1;pointer-events:none}
-
-/* Today line */
-#today-line{position:absolute;top:0;bottom:0;width:2px;background:#E24B4A;z-index:30;pointer-events:none}
-#today-line::after{content:'▼';position:absolute;top:-2px;left:50%;transform:translateX(-50%);font-size:10px;color:#E24B4A;line-height:1}
-
-/* Goals / summary */
 .goals-section{margin-top:16px;display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .goal-card{background:#fff;border:1px solid #DDD9D0;border-radius:8px;padding:14px 16px}
 .goal-card-title{font-size:10px;font-weight:600;letter-spacing:0.06em;color:#888880;margin-bottom:10px;text-transform:uppercase}
@@ -106,107 +81,69 @@ body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font
 .sum-accent{height:3px;border-radius:2px;margin-bottom:8px}
 .sum-name{font-size:10px;font-weight:600;letter-spacing:0.04em;color:#888880;margin-bottom:5px;text-transform:uppercase}
 .sum-items{font-size:11px;color:#4A4A44;line-height:1.7}
-.footer{margin-top:2rem;padding-top:1rem;border-top:1px solid #DDD9D0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
-.footer-l{font-size:11px;color:#AAA89E;font-family:'DM Mono',monospace}
-.footer-r{display:flex;gap:12px;flex-wrap:wrap}
+.s-footer{margin-top:14px;background:#fff;border:1px solid #DDD9D0;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.s-footer2{margin-top:10px;padding-top:1rem;border-top:1px solid #DDD9D0;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px}
 .leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#6A6A62}
 .leg-dot{width:8px;height:8px;border-radius:2px}
 
-@media print{
-  body{background:#fff}
-  .page{padding:1.5rem}
-  .task-list{display:block!important}
-  .cat-chevron{display:none}
-}
-
-
-/* ── 캘린더 CSS (충돌 방지 prefix 없이 그대로 — 공통 클래스 같으므로 OK) ── */
-
-*{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased}
-.page{max-width:1080px;margin:0 auto;padding:2.5rem 2rem 4rem}
-
-/* Header */
-.hdr{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:2rem;padding-bottom:1.25rem;border-bottom:2px solid #1C1C1A;flex-wrap:wrap;gap:12px}
-.title{font-size:24px;font-weight:600;letter-spacing:-0.03em}
-.subtitle{font-size:12px;color:#888880;margin-top:3px;font-family:'DM Mono',monospace}
-.today-badge{font-family:'DM Mono',monospace;font-size:11px;background:#E24B4A;color:#fff;padding:4px 10px;border-radius:3px}
-
-/* Nav */
-.nav{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;justify-content:space-between}
-.nav-left{display:flex;align-items:center;gap:8px}
-.nav-btn{background:#fff;border:1px solid #DDD9D0;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;color:#4A4A44}
-.nav-btn:hover{background:#F5F4F0}
+/* ═══════════════════════════════
+   CALENDAR PAGE
+═══════════════════════════════ */
+.cal-nav{display:flex;align-items:center;gap:10px;margin-bottom:1.25rem;flex-wrap:wrap;justify-content:space-between}
+.cal-nav-left{display:flex;align-items:center;gap:8px}
+.cal-nav-btn{background:#fff;border:1px solid #DDD9D0;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;color:#4A4A44;font-family:'Noto Sans KR',sans-serif}
+.cal-nav-btn:hover{background:#F5F4F0}
 .week-label{font-size:14px;font-weight:600;color:#1C1C1A;min-width:180px;text-align:center;font-family:'DM Mono',monospace}
-.nav-right{display:flex;gap:6px;flex-wrap:wrap}
-.leg-item{display:flex;align-items:center;gap:4px;font-size:11px;color:#6A6A62}
-.leg-dot{width:9px;height:9px;border-radius:2px;flex-shrink:0}
-
-/* Week grid */
+.cal-nav-right{display:flex;gap:6px;flex-wrap:wrap}
 .week-grid{background:#fff;border:1px solid #DDD9D0;border-radius:10px;overflow:hidden}
-
-/* Day header row */
 .day-header-row{display:grid;grid-template-columns:80px repeat(5,1fr);border-bottom:2px solid #DDD9D0}
 .day-header-spacer{background:#FAFAF8;border-right:1px solid #DDD9D0}
 .day-header{padding:10px 10px 8px;text-align:center;border-right:1px solid #E8E5DD;background:#FAFAF8}
 .day-header:last-child{border-right:none}
 .day-name{font-size:11px;font-weight:600;letter-spacing:0.04em;color:#888880;text-transform:uppercase}
-.day-date{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:#1C1C1A;margin-top:2px}
-.day-date.today{color:#E24B4A;font-weight:700}
+.day-num{font-family:'DM Mono',monospace;font-size:14px;font-weight:500;color:#1C1C1A;margin-top:2px}
+.day-num.today{color:#E24B4A;font-weight:700}
 .day-header.today-col{background:#FFF8F8}
-
-/* Cat rows */
-.cat-row{display:grid;grid-template-columns:80px repeat(5,1fr);border-bottom:1px solid #EAE7DF;min-height:52px}
-.cat-row:last-child{border-bottom:none}
-.cat-label{display:flex;flex-direction:column;justify-content:center;padding:8px 10px;border-right:1px solid #DDD9D0;background:#FAFAF8}
-.cat-label-bar{width:3px;height:100%;border-radius:2px;position:absolute;left:0;top:0}
-.cat-num{font-family:'DM Mono',monospace;font-size:9px;color:#AAA89E}
-.cat-name-short{font-size:10px;font-weight:600;color:#2A2A28;line-height:1.3;margin-top:1px}
-
-/* Day cell */
-.day-cell{border-right:1px solid #E8E5DD;padding:5px 5px;position:relative;display:flex;flex-direction:column;gap:3px}
+.cat-row-cal{display:grid;grid-template-columns:80px repeat(5,1fr);border-bottom:1px solid #EAE7DF;min-height:52px}
+.cat-row-cal:last-child{border-bottom:none}
+.cat-label-cal{display:flex;flex-direction:column;justify-content:center;padding:8px 8px 8px 11px;border-right:1px solid #DDD9D0;background:#FAFAF8;border-left:3px solid transparent}
+.cat-num-cal{font-family:'DM Mono',monospace;font-size:9px;color:#AAA89E}
+.cat-name-cal{font-size:10px;font-weight:600;color:#2A2A28;line-height:1.3;margin-top:1px}
+.cat-member-cal{font-size:9px;color:#AAA89E;margin-top:2px}
+.day-cell{border-right:1px solid #E8E5DD;padding:4px 5px;display:flex;flex-direction:column;gap:3px;min-height:52px}
 .day-cell:last-child{border-right:none}
 .day-cell.today-col{background:#FFFAF9}
-.day-cell.weekend{background:#F9F8F5}
-
-/* Task chip in cell */
-.task-chip{border-radius:4px;padding:3px 7px;font-size:10px;font-weight:500;line-height:1.4;cursor:default;position:relative}
-.task-chip:hover .chip-tooltip{display:block}
-.chip-tooltip{display:none;position:absolute;left:0;top:100%;margin-top:4px;background:#1C1C1A;color:#fff;font-size:11px;padding:6px 10px;border-radius:5px;white-space:nowrap;z-index:100;line-height:1.5;min-width:180px;max-width:260px;white-space:normal}
-
-/* Empty cell indicator */
-.no-task{display:flex;align-items:center;justify-content:center;height:100%;min-height:40px;font-size:18px;color:#E8E5DD}
-
-/* Month divider */
-.month-divider{padding:8px 14px;background:#F0FAF5;border-bottom:1px solid #A8DEC6;font-size:10px;font-weight:600;letter-spacing:0.08em;color:#1D9E75;text-transform:uppercase;grid-column:1/-1}
-
-/* Footer */
-.footer{margin-top:1.5rem;padding-top:1rem;border-top:1px solid #DDD9D0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.footer-l{font-size:11px;color:#AAA89E;font-family:'DM Mono',monospace}
-.footer-r{display:flex;gap:12px;flex-wrap:wrap}
-
+.day-cell.off{background:#F9F8F5}
+.task-chip-cal{border-radius:4px;padding:3px 7px;font-size:10px;font-weight:500;line-height:1.4;position:relative;cursor:default}
+.task-chip-cal:hover .chip-tip{display:block}
+.chip-tip{display:none;position:absolute;left:0;top:100%;margin-top:4px;background:#1C1C1A;color:#fff;font-size:11px;padding:6px 10px;border-radius:5px;white-space:normal;z-index:100;line-height:1.5;min-width:180px;max-width:260px}
+.c-footer{margin-top:1.5rem;padding-top:1rem;border-top:1px solid #DDD9D0;display:flex;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.c-footer-l{font-size:11px;color:#AAA89E;font-family:'DM Mono',monospace}
 </style>
 </head>
 <body>
 
+<!-- NAV -->
 <nav class="gnav">
   <div class="gnav-inner">
     <span class="gnav-logo">WHITE PASS</span>
     <div class="gnav-tabs">
-      <button class="gnav-tab active" onclick="switchTab('schedule', this)">📋 스케줄</button>
-      <button class="gnav-tab" onclick="switchTab('calendar', this)">📅 주간 캘린더</button>
+      <button class="gnav-tab active" onclick="switchTab('schedule',this)">📋 스케줄</button>
+      <button class="gnav-tab" onclick="switchTab('calendar',this)">📅 주간 캘린더</button>
     </div>
   </div>
 </nav>
 
-<!-- 스케줄 뷰 -->
+<!-- ══════════════════════════════════════
+     SCHEDULE VIEW
+══════════════════════════════════════ -->
 <div class="view active" id="view-schedule">
 <div class="page">
 
 <div class="hdr">
   <div>
-    <div class="title">화이트패스 운영 목표 스케줄</div>
-    <div class="subtitle">WHITE PASS · 2025.05.22(목) — 2025.06.30(월) · 평일 기준 28일</div>
+    <div class="pg-title">화이트패스 운영 목표 스케줄</div>
+    <div class="pg-sub">WHITE PASS · 2025.05.22(목) — 2025.06.30(월) · 평일 기준 28일</div>
   </div>
   <span class="today-badge">TODAY 2025.05.22 (목)</span>
 </div>
@@ -244,7 +181,7 @@ body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font
   <div class="sum-card"><div class="sum-accent" style="background:#D4537E"></div><div class="sum-name">④ 기존 업체 관리</div><div class="sum-items">매장 안내 체크<br>동선 점검<br>CS 대응·개선</div></div>
 </div>
 
-<div style="margin-top:14px;background:#fff;border:1px solid #DDD9D0;border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+<div class="s-footer">
   <span style="font-size:10px;font-weight:600;letter-spacing:0.06em;color:#888880;text-transform:uppercase;flex-shrink:0">담당자</span>
   <div style="display:flex;gap:8px;flex-wrap:wrap">
     <span class="chip" style="background:#E6F1FB;color:#0C447C;border-color:#85B7EB;font-size:11px;padding:3px 9px">HAM</span>
@@ -254,317 +191,42 @@ body{font-family:'Noto Sans KR',sans-serif;background:#F4F3EF;color:#1C1C1A;font
     <span class="chip" style="background:#FBEAF0;color:#4B1528;border-color:#ED93B1;font-size:11px;padding:3px 9px">TSUJII</span>
     <span class="chip" style="background:#F1EFE8;color:#444441;border-color:#B4B2A9;font-size:11px;padding:3px 9px">JEON</span>
   </div>
-  <span style="font-size:11px;color:#B0AEA8;margin-left:auto">각 태스크 우측에 담당자 표시</span>
 </div>
-<div class="footer">
-  <span class="footer-l">WHITE PASS · 2025.05.22 — 2025.06.30 · 평일 기준</span>
-  <div class="footer-r">
+
+<div class="s-footer2">
+  <span style="font-size:11px;color:#AAA89E;font-family:'DM Mono',monospace">WHITE PASS · 2025.05.22 — 2025.06.30</span>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
     <span class="leg-item"><span class="leg-dot" style="background:#378ADD"></span>사이트 기능</span>
     <span class="leg-item"><span class="leg-dot" style="background:#1D9E75"></span>모바일화</span>
     <span class="leg-item"><span class="leg-dot" style="background:#BA7517"></span>제휴처 확장</span>
     <span class="leg-item"><span class="leg-dot" style="background:#D4537E"></span>업체 관리</span>
-    <span class="leg-item"><span class="leg-dot" style="background:#E24B4A;border-radius:50%"></span>오늘(5/22)</span>
   </div>
 </div>
 
-</div><!-- .page -->
-
-<script>
-// ─── 평일만 배열로 관리 ───────────────────────────────
-function mkDate(y,m,d){ return new Date(y,m-1,d); }
-function isWeekday(d){ return d.getDay()>=1 && d.getDay()<=5; }
-
-const START_DATE = mkDate(2025,5,22);
-const END_DATE   = mkDate(2025,6,30);
-const TODAY_DATE = mkDate(2025,5,22);
-
-// 평일 전체 배열 생성
-const WEEKDAYS = [];
-let cur = new Date(START_DATE);
-while(cur <= END_DATE){
-  if(isWeekday(cur)) WEEKDAYS.push(new Date(cur));
-  cur.setDate(cur.getDate()+1);
-}
-const TOTAL_WD = WEEKDAYS.length; // 28
-
-function wdIndex(date){
-  // 가장 가까운 평일 인덱스 (주말이면 다음 월요일)
-  let t = new Date(date);
-  while(!isWeekday(t)) t.setDate(t.getDate()+1);
-  for(let i=0;i<WEEKDAYS.length;i++){
-    if(WEEKDAYS[i].toDateString()===t.toDateString()) return i;
-  }
-  return WEEKDAYS.length-1;
-}
-
-function pctL(date){
-  return (wdIndex(date)/TOTAL_WD*100).toFixed(3)+'%';
-}
-function pctW(s,e){
-  const si = wdIndex(s);
-  let ei = wdIndex(e);
-  // e가 평일이면 그날 포함
-  let t = new Date(e);
-  if(!isWeekday(t)){
-    // 이전 평일
-    t.setDate(t.getDate()-1);
-    while(!isWeekday(t)) t.setDate(t.getDate()-1);
-    ei = wdIndex(t);
-  }
-  const w = Math.max((ei-si+1)/TOTAL_WD*100, 2.5);
-  return w.toFixed(3)+'%';
-}
-
-function d(m,day){ return mkDate(2025,m,day); }
-
-// ─── 멤버 색상 팔레트 ─────────────────────────────────
-const MEMBER_COLORS = {
-  HAM:   {bg:'#E6F1FB', text:'#0C447C', border:'#85B7EB'},
-  LEE:   {bg:'#EEEDFE', text:'#3C3489', border:'#AFA9EC'},
-  KIM:   {bg:'#E1F5EE', text:'#085041', border:'#5DCAA5'},
-  MEI:   {bg:'#FAEEDA', text:'#633806', border:'#EF9F27'},
-  TSUJII:{bg:'#FBEAF0', text:'#4B1528', border:'#ED93B1'},
-  JEON:  {bg:'#F1EFE8', text:'#444441', border:'#B4B2A9'},
-};
-
-// ─── 카테고리 데이터 ─────────────────────────────────
-const CATS = [
-  {
-    num:'01', name:'사이트 기능 운영', color:'#378ADD',
-    lb:'#EBF3FD', lt:'#185FA5',
-    members:['HAM','LEE','KIM'],
-    span:[d(5,26),d(6,30)],
-    tasks:[
-      {name:'제휴처 정보 업데이트 진행',           detail:'제휴처별 최신 정보 수집 및 사이트 반영', dl:'5/26(월)~5/30(금)', m:['HAM','LEE'], s:d(5,26), e:d(5,30)},
-      {name:'내부 UI/UX 개선사항 반영',             detail:'고객 이용 흐름 기준 레이아웃 개선 적용',  dl:'5/26(월)~5/30(금)', m:['KIM','HAM'], s:d(5,26), e:d(5,30)},
-      {name:'제휴처 운영 정보 취합·내부 검토',      detail:'운영에 필요한 정보 취합 후 내부 정리',    dl:'5/28(수)~5/30(금)', m:['HAM','LEE','KIM'], s:d(5,28), e:d(5,30)},
-      {name:'검토 완료 내용 사이트 반영·운영 적용', detail:'검토된 내용 실제 사이트에 최종 적용',     dl:'6/2(월)~6/6(금)',   m:['KIM','HAM'], s:d(6,2),  e:d(6,6) },
-      {name:'기능 업데이트 및 애로사항 수정 대응',  detail:'운영 중 발생하는 문제 즉시 수정 대응',    dl:'6/9(월)~6/30(월)',  m:['KIM','LEE'], s:d(6,9),  e:d(6,30)},
-    ]
-  },
-  {
-    num:'02', name:'모바일화 운영', color:'#1D9E75',
-    lb:'#E1F5EE', lt:'#0F6E56',
-    members:['KIM','HAM'],
-    span:[d(6,9),d(6,30)],
-    tasks:[
-      {name:'모바일 패스 테스트 (실물 미사용)',      detail:'실물 화이트패스 없이 모바일 QR 기반 테스트', dl:'6/9(월)~6/13(금)',  m:['KIM','HAM'], s:d(6,9),  e:d(6,13)},
-      {name:'모바일 화면 기반 사용 동선 테스트',     detail:'실제 이용자 관점의 화면 흐름 및 UX 점검',   dl:'6/9(월)~6/13(금)',  m:['HAM','KIM'], s:d(6,9),  e:d(6,13)},
-      {name:'모바일 시스템 구현 진행',               detail:'백엔드·프론트엔드 모바일 시스템 개발',       dl:'6/16(월)~6/27(금)', m:['KIM'],       s:d(6,16), e:d(6,27)},
-      {name:'우나기 우시큐/카키큐 우선 적용',        detail:'시범 제휴처 2곳 대상 모바일 시스템 론칭',    dl:'6/23(월)~6/30(월)', m:['KIM','HAM'], s:d(6,23), e:d(6,30)},
-    ]
-  },
-  {
-    num:'03', name:'제휴처 확장 운영', color:'#BA7517',
-    lb:'#FAEEDA', lt:'#633806',
-    members:['MEI','TSUJII'],
-    span:[d(5,26),d(6,30)],
-    tasks:[
-      {name:'기존 제휴처 진척 상황 체크',            detail:'현재 제휴 진행 중인 점포별 현황 파악',      dl:'5/26(월)~5/30(금)', m:['MEI','TSUJII'], s:d(5,26), e:d(5,30)},
-      {name:'제휴 현황 정리 및 운영 방향 검토',       detail:'진척 부진 점포 파악 및 대응 방향 수립',     dl:'5/28(수)~5/30(금)', m:['MEI','TSUJII'], s:d(5,28), e:d(5,30)},
-      {name:'신규 제휴 점포 검토 진행',               detail:'진척 부족 시 신규 후보 점포 발굴·평가',     dl:'6/2(월)~6/6(금)',   m:['TSUJII'],       s:d(6,2),  e:d(6,6) },
-      {name:'신규 점포 리스트업 및 운영 협의',        detail:'최종 후보 점포 선정 및 제휴 조건 협의',     dl:'6/9(월)~6/30(월)',  m:['MEI','TSUJII'], s:d(6,9),  e:d(6,30)},
-    ]
-  },
-  {
-    num:'04', name:'기존 업체 운영 관리', color:'#D4537E',
-    lb:'#FBEAF0', lt:'#4B1528',
-    members:['MEI','JEON'],
-    span:[d(5,26),d(6,30)],
-    tasks:[
-      {name:'스티커 부착 및 매장 안내 상태 체크',    detail:'화이트패스 안내물 부착 여부 및 상태 점검',  dl:'5/26(월)~5/30(금)', m:['JEON','MEI'], s:d(5,26), e:d(5,30)},
-      {name:'실제 운영 상태 및 고객 동선 점검',      detail:'현장 방문 통한 고객 이용 흐름 직접 확인',   dl:'6/2(월)~6/6(금)',   m:['MEI','JEON'], s:d(6,2),  e:d(6,6) },
-      {name:'CS 발생 여부 및 이용 불편 사항 체크',   detail:'고객 문의·불편 현황 집계 및 원인 파악',     dl:'6/9(월)~6/27(금)',  m:['JEON'],       s:d(6,9),  e:d(6,27)},
-      {name:'확인된 문제사항 수정·운영 개선 반영',   detail:'수집된 CS 및 현장 이슈 즉시 개선 적용',     dl:'6/16(월)~6/30(월)', m:['MEI','JEON'], s:d(6,16), e:d(6,30)},
-    ]
-  }
-];
-
-// ─── 격자선 공통 주입 ──────────────────────────────────
-function injectGrid(tl){
-  // 월요일 및 6/2 기준 세로선
-  WEEKDAYS.forEach((wd,i)=>{
-    if(wd.getDay()!==1) return;
-    const gl=document.createElement('div');
-    gl.className='grid-v';
-    const isMon6=wd.getMonth()===5; // June
-    gl.style.cssText=`left:${(i/TOTAL_WD*100).toFixed(3)}%;background:${isMon6?'#B8DDD0':'#E8E5DD'};opacity:${isMon6?1:0.8}`;
-    tl.appendChild(gl);
-  });
-}
-
-// ─── 루러 빌드 ────────────────────────────────────────
-function buildRuler(){
-  const tl=document.getElementById('ruler-tl');
-
-  // 월 밴드
-  const mayPct = (wdIndex(d(5,22))/TOTAL_WD*100).toFixed(1);
-  // 6/2가 첫 6월 평일
-  const junIdx = wdIndex(d(6,2));
-  const junPct = (junIdx/TOTAL_WD*100).toFixed(1);
-  const mayW   = ((junIdx)/TOTAL_WD*100).toFixed(1);
-  const junW   = ((TOTAL_WD-junIdx)/TOTAL_WD*100).toFixed(1);
-
-  const mayBand=document.createElement('div');
-  mayBand.className='month-band';
-  mayBand.style.cssText=`left:${mayPct}%;width:${mayW}%;background:#F7F6F2;color:#888880;border-right:2px dashed #D0CCC4;border-bottom:1px solid #E0DDD6;`;
-  mayBand.textContent='5월 MAY';
-  tl.appendChild(mayBand);
-
-  const junBand=document.createElement('div');
-  junBand.className='month-band';
-  junBand.style.cssText=`left:${junPct}%;width:${junW}%;background:#F0FAF5;color:#1D9E75;border-bottom:1px solid #A8DEC6;`;
-  junBand.textContent='6월 JUN';
-  tl.appendChild(junBand);
-
-  // 주 눈금 (월요일 + 5/22 첫날)
-  const tickDates = WEEKDAYS.filter(wd=>wd.getDay()===1 || wd.toDateString()===START_DATE.toDateString());
-  tickDates.forEach((wd,i)=>{
-    const idx=wdIndex(wd);
-    const lPct=(idx/TOTAL_WD*100).toFixed(3)+'%';
-    const isJun=wd.getMonth()===5;
-    const isFirst=wd.toDateString()===START_DATE.toDateString();
-    const mm=wd.getMonth()+1;
-    const dd=wd.getDate();
-    const dayNames=['일','월','화','수','목','금','토'];
-    const dayKor=dayNames[wd.getDay()];
-    const label=`${mm}/${dd}(${dayKor})`;
-
-    const tick=document.createElement('div');
-    tick.className='week-tick';
-    tick.style.cssText=`left:${lPct};transform:translateX(-50%);position:absolute;top:16px;bottom:0;display:flex;align-items:center;justify-content:center;`;
-
-    const line=document.createElement('div');
-    line.className='week-tick-line';
-    line.style.background=isJun?'#A8DEC6':'#E0DDD6';
-
-    const lbl=document.createElement('span');
-    lbl.style.cssText=`font-family:'DM Mono',monospace;font-size:${isFirst?'10':'10'}px;color:${isJun?'#1D9E75':isFirst?'#E24B4A':'#888880'};font-weight:${isJun||isFirst?'600':'400'};position:relative;z-index:1;white-space:nowrap;padding:0 2px;background:${isJun?'#F0FAF5':'#FAFAF8'}`;
-    lbl.textContent=label;
-
-    tick.appendChild(line);
-    tick.appendChild(lbl);
-    tl.appendChild(tick);
-  });
-}
-
-// ─── 카테고리 빌드 ────────────────────────────────────
-function buildCats(){
-  const cont=document.getElementById('cat-container');
-
-  CATS.forEach(cat=>{
-    const section=document.createElement('div');
-    section.className='cat-section';
-
-    // ── 헤더 ──
-    const head=document.createElement('div');
-    head.className='cat-head';
-
-    const labelCol=document.createElement('div');
-    labelCol.className='cat-label-col';
-    const memberChips = (cat.members||[]).map(m=>{
-      const c=MEMBER_COLORS[m]||{bg:'#eee',text:'#333',border:'#ccc'};
-      return `<span class="chip" style="background:${c.bg};color:${c.text};border-color:${c.border}">${m}</span>`;
-    }).join('');
-    labelCol.innerHTML=`<div class="cat-color-bar" style="background:${cat.color}"></div>
-      <div><span class="cat-num">${cat.num}</span><span class="cat-name">${cat.name}</span><div class="cat-members">${memberChips}</div></div>`;
-    head.appendChild(labelCol);
-
-    const catTl=document.createElement('div');
-    catTl.className='cat-tl';
-    injectGrid(catTl);
-
-    // 카테고리 요약바
-    const cbar=document.createElement('div');
-    cbar.className='bar cat-bar';
-    cbar.style.cssText=`left:${pctL(cat.span[0])};width:${pctW(cat.span[0],cat.span[1])};background:${cat.lb};color:${cat.lt};border:1px solid ${cat.color}55;`;
-    cbar.textContent=`${cat.tasks.length}개 태스크`;
-    catTl.appendChild(cbar);
-
-    const chev=document.createElement('div');
-    chev.className='cat-chevron open';
-    chev.textContent='▾';
-    catTl.appendChild(chev);
-    head.appendChild(catTl);
-    section.appendChild(head);
-
-    // ── 태스크 목록 ──
-    const taskList=document.createElement('div');
-    taskList.className='task-list open';
-
-    cat.tasks.forEach(task=>{
-      const row=document.createElement('div');
-      row.className='task-row';
-
-      const lc=document.createElement('div');
-      lc.className='task-label-col';
-      lc.innerHTML=`<span class="task-name">${task.name}</span>${task.detail?`<span class="task-detail">${task.detail}</span>`:''}<span class="task-date-label">${task.dl}</span>`;
-      row.appendChild(lc);
-
-      const ttl=document.createElement('div');
-      ttl.className='task-tl';
-      injectGrid(ttl);
-
-      const bar=document.createElement('div');
-      bar.className='bar';
-      bar.style.cssText=`left:${pctL(task.s)};width:${pctW(task.s,task.e)};background:${cat.color};color:#fff;`;
-      const si=wdIndex(task.s), ei=wdIndex(task.e);
-      if(ei-si>=2) bar.textContent=task.dl;
-      ttl.appendChild(bar);
-
-      row.appendChild(ttl);
-      taskList.appendChild(row);
-    });
-
-    section.appendChild(taskList);
-
-    // 토글
-    head.addEventListener('click',()=>{
-      const open=taskList.classList.contains('open');
-      taskList.classList.toggle('open',!open);
-      chev.classList.toggle('open',!open);
-    });
-
-    cont.appendChild(section);
-  });
-}
-
-// ─── TODAY LINE ───────────────────────────────────────
-function buildTodayLine(){
-  const gantt=document.getElementById('gantt');
-  const tl=document.getElementById('today-line');
-  const labelW=300; // px
-  const todayIdx=wdIndex(TODAY_DATE);
-  const fraction=todayIdx/TOTAL_WD;
-  tl.style.display='block';
-  tl.style.left=`calc(${labelW}px + (100% - ${labelW}px) * ${fraction.toFixed(4)})`;
-}
-
-buildRuler();
-buildCats();
-buildTodayLine();
-</script>
+</div>
 </div>
 
-<!-- 캘린더 뷰 -->
+<!-- ══════════════════════════════════════
+     CALENDAR VIEW
+══════════════════════════════════════ -->
 <div class="view" id="view-calendar">
 <div class="page">
 
 <div class="hdr">
   <div>
-    <div class="title">화이트패스 주간 캘린더</div>
-    <div class="subtitle">WHITE PASS · 2025.05.22 — 2025.06.30</div>
+    <div class="pg-title">화이트패스 주간 캘린더</div>
+    <div class="pg-sub">WHITE PASS · 2025.05.22 — 2025.06.30</div>
   </div>
   <span class="today-badge">TODAY 2025.05.22 (목)</span>
 </div>
 
-<div class="nav">
-  <div class="nav-left">
-    <button class="nav-btn" onclick="prevWeek()">◀ 이전 주</button>
-    <div class="week-label" id="week-label"></div>
-    <button class="nav-btn" onclick="nextWeek()">다음 주 ▶</button>
+<div class="cal-nav">
+  <div class="cal-nav-left">
+    <button class="cal-nav-btn" id="btn-prev" onclick="prevWeek()">◀ 이전 주</button>
+    <div class="week-label" id="week-label">-</div>
+    <button class="cal-nav-btn" id="btn-next" onclick="nextWeek()">다음 주 ▶</button>
   </div>
-  <div class="nav-right">
+  <div class="cal-nav-right">
     <span class="leg-item"><span class="leg-dot" style="background:#378ADD"></span>사이트 기능</span>
     <span class="leg-item"><span class="leg-dot" style="background:#1D9E75"></span>모바일화</span>
     <span class="leg-item"><span class="leg-dot" style="background:#BA7517"></span>제휴처 확장</span>
@@ -574,9 +236,9 @@ buildTodayLine();
 
 <div class="week-grid" id="week-grid"></div>
 
-<div class="footer">
-  <span class="footer-l">WHITE PASS · 2025.05.22 — 2025.06.30 · 평일 기준</span>
-  <div class="footer-r">
+<div class="c-footer">
+  <span class="c-footer-l">WHITE PASS · 2025.05.22 — 2025.06.30 · 평일 기준</span>
+  <div style="display:flex;gap:12px;flex-wrap:wrap">
     <span class="leg-item"><span class="leg-dot" style="background:#378ADD"></span>사이트 기능 (HAM·LEE·KIM)</span>
     <span class="leg-item"><span class="leg-dot" style="background:#1D9E75"></span>모바일화 (KIM·HAM)</span>
     <span class="leg-item"><span class="leg-dot" style="background:#BA7517"></span>제휴처 확장 (MEI·TSUJII)</span>
@@ -585,195 +247,278 @@ buildTodayLine();
 </div>
 
 </div>
-
-<script>
-function d(m,day){return new Date(2025,m-1,day);}
-
-const CATS = [
-  {
-    num:'01', name:'사이트\n기능', color:'#378ADD', bg:'#EBF3FD', text:'#0C447C',
-    members:'HAM·LEE·KIM',
-    tasks:[
-      {name:'제휴처 정보 업데이트',     detail:'제휴처별 최신 정보 수집 및 사이트 반영', s:d(5,26), e:d(5,30)},
-      {name:'UI/UX 개선사항 반영',      detail:'고객 이용 흐름 기준 레이아웃 개선 적용',  s:d(5,26), e:d(5,30)},
-      {name:'운영 정보 취합·검토',      detail:'운영에 필요한 정보 취합 후 내부 정리',    s:d(5,28), e:d(5,30)},
-      {name:'사이트 반영·운영 적용',    detail:'검토된 내용 실제 사이트에 최종 적용',     s:d(6,2),  e:d(6,6) },
-      {name:'기능 업데이트·수정 대응',  detail:'운영 중 발생하는 문제 즉시 수정 대응',    s:d(6,9),  e:d(6,30)},
-    ]
-  },
-  {
-    num:'02', name:'모바일화', color:'#1D9E75', bg:'#E1F5EE', text:'#085041',
-    members:'KIM·HAM',
-    tasks:[
-      {name:'모바일 패스 테스트',        detail:'실물 없이 모바일 QR 기반 테스트',          s:d(6,9),  e:d(6,13)},
-      {name:'사용 동선 테스트',          detail:'이용자 관점의 화면 흐름 및 UX 점검',        s:d(6,9),  e:d(6,13)},
-      {name:'모바일 시스템 구현',        detail:'백엔드·프론트엔드 모바일 시스템 개발',      s:d(6,16), e:d(6,27)},
-      {name:'우나기/카키큐 우선 적용',   detail:'시범 제휴처 2곳 대상 모바일 시스템 론칭',   s:d(6,23), e:d(6,30)},
-    ]
-  },
-  {
-    num:'03', name:'제휴처\n확장', color:'#BA7517', bg:'#FAEEDA', text:'#633806',
-    members:'MEI·TSUJII',
-    tasks:[
-      {name:'제휴처 진척 상황 체크',     detail:'현재 제휴 진행 중인 점포별 현황 파악',     s:d(5,26), e:d(5,30)},
-      {name:'현황 정리·방향 검토',       detail:'진척 부진 점포 파악 및 대응 방향 수립',    s:d(5,28), e:d(5,30)},
-      {name:'신규 점포 검토',            detail:'진척 부족 시 신규 후보 점포 발굴·평가',    s:d(6,2),  e:d(6,6) },
-      {name:'리스트업·운영 협의',        detail:'최종 후보 점포 선정 및 제휴 조건 협의',    s:d(6,9),  e:d(6,30)},
-    ]
-  },
-  {
-    num:'04', name:'업체\n관리', color:'#D4537E', bg:'#FBEAF0', text:'#4B1528',
-    members:'MEI·JEON',
-    tasks:[
-      {name:'매장 안내 상태 체크',       detail:'화이트패스 안내물 부착 여부 및 상태 점검', s:d(5,26), e:d(5,30)},
-      {name:'운영 상태·동선 점검',       detail:'현장 방문 통한 고객 이용 흐름 직접 확인',  s:d(6,2),  e:d(6,6) },
-      {name:'CS·불편 사항 체크',         detail:'고객 문의·불편 현황 집계 및 원인 파악',    s:d(6,9),  e:d(6,27)},
-      {name:'문제사항 수정·개선 반영',   detail:'수집된 CS 및 현장 이슈 즉시 개선 적용',   s:d(6,16), e:d(6,30)},
-    ]
-  }
-];
-
-// 주 단위 시작일 계산 (월요일 기준, 5/22 첫 주는 5/22 목요일부터)
-const WEEKS = [
-  { start: d(5,22), label:'1주차 — 5/22(목)~5/23(금)', days:[d(5,22),d(5,23),null,null,null] }, // 단 이틀
-];
-// 이후 주는 월~금
-let cur = d(5,26);
-let wn = 2;
-while(cur <= d(6,30)){
-  const days=[];
-  for(let i=0;i<5;i++){
-    const dd=new Date(cur);
-    dd.setDate(cur.getDate()+i);
-    days.push(dd<=d(6,30)?dd:null);
-  }
-  WEEKS.push({start:new Date(cur), label:`${wn}주차`, days});
-  cur.setDate(cur.getDate()+7);
-  wn++;
-}
-
-// 첫 주 days 수정 (목~금만)
-WEEKS[0].days = [null, null, null, d(5,22), d(5,23)]; // 월화수 = null, 목금 = 5/22,23
-
-let currentWeekIdx = 0;
-
-function isInRange(date, s, e){
-  if(!date) return false;
-  const t=date.getTime();
-  return t>=s.getTime() && t<=e.getTime();
-}
-
-function isSameDay(a,b){
-  return a&&b&&a.getFullYear()===b.getFullYear()&&a.getMonth()===b.getMonth()&&a.getDate()===b.getDate();
-}
-
-const TODAY = d(5,22);
-const DAY_NAMES = ['월','화','수','목','금'];
-
-function render(){
-  const week = WEEKS[currentWeekIdx];
-  const grid = document.getElementById('week-grid');
-  grid.innerHTML='';
-
-  // Week label
-  const days = week.days;
-  const validDays = days.filter(Boolean);
-  const first = validDays[0], last = validDays[validDays.length-1];
-  const fmt = dd=>`${dd.getMonth()+1}/${dd.getDate()}`;
-  document.getElementById('week-label').textContent =
-    `${first.getMonth()+1}월 ${fmt(first)} — ${fmt(last)}`;
-
-  // Check if june starts this week
-  const hasJun = days.some(dd=>dd&&dd.getMonth()===5);
-  const hasMay = days.some(dd=>dd&&dd.getMonth()===4);
-
-  // Day header
-  const headerRow = document.createElement('div');
-  headerRow.className='day-header-row';
-  const spacer=document.createElement('div');
-  spacer.className='day-header-spacer';
-  headerRow.appendChild(spacer);
-
-  days.forEach((dd,i)=>{
-    const cell=document.createElement('div');
-    cell.className='day-header'+(dd&&isSameDay(dd,TODAY)?' today-col':'');
-    if(dd){
-      const isToday=isSameDay(dd,TODAY);
-      cell.innerHTML=`<div class="day-name">${DAY_NAMES[i]}</div>
-        <div class="day-date${isToday?' today':''}">${dd.getMonth()+1}/${dd.getDate()}</div>`;
-    } else {
-      cell.innerHTML=`<div class="day-name">${DAY_NAMES[i]}</div><div class="day-date" style="color:#D0CEC8">—</div>`;
-    }
-    headerRow.appendChild(cell);
-  });
-  grid.appendChild(headerRow);
-
-  // Month boundary notice
-  if(hasJun && hasMay){
-    const divRow=document.createElement('div');
-    divRow.style.cssText='display:grid;grid-template-columns:80px repeat(5,1fr);background:#F0FAF5;border-bottom:1px solid #A8DEC6;';
-    divRow.innerHTML=`<div style="border-right:1px solid #DDD9D0;background:#FAFAF8"></div><div style="grid-column:2/-1;padding:5px 12px;font-size:10px;font-weight:600;letter-spacing:0.08em;color:#1D9E75">🗓 6월 시작 — 6월 태스크 시작됩니다</div>`;
-    grid.appendChild(divRow);
-  }
-
-  // Cat rows
-  CATS.forEach(cat=>{
-    const row=document.createElement('div');
-    row.className='cat-row';
-
-    // Label
-    const label=document.createElement('div');
-    label.className='cat-label';
-    label.style.cssText=`position:relative;border-left:3px solid ${cat.color};padding-left:8px;`;
-    label.innerHTML=`<span class="cat-num">${cat.num}</span>
-      <span class="cat-name-short">${cat.name.replace('\n','<br>')}</span>
-      <span style="font-size:9px;color:#AAA89E;margin-top:2px">${cat.members}</span>`;
-    row.appendChild(label);
-
-    // Day cells
-    days.forEach(dd=>{
-      const cell=document.createElement('div');
-      cell.className='day-cell'+(dd&&isSameDay(dd,TODAY)?' today-col':'');
-      if(!dd){ cell.className+=' weekend'; row.appendChild(cell); return; }
-
-      const activeTasks = cat.tasks.filter(t=>isInRange(dd,t.s,t.e));
-      if(activeTasks.length===0){
-        cell.innerHTML='';
-      } else {
-        activeTasks.forEach(t=>{
-          const chip=document.createElement('div');
-          chip.className='task-chip';
-          chip.style.cssText=`background:${cat.bg};color:${cat.text};border:1px solid ${cat.color}40;`;
-          chip.innerHTML=`${t.name}<div class="chip-tooltip"><strong>${t.name}</strong><br>${t.detail}</div>`;
-          cell.appendChild(chip);
-        });
-      }
-      row.appendChild(cell);
-    });
-
-    grid.appendChild(row);
-  });
-}
-
-function prevWeek(){ if(currentWeekIdx>0){currentWeekIdx--;render();} }
-function nextWeek(){ if(currentWeekIdx<WEEKS.length-1){currentWeekIdx++;render();} }
-
-// Start at current week (5/22 = week 0)
-render();
-</script>
 </div>
 
 <script>
+// ══════════════════════════════════════
+// 공통 탭 전환
+// ══════════════════════════════════════
 function switchTab(name, btn) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
   document.querySelectorAll('.gnav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('view-' + name).classList.add('active');
   btn.classList.add('active');
   window.scrollTo(0, 0);
-  // 캘린더 탭 클릭 시 렌더
-  if(name === 'calendar' && typeof render === 'function') render();
+  if (name === 'calendar') renderCalendar();
 }
-</script>
 
+// ══════════════════════════════════════
+// 공통 데이터
+// ══════════════════════════════════════
+function mk(m, day) { return new Date(2025, m - 1, day); }
+function isWD(d) { return d.getDay() >= 1 && d.getDay() <= 5; }
+
+const MEMBER_COLORS = {
+  HAM:   {bg:'#E6F1FB',text:'#0C447C',border:'#85B7EB'},
+  LEE:   {bg:'#EEEDFE',text:'#3C3489',border:'#AFA9EC'},
+  KIM:   {bg:'#E1F5EE',text:'#085041',border:'#5DCAA5'},
+  MEI:   {bg:'#FAEEDA',text:'#633806',border:'#EF9F27'},
+  TSUJII:{bg:'#FBEAF0',text:'#4B1528',border:'#ED93B1'},
+  JEON:  {bg:'#F1EFE8',text:'#444441',border:'#B4B2A9'},
+};
+
+const CATS = [
+  {
+    num:'01', name:'사이트 기능 운영', nameShort:'사이트\n기능', color:'#378ADD', lb:'#EBF3FD', lt:'#185FA5',
+    members:['HAM','LEE','KIM'],
+    span:[mk(5,26),mk(6,30)],
+    tasks:[
+      {name:'제휴처 정보 업데이트 진행',           detail:'제휴처별 최신 정보 수집 및 사이트 반영', dl:'5/26(월)~5/30(금)', m:['HAM','LEE'], s:mk(5,26), e:mk(5,30)},
+      {name:'내부 UI/UX 개선사항 반영',             detail:'고객 이용 흐름 기준 레이아웃 개선 적용',  dl:'5/26(월)~5/30(금)', m:['KIM','HAM'], s:mk(5,26), e:mk(5,30)},
+      {name:'제휴처 운영 정보 취합·내부 검토',      detail:'운영에 필요한 정보 취합 후 내부 정리',    dl:'5/28(수)~5/30(금)', m:['HAM','LEE','KIM'], s:mk(5,28), e:mk(5,30)},
+      {name:'검토 완료 내용 사이트 반영·운영 적용', detail:'검토된 내용 실제 사이트에 최종 적용',     dl:'6/2(월)~6/6(금)',   m:['KIM','HAM'], s:mk(6,2),  e:mk(6,6)},
+      {name:'기능 업데이트 및 애로사항 수정 대응',  detail:'운영 중 발생하는 문제 즉시 수정 대응',    dl:'6/9(월)~6/30(월)',  m:['KIM','LEE'], s:mk(6,9),  e:mk(6,30)},
+    ]
+  },
+  {
+    num:'02', name:'모바일화 운영', nameShort:'모바일화', color:'#1D9E75', lb:'#E1F5EE', lt:'#0F6E56',
+    members:['KIM','HAM'],
+    span:[mk(6,9),mk(6,30)],
+    tasks:[
+      {name:'모바일 패스 테스트 (실물 미사용)',      detail:'실물 화이트패스 없이 모바일 QR 기반 테스트', dl:'6/9(월)~6/13(금)',  m:['KIM','HAM'], s:mk(6,9),  e:mk(6,13)},
+      {name:'모바일 화면 기반 사용 동선 테스트',     detail:'실제 이용자 관점의 화면 흐름 및 UX 점검',   dl:'6/9(월)~6/13(금)',  m:['HAM','KIM'], s:mk(6,9),  e:mk(6,13)},
+      {name:'모바일 시스템 구현 진행',               detail:'백엔드·프론트엔드 모바일 시스템 개발',       dl:'6/16(월)~6/27(금)', m:['KIM'],       s:mk(6,16), e:mk(6,27)},
+      {name:'우나기 우시큐/카키큐 우선 적용',        detail:'시범 제휴처 2곳 대상 모바일 시스템 론칭',    dl:'6/23(월)~6/30(월)', m:['KIM','HAM'], s:mk(6,23), e:mk(6,30)},
+    ]
+  },
+  {
+    num:'03', name:'제휴처 확장 운영', nameShort:'제휴처\n확장', color:'#BA7517', lb:'#FAEEDA', lt:'#633806',
+    members:['MEI','TSUJII'],
+    span:[mk(5,26),mk(6,30)],
+    tasks:[
+      {name:'기존 제휴처 진척 상황 체크',            detail:'현재 제휴 진행 중인 점포별 현황 파악',      dl:'5/26(월)~5/30(금)', m:['MEI','TSUJII'], s:mk(5,26), e:mk(5,30)},
+      {name:'제휴 현황 정리 및 운영 방향 검토',       detail:'진척 부진 점포 파악 및 대응 방향 수립',     dl:'5/28(수)~5/30(금)', m:['MEI','TSUJII'], s:mk(5,28), e:mk(5,30)},
+      {name:'신규 제휴 점포 검토 진행',               detail:'진척 부족 시 신규 후보 점포 발굴·평가',     dl:'6/2(월)~6/6(금)',   m:['TSUJII'],       s:mk(6,2),  e:mk(6,6)},
+      {name:'신규 점포 리스트업 및 운영 협의',        detail:'최종 후보 점포 선정 및 제휴 조건 협의',     dl:'6/9(월)~6/30(월)',  m:['MEI','TSUJII'], s:mk(6,9),  e:mk(6,30)},
+    ]
+  },
+  {
+    num:'04', name:'기존 업체 운영 관리', nameShort:'업체\n관리', color:'#D4537E', lb:'#FBEAF0', lt:'#4B1528',
+    members:['MEI','JEON'],
+    span:[mk(5,26),mk(6,30)],
+    tasks:[
+      {name:'스티커 부착 및 매장 안내 상태 체크',    detail:'화이트패스 안내물 부착 여부 및 상태 점검',  dl:'5/26(월)~5/30(금)', m:['JEON','MEI'], s:mk(5,26), e:mk(5,30)},
+      {name:'실제 운영 상태 및 고객 동선 점검',      detail:'현장 방문 통한 고객 이용 흐름 직접 확인',   dl:'6/2(월)~6/6(금)',   m:['MEI','JEON'], s:mk(6,2),  e:mk(6,6)},
+      {name:'CS 발생 여부 및 이용 불편 사항 체크',   detail:'고객 문의·불편 현황 집계 및 원인 파악',     dl:'6/9(월)~6/27(금)',  m:['JEON'],       s:mk(6,9),  e:mk(6,27)},
+      {name:'확인된 문제사항 수정·운영 개선 반영',   detail:'수집된 CS 및 현장 이슈 즉시 개선 적용',     dl:'6/16(월)~6/30(월)', m:['MEI','JEON'], s:mk(6,16), e:mk(6,30)},
+    ]
+  }
+];
+
+// ══════════════════════════════════════
+// SCHEDULE
+// ══════════════════════════════════════
+const S_START = mk(5,22), S_END = mk(6,30), S_TODAY = mk(5,22);
+const WEEKDAYS = [];
+(function(){let c=new Date(S_START);while(c<=S_END){if(isWD(c))WEEKDAYS.push(new Date(c));c.setDate(c.getDate()+1);}})();
+const TWD = WEEKDAYS.length;
+
+function wdIdx(date){
+  let t=new Date(date);
+  while(!isWD(t))t.setDate(t.getDate()+1);
+  for(let i=0;i<WEEKDAYS.length;i++)if(WEEKDAYS[i].toDateString()===t.toDateString())return i;
+  return WEEKDAYS.length-1;
+}
+function pL(date){return(wdIdx(date)/TWD*100).toFixed(3)+'%';}
+function pW(s,e){
+  const si=wdIdx(s);let et=new Date(e);
+  if(!isWD(et)){et.setDate(et.getDate()-1);while(!isWD(et))et.setDate(et.getDate()-1);}
+  const ei=wdIdx(et);
+  return Math.max((ei-si+1)/TWD*100,2.5).toFixed(3)+'%';
+}
+
+function injectGrid(tl){
+  WEEKDAYS.forEach((wd,i)=>{
+    if(wd.getDay()!==1)return;
+    const gl=document.createElement('div');
+    gl.className='grid-v';
+    const isJun=wd.getMonth()===5;
+    gl.style.cssText=`left:${(i/TWD*100).toFixed(3)}%;background:${isJun?'#B8DDD0':'#E8E5DD'};`;
+    tl.appendChild(gl);
+  });
+}
+
+function buildSchedule(){
+  // Ruler
+  const rtl=document.getElementById('ruler-tl');
+  const junIdx=wdIdx(mk(6,2));
+  const mayB=document.createElement('div');mayB.className='month-band';
+  mayB.style.cssText=`left:0;width:${(junIdx/TWD*100).toFixed(1)}%;background:#F7F6F2;color:#888880;border-right:2px dashed #D0CCC4;`;
+  mayB.textContent='5월 MAY';rtl.appendChild(mayB);
+  const junB=document.createElement('div');junB.className='month-band';
+  junB.style.cssText=`left:${(junIdx/TWD*100).toFixed(1)}%;width:${((TWD-junIdx)/TWD*100).toFixed(1)}%;background:#F0FAF5;color:#1D9E75;`;
+  junB.textContent='6월 JUN';rtl.appendChild(junB);
+
+  const ticks=WEEKDAYS.filter(wd=>wd.getDay()===1||wd.toDateString()===S_START.toDateString());
+  ticks.forEach(wd=>{
+    const idx=wdIdx(wd);const isJun=wd.getMonth()===5;const isFirst=wd.toDateString()===S_START.toDateString();
+    const dayNames=['일','월','화','수','목','금','토'];
+    const lbl=`${wd.getMonth()+1}/${wd.getDate()}(${dayNames[wd.getDay()]})`;
+    const tick=document.createElement('div');tick.className='week-tick';
+    tick.style.cssText=`left:${(idx/TWD*100).toFixed(3)}%;transform:translateX(-50%);position:absolute;top:16px;bottom:0;display:flex;align-items:center;justify-content:center;`;
+    const line=document.createElement('div');line.className='week-tick-line';line.style.background=isJun?'#A8DEC6':'#E0DDD6';
+    const sp=document.createElement('span');
+    sp.style.cssText=`font-family:'DM Mono',monospace;font-size:10px;color:${isJun?'#1D9E75':isFirst?'#E24B4A':'#888880'};font-weight:${isJun||isFirst?'600':'400'};position:relative;z-index:1;white-space:nowrap;padding:0 2px;background:${isJun?'#F0FAF5':'#FAFAF8'}`;
+    sp.textContent=lbl;tick.appendChild(line);tick.appendChild(sp);rtl.appendChild(tick);
+  });
+
+  // Cats
+  const cont=document.getElementById('cat-container');
+  CATS.forEach(cat=>{
+    const section=document.createElement('div');section.className='cat-section';
+    const head=document.createElement('div');head.className='cat-head';
+    const lc=document.createElement('div');lc.className='cat-label-col';
+    const mChips=(cat.members||[]).map(m=>{const c=MEMBER_COLORS[m]||{bg:'#eee',text:'#333',border:'#ccc'};return`<span class="chip" style="background:${c.bg};color:${c.text};border-color:${c.border}">${m}</span>`;}).join('');
+    lc.innerHTML=`<div class="cat-color-bar" style="background:${cat.color}"></div><div><span class="cat-num">${cat.num}</span><span class="cat-name">${cat.name}</span><div class="cat-members">${mChips}</div></div>`;
+    head.appendChild(lc);
+    const catTl=document.createElement('div');catTl.className='cat-tl';injectGrid(catTl);
+    const cbar=document.createElement('div');cbar.className='bar cat-bar';
+    cbar.style.cssText=`left:${pL(cat.span[0])};width:${pW(cat.span[0],cat.span[1])};background:${cat.lb};color:${cat.lt};border:1px solid ${cat.color}55;`;
+    cbar.textContent=`${cat.tasks.length}개 태스크`;catTl.appendChild(cbar);
+    const chev=document.createElement('div');chev.className='cat-chevron open';chev.textContent='▾';catTl.appendChild(chev);
+    head.appendChild(catTl);section.appendChild(head);
+    const taskList=document.createElement('div');taskList.className='task-list open';
+    cat.tasks.forEach(task=>{
+      const row=document.createElement('div');row.className='task-row';
+      const tlc=document.createElement('div');tlc.className='task-label-col';
+      tlc.innerHTML=`<span class="task-name">${task.name}</span>${task.detail?`<span class="task-detail">${task.detail}</span>`:''}<span class="task-date-label">${task.dl}</span>`;
+      row.appendChild(tlc);
+      const ttl=document.createElement('div');ttl.className='task-tl';injectGrid(ttl);
+      const bar=document.createElement('div');bar.className='bar';
+      bar.style.cssText=`left:${pL(task.s)};width:${pW(task.s,task.e)};background:${cat.color};color:#fff;`;
+      const si=wdIdx(task.s),ei=wdIdx(task.e);if(ei-si>=2)bar.textContent=task.dl;
+      ttl.appendChild(bar);row.appendChild(ttl);taskList.appendChild(row);
+    });
+    section.appendChild(taskList);
+    head.addEventListener('click',()=>{const open=taskList.classList.contains('open');taskList.classList.toggle('open',!open);chev.classList.toggle('open',!open);});
+    cont.appendChild(section);
+  });
+
+  // Today line
+  const tl=document.getElementById('today-line');
+  const lw=300;const frac=wdIdx(S_TODAY)/TWD;
+  tl.style.display='block';
+  tl.style.left=`calc(${lw}px + (100% - ${lw}px) * ${frac.toFixed(4)})`;
+}
+
+// ══════════════════════════════════════
+// CALENDAR
+// ══════════════════════════════════════
+const C_TODAY = mk(5,22);
+const DAY_NAMES_KO = ['월','화','수','목','금'];
+
+// 주 목록 생성
+const WEEKS = [];
+// 1주차: 5/22(목), 5/23(금) → days 배열: [null,null,null, 5/22, 5/23]
+WEEKS.push({days:[null,null,null,mk(5,22),mk(5,23)]});
+// 이후: 5/26부터 월~금
+let wc = mk(5,26);
+while(wc <= mk(6,30)){
+  const days=[];
+  for(let i=0;i<5;i++){
+    const dd=new Date(wc);dd.setDate(wc.getDate()+i);
+    days.push(dd<=mk(6,30)?dd:null);
+  }
+  WEEKS.push({days});
+  wc.setDate(wc.getDate()+7);
+}
+
+let curWeek=0;
+
+function sameDay(a,b){return a&&b&&a.toDateString()===b.toDateString();}
+function inRange(date,s,e){if(!date)return false;const t=date.getTime();return t>=s.getTime()&&t<=e.getTime();}
+
+function renderCalendar(){
+  const grid=document.getElementById('week-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  const week=WEEKS[curWeek];
+  const days=week.days;
+  const valid=days.filter(Boolean);
+  if(valid.length===0)return;
+  const first=valid[0],last=valid[valid.length-1];
+  document.getElementById('week-label').textContent=`${first.getMonth()+1}/${first.getDate()} — ${last.getMonth()+1}/${last.getDate()}`;
+
+  // Day header
+  const hrow=document.createElement('div');hrow.className='day-header-row';
+  const sp=document.createElement('div');sp.className='day-header-spacer';hrow.appendChild(sp);
+  days.forEach((dd,i)=>{
+    const cell=document.createElement('div');
+    cell.className='day-header'+(dd&&sameDay(dd,C_TODAY)?' today-col':'');
+    if(dd){
+      const isT=sameDay(dd,C_TODAY);
+      cell.innerHTML=`<div class="day-name">${DAY_NAMES_KO[i]}</div><div class="day-num${isT?' today':''}">${dd.getMonth()+1}/${dd.getDate()}</div>`;
+    } else {
+      cell.innerHTML=`<div class="day-name">${DAY_NAMES_KO[i]}</div><div class="day-num" style="color:#D0CEC8">—</div>`;
+    }
+    hrow.appendChild(cell);
+  });
+  grid.appendChild(hrow);
+
+  // 6월 시작 알림
+  const hasJun=days.some(d=>d&&d.getMonth()===5);
+  const hasMay=days.some(d=>d&&d.getMonth()===4);
+  if(hasJun&&hasMay){
+    const br=document.createElement('div');
+    br.style.cssText='display:grid;grid-template-columns:80px 1fr;background:#F0FAF5;border-bottom:1px solid #A8DEC6;';
+    br.innerHTML='<div style="border-right:1px solid #DDD9D0;background:#FAFAF8"></div><div style="padding:5px 12px;font-size:10px;font-weight:600;color:#1D9E75">🗓 6월 시작 — 6월 태스크가 시작됩니다</div>';
+    grid.appendChild(br);
+  }
+
+  // Cat rows
+  CATS.forEach(cat=>{
+    const row=document.createElement('div');row.className='cat-row-cal';
+    const label=document.createElement('div');label.className='cat-label-cal';
+    label.style.borderLeftColor=cat.color;
+    label.innerHTML=`<span class="cat-num-cal">${cat.num}</span><span class="cat-name-cal">${cat.nameShort.replace('\n','<br>')}</span><span class="cat-member-cal">${cat.members.join('·')}</span>`;
+    row.appendChild(label);
+    days.forEach(dd=>{
+      const cell=document.createElement('div');
+      cell.className='day-cell'+(dd&&sameDay(dd,C_TODAY)?' today-col':'')+(dd?'':' off');
+      if(dd){
+        const active=cat.tasks.filter(t=>inRange(dd,t.s,t.e));
+        active.forEach(t=>{
+          const chip=document.createElement('div');chip.className='task-chip-cal';
+          chip.style.cssText=`background:${cat.lb};color:${cat.lt};border:1px solid ${cat.color}40;`;
+          chip.innerHTML=`${t.name}<div class="chip-tip"><strong>${t.name}</strong><br>${t.detail}</div>`;
+          cell.appendChild(chip);
+        });
+      }
+      row.appendChild(cell);
+    });
+    grid.appendChild(row);
+  });
+}
+
+function prevWeek(){if(curWeek>0){curWeek--;renderCalendar();}}
+function nextWeek(){if(curWeek<WEEKS.length-1){curWeek++;renderCalendar();}}
+
+// ══════════════════════════════════════
+// INIT
+// ══════════════════════════════════════
+window.addEventListener('DOMContentLoaded', () => {
+  buildSchedule();
+});
+</script>
 </body>
 </html>
