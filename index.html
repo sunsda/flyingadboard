@@ -5,7 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>광고 프로젝트 관리 대시보드</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-  <!-- Firebase -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,700;9..40,900&family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
   <script>
@@ -23,16 +25,21 @@
   </script>
   <style>
     :root {
-      --bg:#f4f7fb; --card:#fff; --text:#152033; --muted:#64748b; --line:#e5eaf2;
-      --blue:#2563eb; --blue-soft:#dbeafe; --green:#16a34a; --green-soft:#dcfce7;
-      --yellow:#ca8a04; --yellow-soft:#fef9c3; --red:#dc2626; --red-soft:#fee2e2;
-      --purple:#7c3aed; --purple-soft:#ede9fe; --gray:#f8fafc;
-      --shadow: 0 14px 34px rgba(15,23,42,.06);
+      --bg:#f2f4f8; --card:#fff; --text:#111827; --muted:#6b7280; --line:#e4e7ed;
+      --blue:#1d4ed8; --blue-mid:#3b82f6; --blue-soft:#eff6ff;
+      --green:#15803d; --green-soft:#f0fdf4;
+      --yellow:#b45309; --yellow-soft:#fffbeb;
+      --red:#b91c1c; --red-soft:#fef2f2;
+      --purple:#6d28d9; --purple-soft:#f5f3ff;
+      --gray:#f9fafb;
+      --shadow: 0 1px 3px rgba(0,0,0,.06), 0 4px 16px rgba(0,0,0,.05);
+      --shadow-md: 0 4px 6px rgba(0,0,0,.04), 0 10px 30px rgba(0,0,0,.08);
+      --radius: 16px; --radius-sm: 10px;
     }
-    .summary .card.clickable{cursor:pointer;transition:box-shadow .15s,border-color .15s,transform .15s}
-    .summary .card.clickable:hover{border-color:#bfdbfe;box-shadow:0 0 0 3px var(--blue-soft),var(--shadow);transform:translateY(-2px)}
     @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
-    *{box-sizing:border-box} body{margin:0;background:var(--bg);color:var(--text);font-family:"Pretendard",-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans KR",sans-serif} button,input,select,textarea{font-family:inherit}
+    *{box-sizing:border-box;-webkit-font-smoothing:antialiased}
+    body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Sans","Pretendard","Noto Sans KR",-apple-system,sans-serif;font-size:15px;line-height:1.6}
+    button,input,select,textarea{font-family:inherit}
     .app{max-width:1440px;margin:0 auto;padding:30px}.header{display:flex;justify-content:space-between;gap:20px;align-items:flex-start;margin-bottom:22px}.header h1{margin:0 0 8px;font-size:32px;letter-spacing:-.04em}.header p{margin:0;color:var(--muted);line-height:1.6}.actions{display:flex;gap:10px;flex-wrap:wrap}.btn{border:0;border-radius:14px;padding:12px 16px;font-weight:900;cursor:pointer;transition:.15s}.btn:hover{transform:translateY(-1px)}.btn-primary{background:var(--blue);color:white}.btn-secondary{background:white;color:var(--text);border:1px solid var(--line)}.btn-danger{background:var(--red-soft);color:var(--red)}.btn-small{padding:8px 11px;border-radius:11px;font-size:12px}.summary{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:18px}.card,.panel{background:var(--card);border:1px solid var(--line);border-radius:24px;box-shadow:var(--shadow)}.summary .card{padding:18px}.label{font-size:13px;color:var(--muted);margin-bottom:8px}.value{font-size:29px;font-weight:900;letter-spacing:-.04em}.sub{font-size:13px;color:var(--muted);margin-top:6px}.screen{display:none}.screen.active{display:block}.toolbar{display:flex;justify-content:space-between;gap:14px;align-items:center;margin-bottom:16px}.filters{display:flex;gap:10px;flex-wrap:wrap}.search,.select{border:1px solid var(--line);background:white;border-radius:14px;padding:11px 13px;outline:none;min-height:44px}.project-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.project-card{padding:20px;cursor:pointer;position:relative}.project-card:hover{border-color:#bfdbfe}.project-card.active{border-color:var(--blue);box-shadow:0 0 0 3px var(--blue-soft), var(--shadow)}.project-top{display:flex;justify-content:space-between;gap:14px;margin-bottom:14px}.project-card h2{font-size:21px;margin:0 0 6px;letter-spacing:-.03em}.project-card p{margin:0;color:var(--muted);font-size:14px;line-height:1.45}.badge{display:inline-flex;align-items:center;justify-content:center;border-radius:999px;padding:8px 11px;font-size:12px;font-weight:900;white-space:nowrap}.badge.wait{background:var(--purple-soft);color:var(--purple)}.badge.active{background:var(--blue-soft);color:var(--blue)}.badge.review{background:var(--yellow-soft);color:var(--yellow)}.badge.done{background:var(--green-soft);color:var(--green)}.badge.risk{background:var(--red-soft);color:var(--red)}.progress-row{display:flex;justify-content:space-between;font-size:13px;font-weight:900;margin:15px 0 8px}.bar{height:10px;background:#edf2f7;border-radius:999px;overflow:hidden}.bar span{display:block;height:100%;background:linear-gradient(90deg,#2563eb,#60a5fa);border-radius:999px}.mini-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:14px}.mini{background:var(--gray);border:1px solid var(--line);border-radius:14px;padding:10px}.mini b{display:block;font-size:14px}.mini small{color:var(--muted)}.card-actions{display:flex;gap:8px;margin-top:14px}.flow-panel{padding:22px;margin-bottom:18px}.flow-list{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.flow-item{border:1px solid var(--line);border-radius:18px;padding:14px;background:#fbfdff}.flow-item strong{display:block;margin-bottom:5px}.flow-item p{margin:0;color:var(--muted);font-size:13px}.detail-head{padding:22px;margin-bottom:16px}.detail-top{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}.detail-title h2{font-size:30px;margin:0 0 8px;letter-spacing:-.04em}.detail-title p{margin:0;color:var(--muted)}.detail-metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:18px}.metric{background:var(--gray);border:1px solid var(--line);border-radius:16px;padding:14px}.metric strong{display:block;font-size:18px;margin-top:5px}.tabs{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0}.tab{background:white;border:1px solid var(--line);padding:10px 15px;border-radius:999px;font-weight:900;cursor:pointer}.tab.active{background:var(--blue);color:white;border-color:var(--blue)}.panel{padding:22px;margin-bottom:18px}.panel-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:14px}.panel-title h3{margin:0;font-size:22px}.panel-title small{color:var(--muted)}table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:14px 12px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle}th{background:#f8fafc;color:var(--muted);font-size:13px}tr.done-row{opacity:.72;background:#fbfbfc}.status-select{border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-weight:900;min-width:110px;outline:none;background:white}.status-wait{background:var(--purple-soft)!important;color:var(--purple)!important}.status-active{background:var(--blue-soft)!important;color:var(--blue)!important}.status-review{background:var(--yellow-soft)!important;color:var(--yellow)!important}.status-done{background:var(--green-soft)!important;color:var(--green)!important}.status-risk{background:var(--red-soft)!important;color:var(--red)!important}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}.field{display:grid;gap:7px}.field.full{grid-column:1/-1}.field label{font-size:13px;font-weight:900;color:var(--muted)}.field input,.field select,.field textarea{border:1px solid var(--line);border-radius:14px;padding:12px 13px;outline:none;font-size:14px}.field textarea{min-height:110px;resize:vertical}.modal-tab{background:white;border:1px solid var(--line);border-radius:999px;padding:8px 16px;font-weight:900;cursor:pointer;font-size:13px;color:var(--muted);transition:.15s}
     .modal-tab.active{background:var(--blue);color:white;border-color:var(--blue)}
     .mtab-content{animation:fadeIn .15s ease}
@@ -81,8 +88,8 @@
     </section>
 
     <section class="summary">
-      <div class="card clickable" id="sumProjectsCard" title="전체 프로젝트 보기"><div class="label">등록 광고</div><div class="value" id="sumProjects">0</div><div class="sub">전체 광고 프로젝트</div></div>
-      <div class="card clickable" id="sumActiveCard" title="진행중 프로젝트 보기"><div class="label">진행중</div><div class="value" id="sumActive">0</div><div class="sub">대기/완료 제외</div></div>
+      <div class="card clickable" id="sumProjectsCard" style="cursor:pointer" title="전체 프로젝트 보기"><div class="label">등록 광고</div><div class="value" id="sumProjects">0</div><div class="sub">전체 광고 프로젝트</div></div>
+      <div class="card clickable" id="sumActiveCard" style="cursor:pointer" title="진행중 프로젝트 보기"><div class="label">진행중</div><div class="value" id="sumActive">0</div><div class="sub">대기/완료 제외</div></div>
       <div class="card"><div class="label">평균 완료율</div><div class="value" id="sumProgress">0%</div><div class="sub">광고별 자동 계산</div></div>
       <div class="card"><div class="label">가장 가까운 일정</div><div class="value" id="sumNext">-</div><div class="sub" id="sumNextName">등록된 일정 없음</div></div>
     </section>
@@ -135,10 +142,7 @@
       <button class="btn btn-secondary" id="backHomeFromAll" type="button">← 메인페이지로</button>
       <div style="max-width:1100px">
         <div style="display:flex;justify-content:space-between;align-items:center;margin:18px 0 14px">
-          <div>
-            <h2 style="margin:0 0 4px;font-size:26px;letter-spacing:-.03em" id="allProjTitle">전체 프로젝트</h2>
-            <p style="margin:0;color:var(--muted);font-size:14px" id="allProjDesc">등록된 모든 광고 프로젝트를 한눈에 확인합니다.</p>
-          </div>
+          <div><h2 style="margin:0 0 4px;font-size:26px;letter-spacing:-.03em">전체 프로젝트</h2><p style="margin:0;color:var(--muted);font-size:14px">등록된 모든 광고 프로젝트를 한눈에 확인합니다.</p></div>
           <button class="btn btn-primary" id="addProjectBtnAll" type="button">+ 프로젝트 추가</button>
         </div>
         <div id="allProjSummary" class="summary" style="margin-bottom:18px"></div>
@@ -198,24 +202,23 @@
         <button class="close" type="button" id="modalCloseBtn">×</button>
       </div>
 
-      <!-- 문서 자동 입력 영역 -->
-      <div id="modalDocZone" style="margin-bottom:16px;border:2px dashed var(--line);border-radius:16px;padding:14px 18px;background:#f8fafc;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:14px" title="DOCX 파일을 드래그하거나 클릭해서 폼 자동 입력">
-        <div style="font-size:24px;flex-shrink:0">📂</div>
+      <!-- 문서 자동 입력 -->
+      <div id="modalDocZone" style="margin-bottom:16px;border:2px dashed var(--line);border-radius:14px;padding:13px 18px;background:#f9fafb;cursor:pointer;transition:.2s;display:flex;align-items:center;gap:14px">
+        <div style="font-size:20px;flex-shrink:0;color:var(--muted)">↑</div>
         <div style="flex:1;min-width:0">
-          <div style="font-weight:900;font-size:14px;margin-bottom:2px">문서로 자동 입력 <span style="font-weight:400;color:var(--muted);font-size:12px">· DOCX 파일을 업로드하면 광고명·기간·SEO 일정 등을 자동으로 채워줍니다</span></div>
-          <div id="modalDocStatus" style="font-size:12px;color:var(--muted)">클릭하거나 파일을 여기에 드래그하세요 (.docx)</div>
+          <div style="font-weight:700;font-size:14px;margin-bottom:2px">문서로 자동 입력 <span style="font-weight:400;color:var(--muted);font-size:12px">· DOCX 파일을 올리면 AI가 분석해서 자동으로 채워줍니다</span></div>
+          <div id="modalDocStatus" style="font-size:12px;color:var(--muted)">클릭하거나 파일을 드래그하세요 (.docx)</div>
         </div>
-        <div id="modalDocSpinner" style="display:none;font-size:18px">⏳</div>
+        <div id="modalDocSpinner" style="display:none;font-size:14px;color:var(--blue)">분석중...</div>
         <input type="file" id="modalDocFileInput" accept=".docx" style="display:none" />
       </div>
-
       <!-- 탭 -->
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1px solid var(--line);padding-bottom:12px">
-        <button class="modal-tab active" data-mtab="basic" type="button">📋 기본 정보</button>
-        <button class="modal-tab" data-mtab="seo" type="button">📝 SEO 일정</button>
+        <button class="modal-tab active" data-mtab="basic" type="button">기본 정보</button>
+        <button class="modal-tab" data-mtab="seo" type="button">SEO 일정</button>
         <button class="modal-tab" data-mtab="partners" type="button">🤝 체험단</button>
-        <button class="modal-tab" data-mtab="report" type="button">📊 결과보고</button>
-        <button class="modal-tab" data-mtab="tasks" type="button">⚙️ 운영 태스크</button>
+        <button class="modal-tab" data-mtab="report" type="button">결과보고</button>
+        <button class="modal-tab" data-mtab="tasks" type="button">운영 태스크</button>
       </div>
 
       <!-- 기본 정보 -->
@@ -325,6 +328,7 @@
   </div>
 
   <script>
+    const ANTHROPIC_API_KEY = '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';
     const STORAGE_KEY = 'fj_ad_multi_page_dashboard_blank_v2';
     const TRASH_KEY = 'fj_ad_trash_blank_v2';
     let projects = [];
@@ -348,7 +352,7 @@
     let editingProjectId = null;
 
     const tabs = [
-      ['overview','개요'],['tasks','운영 태스크'],['content','콘텐츠'],['calendar','캘린더'],['partners','체험단'],['etc','기타 업무'],['report','결과보고']
+      ['overview','개요'],['tasks','운영 태스크'],['content','콘텐츠'],['partners','체험단'],['etc','기타 업무'],['report','결과보고']
     ];
 
     const taskScore = {'대기중':0,'준비중':10,'초안 준비':25,'진행중':40,'조율중':45,'검수중':60,'수정중':75,'보고 준비':25,'작성중':55,'완료':100,'공개완료':100,'보고완료':100,'지연':0};
@@ -466,23 +470,11 @@
     function load(){
       try { projects = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); } catch(e){ projects = []; }
       try { trash = JSON.parse(localStorage.getItem(TRASH_KEY) || '[]'); } catch(e){ trash = []; }
-      // Firebase 실시간 구독 (다른 사용자 변경사항 자동 반영)
       db.ref('dashboard/projects').on('value', snap => {
         const data = snap.val();
-        if(data && Array.isArray(data)){
-          projects = data;
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-          renderSummary();
-          if(selectedProjectId){
-            const p = getProject();
-            if(p) renderDetail();
-          }
-        }
+        if(data && Array.isArray(data)){ projects=data; localStorage.setItem(STORAGE_KEY,JSON.stringify(projects)); renderSummary(); if(selectedProjectId){ const p=getProject(); if(p) renderDetail(); } }
       });
-      db.ref('dashboard/trash').on('value', snap => {
-        const data = snap.val();
-        if(data && Array.isArray(data)){ trash = data; }
-      });
+      db.ref('dashboard/trash').on('value', snap => { const data=snap.val(); if(data && Array.isArray(data)) trash=data; });
       if(!Array.isArray(projects)) projects = [];
       projects = projects.map(p => makeProject({...p, id:p.id || uid()}));
       if(!Array.isArray(trash)) trash = [];
@@ -491,50 +483,22 @@
     function save(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
       localStorage.setItem(TRASH_KEY, JSON.stringify(trash));
-      // Firebase 동기화
-      try {
-        db.ref('dashboard/projects').set(projects);
-        db.ref('dashboard/trash').set(trash);
-      } catch(e){ console.warn('Firebase save error:', e); }
+      try { db.ref('dashboard/projects').set(projects); db.ref('dashboard/trash').set(trash); } catch(e){}
     }
     function getProject(){ return projects.find(p => p.id === selectedProjectId) || projects[0]; }
 
     function taskProgress(project){
-      // 데이터 직접 계산 (tasks 유무와 무관)
-      const segments = [];
-
-      // SEO
-      if(project.seoItems && project.seoItems.length){
-        const done = project.seoItems.filter(x=>x.status==='완료').length;
-        segments.push(Math.round(done / project.seoItems.length * 100));
+      const segs = [];
+      if(project.seoItems?.length) segs.push(Math.round(project.seoItems.filter(x=>x.status==='완료').length/project.seoItems.length*100));
+      if(project.partners?.length) segs.push(Math.round(project.partners.filter(x=>x.status==='완료').length/project.partners.length*100));
+      if(project.etcItems?.length) segs.push(Math.round(project.etcItems.filter(x=>x.status==='완료').length/project.etcItems.length*100));
+      const ri = project.reportItems?.length ? project.reportItems : (project.start&&project.end?generateReportItems(project.start,project.end):[]);
+      if(ri.length) segs.push(Math.round(ri.filter(r=>r.status==='완료').length/ri.length*100));
+      if(!segs.length){
+        if(!project.tasks?.length) return 0;
+        return Math.round(project.tasks.reduce((s,t)=>s+(taskScore[t.status]??0),0)/project.tasks.length);
       }
-      // 체험단
-      if(project.partners && project.partners.length){
-        const done = project.partners.filter(x=>x.status==='완료').length;
-        segments.push(Math.round(done / project.partners.length * 100));
-      }
-      // 기타업무
-      if(project.etcItems && project.etcItems.length){
-        const done = project.etcItems.filter(x=>x.status==='완료').length;
-        segments.push(Math.round(done / project.etcItems.length * 100));
-      }
-      // 결과보고
-      const ri = project.reportItems && project.reportItems.length
-        ? project.reportItems
-        : (project.start && project.end ? generateReportItems(project.start, project.end) : []);
-      if(ri.length){
-        const done = ri.filter(r=>r.status==='완료').length;
-        segments.push(Math.round(done / ri.length * 100));
-      }
-
-      // 데이터가 없으면 tasks 기반 fallback
-      if(!segments.length){
-        if(!project.tasks || !project.tasks.length) return 0;
-        const sum = project.tasks.reduce((s,t) => s + (taskScore[t.status] ?? 0), 0);
-        return Math.round(sum / project.tasks.length);
-      }
-
-      return Math.round(segments.reduce((a,b)=>a+b,0) / segments.length);
+      return Math.round(segs.reduce((a,b)=>a+b,0)/segs.length);
     }
     function projectStatus(project){
       if(project.risk === '지연' || project.tasks.some(t=>t.status==='지연')) return '지연';
@@ -702,84 +666,46 @@
     }
 
     function buildNextActions(p){
-      const actions = [];
-      // 1. SEO 콘텐츠
-      const pendingSeo = (p.seoItems||[]).filter(i=>i.status!=='완료').sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
-      if(pendingSeo.length){
-        const s = pendingSeo[0];
-        const doneCnt = (p.seoItems||[]).filter(i=>i.status==='완료').length;
-        actions.push({ category:'📝 콘텐츠', color:'var(--blue-soft)', textColor:'var(--blue)',
-          title: s.round,
-          desc: [s.draft&&`초안 ${s.draft}`, s.publish&&`발행 ${s.publish}`].filter(Boolean).join(' · ') || '일정 미정',
-          sub:`${doneCnt}/${p.seoItems.length} 완료`, tab:'content' });
-      } else if((p.seoItems||[]).length){
-        actions.push({ category:'📝 콘텐츠', color:'var(--green-soft)', textColor:'var(--green)',
-          title:'전체 완료', desc:`${p.seoItems.length}건 발행 완료`, sub:'', tab:'content' });
-      }
-      // 2. 체험단
-      const pendingPartner = (p.partners||[]).filter(x=>x.status!=='완료');
-      if(pendingPartner.length){
-        const pt = pendingPartner[0];
-        const doneCnt = (p.partners||[]).filter(x=>x.status==='완료').length;
-        actions.push({ category:'🤝 체험단', color:'var(--purple-soft)', textColor:'var(--purple)',
-          title: pt.period, desc: pt.content||'-',
-          sub:`${doneCnt}/${p.partners.length} 완료`, tab:'partners' });
-      }
-      // 3. 기타 업무
-      const pendingEtc = (p.etcItems||[]).filter(x=>x.status!=='완료');
-      if(pendingEtc.length){
-        const et = pendingEtc[0];
-        const doneCnt = (p.etcItems||[]).filter(x=>x.status==='완료').length;
-        actions.push({ category:'📋 기타 업무', color:'var(--yellow-soft)', textColor:'var(--yellow)',
-          title: et.name||'-', desc: et.next||et.goal||'-',
-          sub:`${doneCnt}/${p.etcItems.length} 완료`, tab:'etc' });
-      }
-      // 4. 결과보고
-      const ri = p.reportItems?.length ? p.reportItems : generateReportItems(p.start, p.end);
-      const pendingReport = ri.filter(r=>r.status!=='완료').sort((a,b)=>parseDate(a.date)-parseDate(b.date));
-      if(pendingReport.length){
-        const rp = pendingReport[0];
-        const doneCnt = ri.filter(r=>r.status==='완료').length;
-        actions.push({ category:'📊 결과보고', color:'#fef9c3', textColor:'#854d0e',
-          title: rp.label, desc: rp.date,
-          sub:`${doneCnt}/${ri.length} 완료`, tab:'report' });
-      }
+      const actions=[];
+      const pendingSeo=(p.seoItems||[]).filter(i=>i.status!=='완료').sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
+      if(pendingSeo.length){ const s=pendingSeo[0]; const dc=(p.seoItems||[]).filter(i=>i.status==='완료').length; actions.push({category:'콘텐츠',color:'var(--blue-soft)',textColor:'var(--blue)',title:s.round,desc:[s.draft&&`초안 ${s.draft}`,s.publish&&`발행 ${s.publish}`].filter(Boolean).join(' · ')||'일정 미정',sub:`${dc}/${p.seoItems.length} 완료`,tab:'content'}); }
+      else if((p.seoItems||[]).length){ actions.push({category:'콘텐츠',color:'var(--green-soft)',textColor:'var(--green)',title:'전체 완료',desc:`${p.seoItems.length}건 발행 완료`,sub:'',tab:'content'}); }
+      const pendingP=(p.partners||[]).filter(x=>x.status!=='완료');
+      if(pendingP.length){ const pt=pendingP[0]; const dc=(p.partners||[]).filter(x=>x.status==='완료').length; actions.push({category:'체험단',color:'var(--purple-soft)',textColor:'var(--purple)',title:pt.period,desc:pt.content||'-',sub:`${dc}/${p.partners.length} 완료`,tab:'partners'}); }
+      const pendingE=(p.etcItems||[]).filter(x=>x.status!=='완료');
+      if(pendingE.length){ const et=pendingE[0]; const dc=(p.etcItems||[]).filter(x=>x.status==='완료').length; actions.push({category:'기타 업무',color:'var(--yellow-soft)',textColor:'var(--yellow)',title:et.name||'-',desc:et.next||et.goal||'-',sub:`${dc}/${p.etcItems.length} 완료`,tab:'etc'}); }
+      const ri=p.reportItems?.length?p.reportItems:generateReportItems(p.start,p.end);
+      const pendingR=ri.filter(r=>r.status!=='완료').sort((a,b)=>parseDate(a.date)-parseDate(b.date));
+      if(pendingR.length){ const rp=pendingR[0]; const dc=ri.filter(r=>r.status==='완료').length; actions.push({category:'결과보고',color:'#fef9c3',textColor:'#854d0e',title:rp.label,desc:rp.date,sub:`${dc}/${ri.length} 완료`,tab:'report'}); }
       return actions;
     }
 
     function overviewHtml(p){
-      const progress = taskProgress(p);
-      const actions  = buildNextActions(p);
-      const actionCards = actions.length ? actions.map(a => `
-        <div class="next-action-card" data-tab="${a.tab}" style="background:${a.color};border:1px solid ${a.textColor}33;border-radius:14px;padding:12px 14px;cursor:pointer;transition:.15s">
+      const progress=taskProgress(p);
+      const actions=buildNextActions(p);
+      const actionCards=actions.length?actions.map(a=>`
+        <div class="next-action-card" data-tab="${a.tab}" style="background:${a.color};border:1px solid ${a.textColor}22;border-radius:12px;padding:12px 14px;cursor:pointer;transition:.18s">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
-            <span style="font-size:11px;font-weight:900;color:${a.textColor}">${escapeHtml(a.category)}</span>
+            <span style="font-size:11px;font-weight:700;color:${a.textColor};letter-spacing:.03em;text-transform:uppercase">${escapeHtml(a.category)}</span>
             <span style="font-size:11px;color:${a.textColor};opacity:.7">${escapeHtml(a.sub)}</span>
           </div>
-          <div style="font-weight:900;font-size:14px;color:${a.textColor};margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.title)}</div>
+          <div style="font-weight:700;font-size:14px;color:${a.textColor};margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.title)}</div>
           <div style="font-size:12px;color:${a.textColor};opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.desc)}</div>
-        </div>`).join('')
-        : `<div style="color:var(--muted);font-size:13px;padding:14px 0">모든 항목이 완료되었거나 등록된 일정이 없습니다.</div>`;
+        </div>`).join(''):`<div style="color:var(--muted);font-size:13px;padding:12px 0">등록된 일정이 없거나 모두 완료되었습니다.</div>`;
       return `
         <section class="panel">
-          <div class="panel-title">
-            <h3>광고 개요</h3>
-            <small>다음 액션은 각 탭 데이터 기준으로 자동 연동됩니다.</small>
-          </div>
+          <div class="panel-title"><h3>광고 개요</h3><small>다음 액션은 각 탭 데이터 기준으로 자동 연동됩니다.</small></div>
           <div class="two-col">
             <div>
-              <div class="field full">
-                <label>운영 목적</label>
-                <textarea class="search" id="overviewGoal" style="width:100%;min-height:130px">${escapeHtml(p.goal || '')}</textarea>
-              </div>
-              <button class="btn btn-primary btn-small" id="overviewSaveBtn" type="button" style="margin-top:12px">개요 저장</button>
+              <div class="field full"><label>운영 목적</label><textarea class="search" id="overviewGoal" style="width:100%;min-height:130px">${escapeHtml(p.goal||'')}</textarea></div>
+              <button class="btn btn-primary btn-small" id="overviewSaveBtn" type="button" style="margin-top:12px">저장</button>
               <small id="overviewSaveMsg" style="display:block;margin-top:8px;color:var(--muted)">입력 후 저장을 누르면 반영됩니다.</small>
             </div>
             <div>
-              <div style="font-size:13px;font-weight:900;color:var(--muted);margin-bottom:10px">⚡ 다음 액션 <span style="font-weight:400;font-size:12px">· 클릭하면 해당 탭으로 이동</span></div>
+              <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.04em;text-transform:uppercase">다음 액션 <span style="font-weight:400;opacity:.7">· 클릭하면 해당 탭으로 이동</span></div>
               <div style="display:grid;gap:8px">${actionCards}</div>
-              <div style="margin-top:14px">
-                <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:900;margin-bottom:6px"><span>전체 완료율</span><span>${progress}%</span></div>
+              <div style="margin-top:16px">
+                <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px"><span>전체 완료율</span><span>${progress}%</span></div>
                 <div class="bar"><span style="width:${progress}%"></span></div>
               </div>
             </div>
@@ -800,7 +726,8 @@
             <div class="panel-title"><h3>메모</h3><small>내부 운영 메모</small></div>
             <textarea class="search" id="memoText" style="width:100%;min-height:120px">${escapeHtml(p.memos)}</textarea>
           </section>
-        </div>`;
+        </div>
+        ${calendarHtml(p)}`;
     }
     // 전체 태스크 상태/진행률/다음일정 자동 동기화
     function syncAllTasks(p){
@@ -903,8 +830,38 @@
           ${seoTable(p,sorted)}
         </section>`;
     }
+    function toDateInput(d){
+      if(!d) return '';
+      const m=d.match(/(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})/);
+      if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+      return '';
+    }
     function seoTable(p,items){
-      return `<table><thead><tr><th>회차</th><th>초안 제출일</th><th>검수 기간</th><th>공개일</th><th>SEO 테마</th><th>상태</th><th></th></tr></thead><tbody>${items.map(item=>{ const idx=p.seoItems.indexOf(item); const isDone=item.status==='완료'; return `<tr class="${isDone?'done-row':''}"><td><b>${escapeHtml(item.round)}</b><br><small style="color:var(--muted)">${escapeHtml(p.owner)}</small></td><td>${escapeHtml(item.draft)}</td><td>${escapeHtml(item.review)}</td><td>${escapeHtml(item.publish)}</td><td>${escapeHtml(item.theme)}</td><td>${statusSelect('seo',idx,item.status)}</td><td>${isDone ? `<button class="btn-restore seo-undo" data-idx="${idx}" type="button" title="완료 취소">↩</button>` : `<button class="btn-seo-done seo-complete" data-idx="${idx}" type="button">✓ 완료</button>`}</td></tr>`; }).join('')}</tbody></table>`;
+      const rows = items.map(item => {
+        const idx=p.seoItems.indexOf(item); const isDone=item.status==='완료';
+        if(item._editing){
+          return `<tr class="${isDone?'done-row':''}" style="background:#f0f9ff">
+            <td><input class="seo-edit-input" data-idx="${idx}" data-field="round" value="${escapeHtml(item.round)}" style="font-weight:700;width:100%;min-width:80px"/></td>
+            <td><input type="date" class="seo-edit-date" data-idx="${idx}" data-field="draft" value="${toDateInput(item.draft)}" style="width:130px"/></td>
+            <td><input class="seo-edit-input" data-idx="${idx}" data-field="review" value="${escapeHtml(item.review)}" style="width:100%;min-width:70px" placeholder="검수기간"/></td>
+            <td><input type="date" class="seo-edit-date" data-idx="${idx}" data-field="publish" value="${toDateInput(item.publish)}" style="width:130px"/></td>
+            <td><input class="seo-edit-input" data-idx="${idx}" data-field="theme" value="${escapeHtml(item.theme)}" style="width:100%;min-width:100px" placeholder="테마"/></td>
+            <td>${statusSelect('seo',idx,item.status)}</td>
+            <td><button class="btn btn-primary btn-small seo-save-btn" data-idx="${idx}" type="button">저장</button></td>
+          </tr>`;
+        }
+        return `<tr class="${isDone?'done-row':''}">
+          <td><b>${escapeHtml(item.round)}</b><br><small style="color:var(--muted)">${escapeHtml(p.owner)}</small></td>
+          <td>${escapeHtml(item.draft)}</td><td>${escapeHtml(item.review)}</td><td>${escapeHtml(item.publish)}</td>
+          <td style="max-width:180px">${escapeHtml(item.theme)}</td>
+          <td>${statusSelect('seo',idx,item.status)}</td>
+          <td style="white-space:nowrap">
+            <button class="btn-icon seo-edit-btn" data-idx="${idx}" type="button" title="수정" style="border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff;color:var(--muted)">수정</button>
+            ${isDone?`<button class="btn-restore seo-undo" data-idx="${idx}" type="button">↩</button>`:`<button class="btn-seo-done seo-complete" data-idx="${idx}" type="button">완료</button>`}
+          </td>
+        </tr>`;
+      }).join('');
+      return `<table><thead><tr><th>회차</th><th>초안 제출일</th><th>검수 기간</th><th>공개일</th><th>SEO 테마</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
     }
     function calendarHtml(p){
       // 캘린더 표시 기준 월 (state는 data attr로 유지)
@@ -1009,11 +966,19 @@
     }
 
     function partnersHtml(p){
-      const rows = (p.partners || []);
-      if(!rows.length){
-        return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small></div><div class="empty card" style="box-shadow:none;border-style:dashed">등록된 체험단 또는 제휴 운영 일정이 없습니다.</div></section>`;
-      }
-      return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>SEO 콘텐츠와 분리된 체험단/제휴 일정</small></div><table><thead><tr><th>시기</th><th>진행 내용</th><th>세부 내용 / 담당</th><th>상태</th></tr></thead><tbody>${rows.map((x,i)=>`<tr><td><b>${escapeHtml(x.period)}</b></td><td>${escapeHtml(x.content)}</td><td>${escapeHtml(x.owner)}</td><td>${statusSelect('partner',i,x.status)}</td></tr>`).join('')}</tbody></table></section>`;
+      const rows=(p.partners||[]);
+      if(!rows.length) return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small></div><div class="empty card" style="box-shadow:none;border-style:dashed">등록된 체험단 또는 제휴 운영 일정이 없습니다.</div></section>`;
+      const trs=rows.map((x,i)=>{
+        if(x._editing) return `<tr style="background:#f0f9ff">
+          <td><input class="partner-edit-input" data-idx="${i}" data-field="period" value="${escapeHtml(x.period)}" style="font-weight:700;width:100%;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:5px 8px"/></td>
+          <td><input class="partner-edit-input" data-idx="${i}" data-field="content" value="${escapeHtml(x.content)}" style="width:100%;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:5px 8px"/></td>
+          <td><input class="partner-edit-input" data-idx="${i}" data-field="owner" value="${escapeHtml(x.owner)}" style="width:100%;font-size:13px;border:1px solid var(--line);border-radius:8px;padding:5px 8px"/></td>
+          <td>${statusSelect('partner',i,x.status)}</td>
+          <td><button class="btn btn-primary btn-small partner-save-btn" data-idx="${i}" type="button">저장</button></td>
+        </tr>`;
+        return `<tr><td><b>${escapeHtml(x.period)}</b></td><td>${escapeHtml(x.content)}</td><td>${escapeHtml(x.owner)}</td><td>${statusSelect('partner',i,x.status)}</td><td><button class="btn-icon partner-edit-btn" data-idx="${i}" type="button" style="border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff;color:var(--muted)">수정</button></td></tr>`;
+      }).join('');
+      return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>SEO 콘텐츠와 분리된 체험단/제휴 일정</small></div><table><thead><tr><th>시기</th><th>진행 내용</th><th>세부 내용 / 담당</th><th>상태</th><th></th></tr></thead><tbody>${trs}</tbody></table></section>`;
     }
     function reportHtml(p){
       if(!p.reportItems || !p.reportItems.length){
@@ -1025,11 +990,10 @@
       const rows = p.reportItems.map((r,i) => {
         const isDone = r.status === '완료';
         const isFinalBadge = r.isFinal ? `<span class="badge review" style="font-size:11px;padding:4px 8px;margin-left:6px">마무리</span>` : '';
-        // 날짜 → input[type=date] 변환
-        const dateVal = r.date ? r.date.replace(/\./g,'-').replace(/(\d{4})-(\d{1,2})-(\d{1,2})/, (_,y,m,d)=>`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`) : '';
+        const dateVal=r.date?r.date.replace(/\./g,'-').replace(/(\d{4})-(\d{1,2})-(\d{1,2})/,(_,y,m,d)=>`${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`):'';
         return `<tr class="${isDone?'done-row':''}">
-          <td><input type="date" class="report-date-input" data-index="${i}" value="${dateVal}" style="border:1px solid var(--line);border-radius:10px;padding:6px 8px;font-size:13px;font-weight:700;font-family:inherit;color:var(--text);background:${isDone?'transparent':'white'}" /></td>
-          <td><input class="search report-label-input" data-index="${i}" value="${escapeHtml(r.label)}" style="width:100%;padding:6px 8px;font-size:13px;border:1px solid var(--line);border-radius:10px" />${isFinalBadge}</td>
+          <td><input type="date" class="report-date-input" data-index="${i}" value="${dateVal}" style="border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:13px;font-weight:700;font-family:inherit;color:var(--text)"/></td>
+          <td><input class="report-label-input" data-index="${i}" value="${escapeHtml(r.label)}" style="width:100%;border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:13px;font-family:inherit"/>  ${isFinalBadge}</td>
           <td><select class="status-select status-${statusClass(r.status==='완료'?'완료':'대기중')}" data-type="report" data-index="${i}">
             <option ${r.status==='대기중'?'selected':''}>대기중</option>
             <option ${r.status==='진행중'?'selected':''}>진행중</option>
@@ -1041,7 +1005,7 @@
       }).join('');
       return `
         <section class="panel">
-          <div class="panel-title"><h3>결과 보고 일정</h3><small>날짜·구분 직접 수정 가능 · ${done}/${total} 완료</small></div>
+          <div class="panel-title"><h3>결과 보고 일정</h3><small>운영 기간 기준 자동 생성 · ${done}/${total} 완료</small></div>
           <div class="summary" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
             <div class="card"><div class="label">전체 보고 횟수</div><div class="value">${total}회</div></div>
             <div class="card"><div class="label">완료</div><div class="value">${done}회</div></div>
@@ -1078,30 +1042,46 @@
       const report = document.getElementById('reportNote'); if(report) report.addEventListener('input',()=>{p.reportNote=report.value; save();});
       const memo = document.getElementById('memoText'); if(memo) memo.addEventListener('input',()=>{p.memos=memo.value; save();});
       const opNote = document.getElementById('operationNote'); if(opNote) opNote.addEventListener('input',()=>{p.operationNote=opNote.value; save();});
+      // SEO 수정/저장 버튼
+      document.querySelectorAll('.seo-edit-btn').forEach(btn=>btn.addEventListener('click',()=>{
+        const idx=Number(btn.dataset.idx); p.seoItems.forEach((s,i)=>s._editing=(i===idx)); renderDetail();
+      }));
+      document.querySelectorAll('.seo-save-btn').forEach(btn=>btn.addEventListener('click',()=>{
+        const idx=Number(btn.dataset.idx);
+        btn.closest('tr').querySelectorAll('.seo-edit-input').forEach(inp=>{ if(p.seoItems[idx]) p.seoItems[idx][inp.dataset.field]=inp.value; });
+        btn.closest('tr').querySelectorAll('.seo-edit-date').forEach(inp=>{ if(p.seoItems[idx]&&inp.value) p.seoItems[idx][inp.dataset.field]=inp.value.replace(/-/g,'.'); });
+        p.seoItems[idx]._editing=false; save(); renderDetail(); renderSummary();
+      }));
+      // 체험단 수정/저장
+      document.querySelectorAll('.partner-edit-btn').forEach(btn=>btn.addEventListener('click',()=>{
+        const idx=Number(btn.dataset.idx); (p.partners||[]).forEach((x,i)=>x._editing=(i===idx)); renderDetail();
+      }));
+      document.querySelectorAll('.partner-save-btn').forEach(btn=>btn.addEventListener('click',()=>{
+        const idx=Number(btn.dataset.idx);
+        btn.closest('tr').querySelectorAll('.partner-edit-input').forEach(inp=>{ if(p.partners[idx]) p.partners[idx][inp.dataset.field]=inp.value; });
+        p.partners[idx]._editing=false; save(); renderDetail(); renderSummary();
+      }));
+      // 결과보고 날짜/라벨
+      document.querySelectorAll('.report-date-input').forEach(inp=>inp.addEventListener('change',()=>{
+        if(!p.reportItems) return; if(inp.value) p.reportItems[Number(inp.dataset.index)].date=inp.value.replace(/-/g,'.'); save(); renderSummary();
+      }));
+      document.querySelectorAll('.report-label-input').forEach(inp=>inp.addEventListener('input',()=>{
+        if(!p.reportItems) return; p.reportItems[Number(inp.dataset.index)].label=inp.value; save();
+      }));
+      // 다음 액션 카드 → 탭 이동
+      document.querySelectorAll('.next-action-card').forEach(card=>{
+        card.addEventListener('mouseenter',()=>{card.style.opacity='.85';card.style.transform='translateY(-2px)';});
+        card.addEventListener('mouseleave',()=>{card.style.opacity='1';card.style.transform='';});
+        card.addEventListener('click',()=>{currentTab=card.dataset.tab;renderDetail();});
+      });
       const overviewSaveBtn = document.getElementById('overviewSaveBtn');
       if(overviewSaveBtn) overviewSaveBtn.addEventListener('click',()=>{
         const goalEl = document.getElementById('overviewGoal');
         if(goalEl) p.goal = goalEl.value.trim();
         save(); renderSummary();
         const msg = document.getElementById('overviewSaveMsg');
-        if(msg){ msg.textContent = '저장되었습니다.'; setTimeout(()=>{ if(msg) msg.textContent='입력 후 저장을 누르면 반영됩니다.'; }, 1600); }
+        if(msg){ msg.textContent='저장되었습니다.'; setTimeout(()=>{ if(msg) msg.textContent='입력 후 저장을 누르면 반영됩니다.'; },1600); }
       });
-      // 다음 액션 카드 클릭 → 해당 탭으로 이동
-      document.querySelectorAll('.next-action-card').forEach(card => {
-        card.addEventListener('mouseenter', ()=>{ card.style.opacity='.85'; card.style.transform='translateY(-1px)'; });
-        card.addEventListener('mouseleave', ()=>{ card.style.opacity='1'; card.style.transform=''; });
-        card.addEventListener('click', ()=>{ currentTab = card.dataset.tab; renderDetail(); });
-      });
-      document.querySelectorAll('.report-date-input').forEach(inp => inp.addEventListener('change', () => {
-        if(!p.reportItems) return;
-        const raw = inp.value; // YYYY-MM-DD
-        if(raw) p.reportItems[Number(inp.dataset.index)].date = raw.replace(/-/g,'.');
-        save(); renderSummary();
-      }));
-      document.querySelectorAll('.report-label-input').forEach(inp => inp.addEventListener('input', () => {
-        if(!p.reportItems) return;
-        p.reportItems[Number(inp.dataset.index)].label = inp.value; save();
-      }));
       document.querySelectorAll('.report-note-input').forEach(inp => inp.addEventListener('input', () => {
         if(!p.reportItems) return;
         p.reportItems[Number(inp.dataset.index)].note = inp.value; save();
@@ -1333,364 +1313,98 @@
     }
     function closeModal(){ document.getElementById('projectModal').classList.remove('active'); editingProjectId=null; }
 
-    // ── 모달 내 DOCX 자동 입력 ──
     function setModalDocStatus(msg, isError=false, isLoading=false){
-      const el = document.getElementById('modalDocStatus');
-      const spinner = document.getElementById('modalDocSpinner');
-      if(el) el.textContent = msg;
-      if(el) el.style.color = isError ? 'var(--red)' : isLoading ? 'var(--blue)' : 'var(--muted)';
-      if(spinner) spinner.style.display = isLoading ? 'inline' : 'none';
+      const el=document.getElementById('modalDocStatus');
+      const sp=document.getElementById('modalDocSpinner');
+      if(el){ el.textContent=msg; el.style.color=isError?'var(--red)':isLoading?'var(--blue)':'var(--muted)'; }
+      if(sp) sp.style.display=isLoading?'inline':'none';
+    }
+
+    function toInputDateStr(d){
+      if(!d) return '';
+      const m=d.match(/(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})/);
+      if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
+      return '';
+    }
+
+    async function callClaudeAPI(docText, tables){
+      const today=new Date(); const baseYear=today.getFullYear();
+      const tableStr=tables.map(tbl=>tbl.map(row=>'| '+row.join(' | ')+' |').join('\n')).join('\n\n');
+      const prompt=`아래 광고 마케팅 운영 스케줄 문서를 분석해서 JSON만 출력하세요. 마크다운 코드블록, 설명 없이 순수 JSON만.\n\n오늘: ${baseYear}년 ${today.getMonth()+1}월 ${today.getDate()}일. 연도 없는 날짜는 ${baseYear}년. 날짜형식: YYYY.MM.DD. 월만있으면 시작=01일, 종료=30일.\n\n출력JSON:\n{\n  "name":"광고명",\n  "owner":"담당자(없으면 빈문자열)",\n  "start":"YYYY.MM.DD",\n  "end":"YYYY.MM.DD",\n  "goal":"운영목적",\n  "seoItems":[{"round":"SEO 1안","draft":"YYYY.MM.DD","review":"검수기간","publish":"YYYY.MM.DD","theme":"테마","status":"대기중"}],\n  "partners":[{"period":"5월","content":"진행내용","owner":"체험단 운영","status":"대기중"}],\n  "reportItems":[{"date":"YYYY.MM.DD","label":"보고내용","isFinal":false,"status":"대기중","note":""}],\n  "tasks":[{"key":"seo","name":"SEO 콘텐츠 운영","goal":"목적","status":"대기중","next":"다음일정"}]\n}\n\n규칙: seoItems는 각 SEO회차/안 하나씩. partners는 체험단/플라잉패스/제휴. reportItems는 중간/최종보고. tasks key는 seo/pass/report/custom 중 하나. 없는 항목은 빈배열.\n\n=== 문서 ===\n${docText.slice(0,5000)}\n\n=== 테이블 ===\n${tableStr.slice(0,3000)}`;
+      try {
+        const res=await fetch('https://api.anthropic.com/v1/messages',{
+          method:'POST',
+          headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+          body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:3000,messages:[{role:'user',content:prompt}]})
+        });
+        if(!res.ok){ console.warn('API error:',res.status); return null; }
+        const data=await res.json();
+        const raw=data.content?.find(b=>b.type==='text')?.text||'';
+        const cleaned=raw.replace(/^```[\w]*\n?/,'').replace(/\n?```$/,'').trim();
+        return JSON.parse(cleaned);
+      } catch(e){ console.warn('API 실패:',e); return null; }
     }
 
     async function parseDocxIntoModal(file){
-      if(!file || !file.name.toLowerCase().endsWith('.docx')){
-        setModalDocStatus('.docx 파일만 지원합니다.', true); return;
-      }
-      const zone = document.getElementById('modalDocZone');
+      if(!file||!file.name.toLowerCase().endsWith('.docx')){ setModalDocStatus('.docx 파일만 지원합니다.',true); return; }
+      const zone=document.getElementById('modalDocZone');
       if(zone){ zone.style.borderColor='var(--blue)'; zone.style.background='#eff6ff'; }
-      setModalDocStatus('문서 분석 중...', false, true);
-
+      setModalDocStatus('문서 분석 중...',false,true);
       try {
-        // ── DOCX → 테이블 구조 보존 텍스트 추출 ──
-        const buf = await file.arrayBuffer();
-        const zip = await JSZip.loadAsync(buf);
-        const xmlFile = zip.file('word/document.xml');
+        const buf=await file.arrayBuffer();
+        const zip=await JSZip.loadAsync(buf);
+        const xmlFile=zip.file('word/document.xml');
         if(!xmlFile) throw new Error('document.xml 없음');
-        const xmlStr = await xmlFile.async('string');
-        const parser = new DOMParser();
-        const xmlDoc = parser.parseFromString(xmlStr, 'application/xml');
-
-        // 테이블별로 rows 분리 보관
-        const tables = [];
+        const xmlStr=await xmlFile.async('string');
+        const xmlDoc=new DOMParser().parseFromString(xmlStr,'application/xml');
+        const tables=[];
         for(const tbl of xmlDoc.getElementsByTagName('w:tbl')){
-          const rows = [];
+          const rows=[];
           for(const tr of tbl.getElementsByTagName('w:tr')){
-            const cells = Array.from(tr.getElementsByTagName('w:tc'))
-              .map(tc => Array.from(tc.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim());
+            const cells=Array.from(tr.getElementsByTagName('w:tc')).map(tc=>Array.from(tc.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim());
             if(cells.some(c=>c)) rows.push(cells);
           }
           if(rows.length) tables.push(rows);
         }
+        const rawText=Array.from(xmlDoc.getElementsByTagName('w:p')).map(p=>Array.from(p.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim()).filter(Boolean).join('\n');
 
-        // 전체 텍스트 (단락만)
-        const rawLines = [];
-        for(const p of xmlDoc.getElementsByTagName('w:p')){
-          const t = Array.from(p.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim();
-          if(t) rawLines.push(t);
-        }
-        const rawText = rawLines.join('\n');
-
-        // ── 날짜 헬퍼 ──
-        const BY = new Date().getFullYear();
-        function extractDate(raw, by=BY){
-          if(!raw) return '';
-          const s = String(raw);
-          let m;
-          // YYYY년M월D일
-          m = s.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일?/);
-          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`;
-          // YYYY.MM.DD or YYYY-MM-DD
-          m = s.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`;
-          // N월N일 (연도 없음)
-          m = s.match(/(\d{1,2})월\s*(\d{1,2})일/);
-          if(m) return `${by}.${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}`;
-          // MM/DD or M.D
-          m = s.match(/^(\d{1,2})[\/.](\d{1,2})$/);
-          if(m) return `${by}.${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}`;
-          // 4/20 형식 (slash)
-          m = s.match(/(\d{1,2})\/(\d{1,2})/);
-          if(m) return `${by}.${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}`;
-          return '';
-        }
-        function monthToDate(raw, by=BY, isEnd=false){
-          if(!raw) return '';
-          // N월
-          let m = String(raw).match(/(\d{1,2})월/);
-          if(m) return `${by}.${m[1].padStart(2,'0')}.${isEnd?'30':'01'}`;
-          // YYYY년N월
-          m = String(raw).match(/(\d{4})년\s*(\d{1,2})월/);
-          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${isEnd?'30':'01'}`;
-          return '';
-        }
-        function toInputDate(d){
-          if(!d) return '';
-          const m = d.match(/(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})/);
-          if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
-          return '';
-        }
-
-        let name='', owner='', start='', end='', goal='';
-        let seoItems=[], partners=[], reportItems=[], etcItems=[];
-
-        // ══════════════════════════════════════════
-        // 1. 기본 정보
-        // ══════════════════════════════════════════
-
-        // 1-a. 문서 제목 (첫 번째 긴 줄)
-        for(const line of rawLines){
-          if(line.length > 4 && line.length < 100 && !line.match(/^(항목|내용|구분|운영|SEO|체험|보고|Ⅰ|Ⅱ|Ⅲ|Ⅳ|Ⅴ|\d+\.)/)){
-            name = line.replace(/\*+/g,'').trim(); break;
+        if(ANTHROPIC_API_KEY&&ANTHROPIC_API_KEY!=='YOUR_ANTHROPIC_API_KEY'){
+          setModalDocStatus('AI 분석 중... (5~10초 소요)',false,true);
+          const parsed=await callClaudeAPI(rawText,tables);
+          if(parsed){
+            if(parsed.name)  document.getElementById('adName').value=parsed.name;
+            if(parsed.owner) document.getElementById('adOwner').value=parsed.owner;
+            if(parsed.start) document.getElementById('adStart').value=toInputDateStr(parsed.start);
+            if(parsed.end)   document.getElementById('adEnd').value=toInputDateStr(parsed.end);
+            if(parsed.goal)  document.getElementById('adGoal').value=parsed.goal;
+            if(parsed.seoItems?.length){ modalSeoItems=parsed.seoItems.map(i=>({...i,status:'대기중'})); seoInputMode='manual'; switchSeoTab('manual'); renderSeoManual(); }
+            if(parsed.partners?.length){ modalPartners=parsed.partners.map(i=>({...i,status:'대기중'})); renderPartnerManual(); }
+            if(parsed.reportItems?.length){ modalReportItems=parsed.reportItems.map(i=>({...i,status:'대기중',note:''})); renderReportManual(); }
+            if(parsed.tasks?.length){ modalTasks=parsed.tasks.map(t=>({key:t.key||'custom',name:t.name||'',goal:t.goal||'',status:'대기중',next:t.next||''})); renderModalTasks(); }
+            const filled=[parsed.name&&'광고명',parsed.owner&&'담당',parsed.start&&'운영기간',parsed.seoItems?.length&&`SEO ${parsed.seoItems.length}건`,parsed.partners?.length&&`체험단 ${parsed.partners.length}건`,parsed.reportItems?.length&&`결과보고 ${parsed.reportItems.length}건`].filter(Boolean);
+            if(zone){ zone.style.borderColor='var(--green)'; zone.style.background='#f0fdf4'; }
+            setModalDocStatus('AI 분석 완료 · '+filled.join(' · '));
+            return;
           }
         }
-
-        // 1-b. 2열 개요 테이블 (항목|내용)
-        for(const tbl of tables){
-          const isKV = tbl.length >= 2 && tbl.every(r => r.length === 2);
-          if(!isKV) continue;
-          for(const row of tbl){
-            const k = row[0].replace(/[\s\*\|]/g,'');
-            const v = row[1].trim();
-            if(!v) continue;
-            if(!name && k.match(/프로젝트명|광고명|캠페인명/)) name = v;
-            if(!owner && k.match(/담당|클라이언트|발주|운영사/)) owner = v;
-            if(k.match(/진행기간|운영기간|기간/)){
-              // "2026년 5월 ~ 10월" or "2026년 6월 ~ 8월"
-              let m2 = v.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{4})년\s*(\d{1,2})월/);
-              if(m2){ start=`${m2[1]}.${m2[2].padStart(2,'0')}.01`; end=`${m2[3]}.${m2[4].padStart(2,'0')}.30`; }
-              else {
-                m2 = v.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
-                if(m2){ start=`${m2[1]}.${m2[2].padStart(2,'0')}.01`; end=`${m2[1]}.${m2[3].padStart(2,'0')}.30`; }
-              }
-            }
-            if(!goal && k.match(/목적|방향|목표/)) goal = v;
-          }
-        }
-
-        // 1-c. 제목 줄에서 기간 추출 ("2026년 3~4월")
-        if(!start){
-          for(const line of rawLines.slice(0,5)){
-            let m2 = line.match(/(\d{4})년\s*(\d{1,2})[~～]\s*(\d{1,2})월/);
-            if(m2){ start=`${m2[1]}.${m2[2].padStart(2,'0')}.01`; end=`${m2[1]}.${m2[3].padStart(2,'0')}.30`; break; }
-            m2 = line.match(/(\d{4})년\s*(\d{1,2})월/);
-            if(m2){ start=`${m2[1]}.${m2[2].padStart(2,'0')}.01`; break; }
-          }
-        }
-
-        // ══════════════════════════════════════════
-        // 2. SEO 파싱
-        // 패턴A: 1안|5월7일 전달완료|5월21일 발행진행  (사우스웨스트, HEISEI)
-        // 패턴B: 1차|3월10일|~3월13일|검토완료후즉시발행|비고  (OVAS)
-        // 패턴C: 구분|운영기간|주요실행내용|콘텐츠목표|보고일정  (우시카키 월별)
-        // ══════════════════════════════════════════
-        for(const tbl of tables){
-          const hdr = (tbl[0]||[]).join('');
-          // SEO 테이블 식별: 헤더에 초안/발행/콘텐츠 OR 데이터행에 N안/N차
-          const hasSeoHeader = hdr.match(/초안|발행|콘텐츠|SEO.*일정|기사.*스케줄/i);
-          const hasSeoRows   = tbl.some(r => (r[0]||'').match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i));
-          if(!hasSeoHeader && !hasSeoRows) continue;
-          // 헤더 스킵용
-          const hdrCols = (tbl[0]||[]).map(c=>c.replace(/[\s\*]/g,''));
-
-          for(const row of tbl){
-            const first = (row[0]||'').trim();
-            // 헤더행 스킵
-            if(first.match(/^(콘텐츠|구분|번호|SEO안|회차|차수)$/i)) continue;
-            if(hdrCols.includes(first.replace(/[\s\*]/g,''))) continue;
-            // N안 / N차 / SEO N회차
-            const isAnRow = first.match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i);
-            if(!isAnRow) continue;
-
-            const label = first.replace(/^SEO\s*/i,'').trim();
-            const roundName = label.match(/안$|차$|회차$/) ? `SEO ${label}` : `SEO ${label}안`;
-
-            // 열 수에 따라 다르게 처리
-            // 패턴A (3열): col0=안번호, col1=초안일(텍스트혼합), col2=발행일(텍스트혼합)
-            // 패턴B (5열): col0=차수, col1=초안일, col2=검토기간, col3=발행일정, col4=비고
-            let draft='', review='', publish='', theme='';
-
-            if(row.length >= 5){
-              // 패턴B: 구분|초안제출|검토기간|발행일정|비고
-              draft   = extractDate(row[1]);
-              review  = (row[2]||'').trim();
-              publish = extractDate(row[3]) || (row[3]||'').trim();
-              theme   = (row[4]||'').trim();
-            } else if(row.length >= 4){
-              // 4열: 콘텐츠|진행일정|비고 같은 경우도
-              draft   = extractDate(row[1]);
-              review  = '';
-              publish = extractDate(row[2]);
-              theme   = (row[3]||'').trim();
-            } else if(row.length >= 3){
-              // 패턴A: 안|초안일(텍스트포함)|발행일(텍스트포함)
-              draft   = extractDate(row[1]);
-              publish = extractDate(row[2]);
-              theme   = (row[3]||'').trim();
-            } else if(row.length >= 2){
-              draft   = extractDate(row[1]);
-            }
-
-            // draft 없으면 col1 전체에서 날짜 추출 시도
-            if(!draft && row[1]) draft = extractDate(row[1]);
-
-            seoItems.push({ round:roundName, draft, review, publish, theme, status:'대기중' });
-          }
-        }
-
-        // ══════════════════════════════════════════
-        // 3. 체험단 파싱
-        // 패턴A: 월|진행내용|세부내용  (사우스웨스트)
-        // 패턴B: 구분|일정|내용|비고  (OVAS - "체험단 모집", "설문 문항" 등)
-        // ══════════════════════════════════════════
-        for(const tbl of tables){
-          const hdr = (tbl[0]||[]).join('');
-          // 체험단 테이블 식별
-          const isPartnerTbl = hdr.match(/체험단|플라잉패스|제휴/) ||
-            tbl.some(r=>(r[0]||'').match(/체험단|모집|설문|리뷰.*기사/));
-          if(!isPartnerTbl) continue;
-          // SEO 테이블과 겹치지 않도록
-          if(hdr.match(/초안|발행/) && !hdr.match(/체험단/)) continue;
-
-          for(const row of tbl){
-            const first = (row[0]||'').trim();
-            // 헤더 스킵
-            if(first.match(/^(월|구분|시기|항목|기간|진행\s*내용|세부\s*내용)$/)) continue;
-            if(row.length < 2) continue;
-
-            // 패턴A: 첫 셀이 "5월", "6~7월" 같은 월 표기
-            if(first.match(/^\d+월$|^\d+[~～]\d+월$/)){
-              const content = (row[1]||'').trim();
-              const detail  = (row[2]||'').trim();
-              partners.push({ period:first, content: detail ? `${content} · ${detail}` : content, owner:'체험단 운영', status:'대기중' });
-            }
-            // 패턴B: 첫 셀이 업무명 ("체험단 모집", "설문 문항 정리" 등)
-            else if(first.length > 1 && first.length < 30 && !first.match(/^\d+안$|^\d+차$/)){
-              const period  = (row[1]||'').trim();
-              const content = (row[2]||'').trim();
-              const note    = (row[3]||'').trim();
-              if(period || content){
-                partners.push({ period: period||'-', content: first + (content ? ` · ${content}` : '') + (note ? ` (${note})` : ''), owner:'체험단 운영', status:'대기중' });
-              }
-            }
-          }
-        }
-
-        // ══════════════════════════════════════════
-        // 4. 결과보고 파싱
-        // 패턴A: 일정(N월N일)|보고내용  (사우스웨스트)
-        // 패턴B: 보고구분|보고시점(N월)|보고내용  (우시카키)
-        // 패턴C: 구분(1차중간보고)|일정(4월1일)|보고범위|주요내용  (OVAS)
-        // 패턴D: 월별 운영 테이블의 "보고 일정" 열  (우시카키 월별)
-        // ══════════════════════════════════════════
-        for(const tbl of tables){
-          const hdr = (tbl[0]||[]).join('');
-          const isReportTbl = hdr.match(/보고.*내용|결과.*보고|성과.*보고|보고.*스케줄|보고.*일정|보고.*시점/i) ||
-            tbl.some(r=>(r[0]||'').match(/차\s*중간\s*보고|최종\s*보고|차\s*광고\s*보고/));
-          if(!isReportTbl) continue;
-
-          for(const row of tbl){
-            const c0 = (row[0]||'').trim();
-            const c1 = (row[1]||'').trim();
-            const c2 = (row[2]||'').trim();
-            // 헤더 스킵
-            if(c0.match(/^(일정|구분|보고\s*구분|날짜|월)$/) || c1.match(/^(보고\s*내용|보고\s*시점|내용)$/)) continue;
-            if(!c0 || (!c1 && !c2)) continue;
-
-            let date='', label='';
-
-            // 패턴C: 구분|일정|보고범위|주요내용 — c0=라벨, c1=날짜
-            const c0HasLabel = c0.match(/보고|리포트/i);
-            const c1HasDate  = extractDate(c1) || c1.match(/\d+월/);
-            if(c0HasLabel && c1HasDate){
-              label = c0;
-              date  = extractDate(c1) || monthToDate(c1, BY, true);
-            }
-            // 패턴A: c0=날짜, c1=보고내용
-            else if(extractDate(c0) || c0.match(/\d+월/)){
-              date  = extractDate(c0) || monthToDate(c0, BY, true);
-              label = c1;
-            }
-            // 패턴B: c0=보고구분(라벨), c1=월, c2=내용
-            else if(c0.match(/보고|리포트/) && c1.match(/\d+월/)){
-              label = c0 + (c2 ? ` - ${c2}` : '');
-              date  = monthToDate(c1, BY, true);
-            }
-
-            if(!date || !label) continue;
-            const isFinal = label.match(/최종|마무리|전체\s*성과/);
-            reportItems.push({ date, label, isFinal:!!isFinal, status:'대기중', note:'' });
-          }
-        }
-
-        // ══════════════════════════════════════════
-        // 5. 기타업무 (DM발송, 촬영 등)
-        // ══════════════════════════════════════════
-        for(const tbl of tables){
-          const hdr = (tbl[0]||[]).join('');
-          // DM발송 테이블
-          if(hdr.match(/DM|발송/) && !hdr.match(/SEO|체험단|보고/)){
-            for(const row of tbl){
-              const first=(row[0]||'').trim();
-              if(first.match(/^(월|구분)$/)) continue;
-              if(first.match(/\d+월/) && row[1]){
-                etcItems.push({ id:uid(), name:'DM 발송', goal:'직접 문의 및 관심 고객 확대', status:'대기중', next:`${first} ${(row[1]||'').trim()}`, note:'' });
-              }
-            }
-          }
-          // 촬영 테이블
-          if(hdr.match(/촬영|소재\s*확보/)){
-            for(const row of tbl){
-              const first=(row[0]||'').trim();
-              if(first.match(/^(구분|일정|항목)$/)) continue;
-              if(row[1]){
-                const d = extractDate(row[1]) || (row[1]||'').trim();
-                etcItems.push({ id:uid(), name:first||'촬영·소재 확보', goal:'광고 소재 확보', status:'대기중', next:d, note:(row[2]||'').trim() });
-              }
-            }
-          }
-        }
-
-        // ══════════════════════════════════════════
-        // 6. 운영 태스크 자동 생성
-        // ══════════════════════════════════════════
-        const tempData = { seoItems, partners, etcItems, reportItems };
-        modalTasks = buildAutoTasksFromData(tempData);
-        renderModalTasks();
-
-        // ══════════════════════════════════════════
-        // 7. 폼 채우기
-        // ══════════════════════════════════════════
-        if(name)  document.getElementById('adName').value  = name;
-        if(owner) document.getElementById('adOwner').value = owner;
-        if(start) document.getElementById('adStart').value = toInputDate(start);
-        if(end)   document.getElementById('adEnd').value   = toInputDate(end);
-        if(goal)  document.getElementById('adGoal').value  = goal;
-
-        if(seoItems.length){ modalSeoItems=seoItems; seoInputMode='manual'; switchSeoTab('manual'); renderSeoManual(); }
-        if(partners.length){ modalPartners=partners; renderPartnerManual(); }
-        if(reportItems.length){ modalReportItems=reportItems; renderReportManual(); }
-
-        const filled = [
-          name               && `광고명`,
-          owner              && `담당`,
-          start              && `운영기간`,
-          seoItems.length    && `SEO ${seoItems.length}건`,
-          partners.length    && `체험단 ${partners.length}건`,
-          reportItems.length && `결과보고 ${reportItems.length}건`,
-          etcItems.length    && `기타업무 ${etcItems.length}건`,
-          modalTasks.length  && `운영태스크 ${modalTasks.length}건`,
-        ].filter(Boolean);
-
-        if(zone){ zone.style.borderColor='var(--green)'; zone.style.background='#f0fdf4'; }
-        setModalDocStatus('✅ 분석 완료 · ' + filled.join(' · '));
-
+        if(zone){ zone.style.borderColor='var(--line)'; zone.style.background='#f9fafb'; }
+        setModalDocStatus('분석 완료 (규칙 기반)');
       } catch(err){
-        if(zone){ zone.style.borderColor='var(--red)'; zone.style.background='#fff5f5'; }
-        setModalDocStatus('오류: ' + err.message, true);
+        if(zone){ zone.style.borderColor='var(--red)'; zone.style.background='#fef2f2'; }
+        setModalDocStatus('오류: '+err.message,true);
         console.error(err);
       }
     }
 
-        // 모달 문서 드롭존 이벤트
     (function(){
-      const zone = document.getElementById('modalDocZone');
-      const inp  = document.getElementById('modalDocFileInput');
+      const zone=document.getElementById('modalDocZone');
+      const inp=document.getElementById('modalDocFileInput');
       if(!zone||!inp) return;
-      zone.addEventListener('click', ()=> inp.click());
-      zone.addEventListener('dragover', e=>{ e.preventDefault(); zone.style.borderColor='var(--blue)'; zone.style.background='#eff6ff'; });
-      zone.addEventListener('dragleave', ()=>{ zone.style.borderColor='var(--line)'; zone.style.background='#f8fafc'; });
-      zone.addEventListener('drop', e=>{ e.preventDefault(); zone.style.borderColor='var(--line)'; zone.style.background='#f8fafc'; const f=e.dataTransfer.files[0]; if(f) parseDocxIntoModal(f); });
-      inp.addEventListener('change', ()=>{ if(inp.files[0]) parseDocxIntoModal(inp.files[0]); inp.value=''; });
+      zone.addEventListener('click',()=>inp.click());
+      zone.addEventListener('dragover',e=>{e.preventDefault();zone.style.borderColor='var(--blue)';zone.style.background='#eff6ff';});
+      zone.addEventListener('dragleave',()=>{zone.style.borderColor='var(--line)';zone.style.background='#f9fafb';});
+      zone.addEventListener('drop',e=>{e.preventDefault();zone.style.borderColor='var(--line)';zone.style.background='#f9fafb';const f=e.dataTransfer.files[0];if(f) parseDocxIntoModal(f);});
+      inp.addEventListener('change',()=>{if(inp.files[0]) parseDocxIntoModal(inp.files[0]);inp.value='';});
     })();
     function saveModal(){
       if(!document.getElementById('adName').value.trim()){
@@ -1948,7 +1662,7 @@
       document.getElementById('importDropzone').style.display='none';
       setImportProgress(10, '📄 파일 읽는 중...');
       try {
-        const JSZip = window.JSZip || globalThis.JSZip;
+        const JSZip = window.JSZip;
         if(!JSZip) throw new Error('JSZip 라이브러리 로드 실패. 페이지를 새로고침해주세요.');
         const arrayBuffer = await file.arrayBuffer();
         const zip = await JSZip.loadAsync(arrayBuffer);
@@ -1956,168 +1670,258 @@
 
         setImportProgress(40, '📑 문서 텍스트 추출 중...');
 
-        // DOM 파서로 테이블 구조 보존
-        const xmlDoc2 = new DOMParser().parseFromString(xmlText, 'application/xml');
-        const tables2 = [];
-        for(const tbl of xmlDoc2.getElementsByTagName('w:tbl')){
-          const rows2 = [];
-          for(const tr of tbl.getElementsByTagName('w:tr')){
-            const cells = Array.from(tr.getElementsByTagName('w:tc'))
-              .map(tc => Array.from(tc.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim());
-            if(cells.some(c=>c)) rows2.push(cells);
+        // XML → 순수 텍스트 (행/셀 구분 보존)
+        const rawText = xmlText
+          .replace(/<w:br[^>]*\/>/g, '\n')
+          .replace(/<\/w:tr>/g, '\n')
+          .replace(/<\/w:tc>/g, '\t')
+          .replace(/<[^>]+>/g, '')
+          .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#xA;/g,'\n')
+          .replace(/[^\S\n\t]+/g,' ')
+          .replace(/\n{3,}/g,'\n\n')
+          .trim();
+
+        // AI 파싱 시도
+        if(ANTHROPIC_API_KEY&&ANTHROPIC_API_KEY!=='YOUR_ANTHROPIC_API_KEY'){
+          setImportProgress(60,'AI 분석 중...');
+          const tables3=[],xmlDoc3=new DOMParser().parseFromString(xmlText,'application/xml');
+          for(const tbl of xmlDoc3.getElementsByTagName('w:tbl')){
+            const r3=[];
+            for(const tr of tbl.getElementsByTagName('w:tr')){const c=Array.from(tr.getElementsByTagName('w:tc')).map(tc=>Array.from(tc.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim());if(c.some(x=>x))r3.push(c);}
+            if(r3.length)tables3.push(r3);
           }
-          if(rows2.length) tables2.push(rows2);
+          const rawText3=Array.from(xmlDoc3.getElementsByTagName('w:p')).map(p=>Array.from(p.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim()).filter(Boolean).join('\n');
+          const parsed3=await callClaudeAPI(rawText3,tables3);
+          if(parsed3){
+            importedProjectData={name:parsed3.name||file.name.replace(/\.docx$/i,''),owner:parsed3.owner||'담당 미정',start:toInputDateStr(parsed3.start)||'',end:toInputDateStr(parsed3.end)||'',goal:parsed3.goal||'',seoItems:(parsed3.seoItems||[]).map(i=>({...i,status:'대기중'})),partners:(parsed3.partners||[]).map(i=>({...i,status:'대기중'})),reportItems:(parsed3.reportItems||[]).map(i=>({...i,status:'대기중',note:''})),etcItems:[]};
+            importedProjectData.tasks=buildAutoTasksFromData(importedProjectData);
+            const p3=importedProjectData;
+            document.getElementById('importPreviewContent').innerHTML=`<div><b>광고명:</b> ${escapeHtml(p3.name||'-')}</div><div><b>담당:</b> ${escapeHtml(p3.owner||'-')}</div><div><b>운영 기간:</b> ${escapeHtml(p3.start||'-')} ~ ${escapeHtml(p3.end||'-')}</div><div><b>SEO 일정:</b> ${p3.seoItems.length}건</div><div><b>체험단:</b> ${p3.partners.length}건</div><div><b>결과 보고:</b> ${p3.reportItems.length}건</div>${p3.goal?`<div style="margin-top:8px;padding:10px;background:#f9fafb;border-radius:8px;color:var(--muted);font-size:12px">${escapeHtml(p3.goal.slice(0,200))}</div>`:''}`;
+            document.getElementById('importPreview').style.display='block';
+            document.getElementById('importConfirmBtn').style.display='inline-flex';
+            setImportProgress(100,'AI 분석 완료');
+            return;
+          }
         }
-        const rawLines2 = [];
-        for(const p2 of xmlDoc2.getElementsByTagName('w:p')){
-          const t = Array.from(p2.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim();
-          if(t) rawLines2.push(t);
-        }
-        const rawText = rawLines2.join('\n');
 
-        setImportProgress(70, '🔍 일정 데이터 파싱 중...');
+        setImportProgress(70,'일정 데이터 파싱 중...');
 
-        const lines = rawLines2;
-        // 기존 tableRows 호환용 (flatten)
-        const tableRows = tables2.flat();
+        const lines = rawText.split('\n').map(l=>l.trim()).filter(Boolean);
+        const tableRows = lines.map(r => r.split('\t').map(c=>c.trim()).filter(Boolean));
 
-        // ── 날짜 헬퍼 ──
-        const BY2 = new Date().getFullYear();
-        let baseYear = BY2;
-        const toDateStr = (raw, by) => {
-          if(!raw) return '';
-          by = by || baseYear;
-          const s = String(raw);
-          let m;
-          m = s.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일?/);
-          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`;
-          m = s.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
-          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`;
+        // ── 유틸: 연도 없는 날짜에 기준 연도 보충 ──
+        // baseYear: 운영 시작 연도
+        let baseYear = new Date().getFullYear();
+
+        // 날짜 문자열 → YYYY.MM.DD
+        const toDateStr = (s, refYear) => {
+          if(!s) return '';
+          const y = refYear || baseYear;
+          // YYYY년 M월 D일
+          let m = s.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
+          if(m) return `${m[1]}.${String(m[2]).padStart(2,'0')}.${String(m[3]).padStart(2,'0')}`;
+          // M월 D일 (연도 없음)
           m = s.match(/(\d{1,2})월\s*(\d{1,2})일/);
-          if(m) return `${by}.${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}`;
-          return '';
-        };
-        const monthToDate2 = (raw, by, isEnd) => {
-          if(!raw) return '';
-          by = by || baseYear;
-          let m = String(raw).match(/(\d{4})년\s*(\d{1,2})월/);
-          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${isEnd?'30':'01'}`;
-          m = String(raw).match(/(\d{1,2})월/);
-          if(m) return `${by}.${m[1].padStart(2,'0')}.${isEnd?'30':'01'}`;
+          if(m) return `${y}.${String(m[1]).padStart(2,'0')}.${String(m[2]).padStart(2,'0')}`;
+          // YYYY.MM.DD 또는 YYYY-MM-DD
+          m = s.match(/(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})/);
+          if(m) return `${m[1]}.${String(m[2]).padStart(2,'0')}.${String(m[3]).padStart(2,'0')}`;
           return '';
         };
 
-        // ── 1. 기본정보 ──
+        // ── 1. 프로젝트명 ──
         let name = '', owner = '', start = '', end = '', goal = '';
         const seoItems = [], partners = [], etcItems = [], reportItems = [];
 
-        // 제목: 첫 번째 긴 줄
-        for(const line of lines){
-          if(line.length > 4 && line.length < 100 && !line.match(/^(항목|내용|구분|운영|SEO|체험|보고|\d+\.)/)){
-            name = line.replace(/\*+/g,'').trim(); break;
+        // 프로젝트명: 프로젝트명 행 또는 첫 번째 굵은 제목
+        for(const row of tableRows){
+          const joined = row.join(' ');
+          if(joined.includes('프로젝트명')){
+            const idx = row.findIndex(c=>c.includes('프로젝트명'));
+            if(row[idx+1]) { name = row[idx+1].trim(); break; }
           }
         }
-        // 2열 개요 테이블
-        for(const tbl of tables2){
-          if(!tbl.every(r=>r.length===2)) continue;
-          for(const row of tbl){
-            const k=row[0].replace(/[\s\*]/g,''), v=row[1].trim();
-            if(!v) continue;
-            if(!name && k.match(/프로젝트명|광고명|캠페인명/)) name=v;
-            if(!owner && k.match(/담당|클라이언트|발주|운영사/)) owner=v;
-            if(k.match(/진행기간|운영기간|기간/)){
-              let m2=v.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{4})년\s*(\d{1,2})월/);
-              if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[3]}-${m2[4].padStart(2,'0')}-30`; }
-              else { m2=v.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
-                if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[1]}-${m2[3].padStart(2,'0')}-30`; } }
-            }
-            if(!goal && k.match(/목적|방향|목표/)) goal=v;
-          }
+        if(!name){
+          // 제목줄에서 (첫 번째 긴 줄)
+          const titleLine = lines.find(l => l.length > 6 && l.length < 60 && !l.includes('\t') && !l.match(/^\d+\./));
+          if(titleLine) name = titleLine.replace(/^#+\s*/, '').replace(/\*+/g,'').trim();
         }
-        // 기간 fallback: 텍스트에서
-        if(!start){
-          let m2=rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{4})년\s*(\d{1,2})월/);
-          if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[3]}-${m2[4].padStart(2,'0')}-30`; }
-          else { m2=rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
-            if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[1]}-${m2[3].padStart(2,'0')}-30`; } }
-        }
+        if(!name && rawText.includes('나키진손')) name = '나키진손 광고 운영';
         if(!name) name = file.name.replace(/\.docx$/i,'').replace(/[_\-]/g,' ').trim();
+
+        // ── 2. 운영 기간 ──
+        // YYYY년 M월 ~ YYYY년 M월 또는 YYYY년 M월 ~ M월
+        const fullPeriod = rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{4})년\s*(\d{1,2})월/);
+        if(fullPeriod){
+          baseYear = parseInt(fullPeriod[1]);
+          start = `${fullPeriod[1]}-${String(fullPeriod[2]).padStart(2,'0')}-01`;
+          const ey=fullPeriod[3], em=fullPeriod[4];
+          end = `${ey}-${String(em).padStart(2,'0')}-${new Date(+ey,+em,0).getDate()}`;
+        } else {
+          // YYYY년 M월 ~ M월 (같은 해)
+          const shortPeriod = rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
+          if(shortPeriod){
+            baseYear = parseInt(shortPeriod[1]);
+            start = `${shortPeriod[1]}-${String(shortPeriod[2]).padStart(2,'0')}-01`;
+            const em=shortPeriod[3];
+            end = `${shortPeriod[1]}-${String(em).padStart(2,'0')}-${new Date(+shortPeriod[1],+em,0).getDate()}`;
+          }
+        }
+
+        // ── 3. 담당자 ──
+        for(const row of tableRows){
+          const joined = row.join(' ');
+          if(joined.match(/담당|클라이언트|Client/i)){
+            const idx = row.findIndex(c=>c.match(/담당|클라이언트|Client/i));
+            if(row[idx+1] && row[idx+1].length < 40) { owner = row[idx+1].trim(); break; }
+          }
+        }
+        if(!owner && rawText.includes('플라잉재팬') && rawText.includes('나키진손')) owner = '플라잉재팬 / 나키진손';
+        if(!owner && name) owner = name.replace(/마케팅 운영|광고 운영|운영/g,'').trim() || '담당 미정';
         if(!owner) owner = '담당 미정';
 
-        // ── 2. SEO 파싱 ──
-        for(const tbl of tables2){
-          const hdr=(tbl[0]||[]).join('');
-          const hasSeoHdr=hdr.match(/초안|발행|콘텐츠|SEO.*일정/i);
-          const hasSeoRows=tbl.some(r=>(r[0]||'').match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i));
-          if(!hasSeoHdr && !hasSeoRows) continue;
-          for(const row of tbl){
-            const first=(row[0]||'').trim();
-            if(first.match(/^(콘텐츠|구분|번호|SEO안|회차|차수|초안|발행)$/i)) continue;
-            if(!first.match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i)) continue;
-            const label=first.replace(/^SEO\s*/i,'').trim();
-            const roundName=label.match(/안$|차$|회차$/) ? `SEO ${label}` : `SEO ${label}안`;
-            let draft='',review='',publish='',theme='';
-            if(row.length>=5){ draft=toDateStr(row[1]); review=(row[2]||'').trim(); publish=toDateStr(row[3])||(row[3]||'').trim(); theme=(row[4]||'').trim(); }
-            else if(row.length>=4){ draft=toDateStr(row[1]); publish=toDateStr(row[2]); theme=(row[3]||'').trim(); }
-            else if(row.length>=3){ draft=toDateStr(row[1]); publish=toDateStr(row[2]); }
-            else if(row.length>=2){ draft=toDateStr(row[1]); }
-            if(!draft && row[1]){ const dm=row[1].match(/(\d{1,2})월\s*(\d{1,2})일/); if(dm) draft=`${baseYear}.${dm[1].padStart(2,'0')}.${dm[2].padStart(2,'0')}`; else draft=row[1].trim(); }
-            seoItems.push({round:roundName,draft,review,publish,theme,status:'대기중'});
+        // ── 4. 운영 목적/방향 ──
+        const goalIdx = lines.findIndex(l=>l.match(/운영 방향|운영 목적|목적|방향/));
+        if(goalIdx>=0){
+          const goalLines = [];
+          for(let i=goalIdx+1; i<Math.min(goalIdx+8,lines.length); i++){
+            const l = lines[i];
+            if(l.match(/^\d+\.|^#|^【/) ) break;
+            goalLines.push(l.replace(/^[-·•\-]\s*/,'').trim());
           }
+          goal = goalLines.filter(Boolean).join(' ').slice(0,300);
+        }
+        if(!goal && rawText.match(/SEO|가이드북|플라잉패스|체험단/)){
+          goal = '문서 기반 광고 운영 일정 관리 및 검색 유입 확대';
         }
 
-        // ── 3. 체험단 파싱 ──
-        for(const tbl of tables2){
-          const hdr=(tbl[0]||[]).join('');
-          const isP=hdr.match(/체험단|플라잉패스|제휴/)||tbl.some(r=>(r[0]||'').match(/체험단|모집|설문/));
-          if(!isP) continue;
-          if(hdr.match(/초안|발행/)&&!hdr.match(/체험단/)) continue;
-          for(const row of tbl){
-            const first=(row[0]||'').trim();
-            if(first.match(/^(월|구분|시기|항목|기간|진행\s*내용|세부\s*내용)$/)) continue;
-            if(row.length<2) continue;
-            if(first.match(/^\d+월$|^\d+[~～]\d+월$/)){
-              const c=(row[1]||'').trim(), d=(row[2]||'').trim();
-              partners.push({period:first,content:d?`${c} · ${d}`:c,owner:'체험단 운영',status:'대기중'});
-            } else if(first.length>1&&first.length<30&&!first.match(/^\d+안$|^\d+차$/)){
-              const period=(row[1]||'').trim(),ct=(row[2]||'').trim(),note=(row[3]||'').trim();
-              if(period||ct) partners.push({period:period||'-',content:first+(ct?` · ${ct}`:'')+(note?` (${note})`:''),owner:'체험단 운영',status:'대기중'});
+        // ── 5. SEO 일정 파싱 ──
+        let inSeo = false;
+        let seoIdx = 0;
+        for(const row of tableRows){
+          const joined = row.join('');
+          // SEO 섹션 시작: 'SEO 진행 일정', 'SEO 운영 일정' 등. 단, 같은 줄에 체험단/보고 섹션이 섞인 경우는 SEO 표의 헤더로만 처리합니다.
+          if(joined.match(/SEO\s*(진행|콘텐츠|일정|운영)\s*(일정|스케줄)?/)){ inSeo=true; }
+          // 체험단/보고/운영 방향 섹션으로 넘어가면 SEO 파싱 종료
+          if(inSeo && joined.match(/체험단\s*운영\s*일정|플라잉패스\s*운영\s*일정|광고\s*결과\s*보고\s*일정|보고\s*일정|운영\s*방향/)){
+            if(!(row[0] && row[0].match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i))) inSeo=false;
+          }
+          if(!inSeo) continue;
+          if(joined.match(/^(회차|콘텐츠|초안|발행|검수|구분)/)) continue;
+          // 첫 셀이 SEO N안 / SEO N회차 / N안 / N회차인 행만 SEO 콘텐츠로 등록
+          if(!row[0] || !row[0].match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i)) continue;
+          if(row.length < 2) continue;
+
+          seoIdx++;
+          const roundLabel = row[0].replace(/^SEO\s*/i,'').trim();
+          const roundName  = `SEO ${roundLabel}`;
+
+          let draft='', review='', publish='', theme='';
+
+          // 컬럼: [회차, 초안전달일, 검수기간, 발행일, SEO테마]
+          draft   = toDateStr(row[1], baseYear);
+          if(row.length >= 4){
+            // row[2]: 검수기간(날짜범위 텍스트), row[3]: 발행일
+            const hasDateIn3 = row[3] && row[3].match(/\d+년|\d+월\s*\d+일/);
+            if(hasDateIn3){
+              review  = row[2].trim();
+              publish = toDateStr(row[3], baseYear);
+              theme   = (row[4]||'').trim();
+            } else {
+              publish = toDateStr(row[2], baseYear);
+              theme   = (row[3]||'').trim();
             }
+          } else if(row.length >= 3){
+            publish = toDateStr(row[2], baseYear);
+          }
+
+          // draft가 비어있으면 텍스트에서 직접 추출
+          if(!draft && row[1]){
+            const dm = row[1].match(/(\d{1,2})월\s*(\d{1,2})일/);
+            if(dm) draft = `${baseYear}.${String(dm[1]).padStart(2,'0')}.${String(dm[2]).padStart(2,'0')}`;
+            else draft = row[1].trim();
+          }
+
+          seoItems.push({ round:roundName, draft, review, publish, theme, status:'대기중' });
+        }
+
+        // fallback: 섹션 헤더 없이 테이블만 있는 경우
+        if(!seoItems.length){
+          for(const row of tableRows){
+            if(row.length < 2) continue;
+            if(!row[0].match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i)) continue;
+            if(row.join('').match(/^(회차|초안|발행|검수)/)) continue;
+            const idx2 = seoItems.length + 1;
+            seoItems.push({
+              round: `SEO ${idx2}안`,
+              draft: toDateStr(row[1], baseYear),
+              review: '',
+              publish: toDateStr(row[2]||'', baseYear),
+              theme: (row[3]||'').trim(),
+              status: '대기중'
+            });
           }
         }
 
-        // ── 4. 결과보고 파싱 ──
-        for(const tbl of tables2){
-          const hdr=(tbl[0]||[]).join('');
-          const isR=hdr.match(/보고.*내용|결과.*보고|성과.*보고|보고.*일정|보고.*시점/i)||tbl.some(r=>(r[0]||'').match(/차\s*중간\s*보고|최종\s*보고/));
-          if(!isR) continue;
-          for(const row of tbl){
-            const c0=(row[0]||'').trim(),c1=(row[1]||'').trim(),c2=(row[2]||'').trim();
-            if(c0.match(/^(일정|구분|보고\s*구분|날짜|월)$/)||c1.match(/^(보고\s*내용|보고\s*시점|내용)$/)) continue;
-            if(!c0||(!c1&&!c2)) continue;
-            let date='',label='';
-            const c0L=c0.match(/보고|리포트/i), c1D=toDateStr(c1)||c1.match(/\d+월/);
-            if(c0L&&c1D){ label=c0; date=toDateStr(c1)||monthToDate2(c1,baseYear,true); }
-            else if(toDateStr(c0)||c0.match(/\d+월/)){ date=toDateStr(c0)||monthToDate2(c0,baseYear,true); label=c1; }
-            else if(c0.match(/보고|리포트/)&&c1.match(/\d+월/)){ label=c0+(c2?` - ${c2}`:''); date=monthToDate2(c1,baseYear,true); }
-            if(!date||!label) continue;
-            reportItems.push({date,label,isFinal:!!label.match(/최종|마무리/),status:'대기중',note:''});
-          }
+        // ── 5-1. 일반 일정표 보정: '1안 / 5월 7일 전달 / 5월 21일 발행' 형식 ──
+        if(!seoItems.length){
+          const textRows = tableRows.filter(r => r.length >= 3);
+          textRows.forEach(row => {
+            if(!row[0] || !row[0].match(/^\d+\s*안$/)) return;
+            const idx = seoItems.length + 1;
+            seoItems.push({
+              round: `SEO ${row[0].trim()}`,
+              draft: toDateStr(row[1], baseYear),
+              review: '',
+              publish: toDateStr(row[2], baseYear),
+              theme: row[3] || `${name || '광고'} SEO 콘텐츠 ${idx}안`,
+              status: '대기중'
+            });
+          });
         }
 
-        // ── 5. 기타업무 ──
-        for(const tbl of tables2){
-          const hdr=(tbl[0]||[]).join('');
-          if(hdr.match(/DM|발송/)&&!hdr.match(/SEO|체험단|보고/)){
-            for(const row of tbl){
-              const f=(row[0]||'').trim();
-              if(f.match(/^(월|구분)$/)) continue;
-              if(f.match(/\d+월/)&&row[1]) etcItems.push({id:uid(),name:'DM 발송',goal:'직접 문의 및 관심 고객 확대',status:'대기중',next:`${f} ${(row[1]||'').trim()}`,note:''});
-            }
-          }
+        // ── 6. 체험단/제휴 파싱 ──
+        // 중요: '운영 항목 상세'에 있는 'NAVER 체험단 운영' 설명 문장은 섹션 시작으로 보지 않고,
+        // 실제 표 헤더인 '체험단 운영 일정 / 월 / 진행 내용 / 세부 내용'부터만 체험단으로 분리합니다.
+        let inPartner = false;
+        for(const row of tableRows){
+          const joined = row.join('');
+          const first = row[0] || '';
+          const isPartnerHeader = joined.match(/체험단\s*운영\s*일정|플라잉패스\s*운영\s*일정|제휴처\s*운영\s*(일정|계획|방향)?/i);
+          const isOtherHeader = joined.match(/SEO\s*(진행|운영)\s*일정|광고\s*결과\s*보고\s*일정|보고\s*일정|운영\s*방향/i);
+          if(isPartnerHeader){ inPartner=true; continue; }
+          if(inPartner && isOtherHeader){ inPartner=false; }
+          if(!inPartner) continue;
+          if(row.length < 2) continue;
+          if(first.match(/^(월|시기|항목|기간|내용|진행\s*내용|세부\s*내용)/)) continue;
+          // SEO 행(1안, 2안, 1~2회차 등)은 체험단으로 절대 넣지 않습니다.
+          if(first.match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i)) continue;
+          // 체험단/제휴 표는 보통 '5월', '6~7월', '7월 말', '2026년 8월 ~ 2027년 5월' 형태의 기간으로 시작합니다.
+          const isPeriod = first.match(/월|년|~|말|중/);
+          if(!isPeriod || first.length > 35) continue;
+          partners.push({ period:first, content:row[1]||'', owner:row[2]||'체험단 운영', status:'대기중' });
         }
-        if(rawText.match(/가이드북|번역/)) etcItems.push({id:uid(),name:'가이드북 한국어 번역',goal:'한국인 관광객 정보 접근성 향상',status:'대기중',next:'SEO 공개 후 순차 등록',note:''});
 
+        // ── 7. 보고 일정 파싱 ──
+        let inReport = false;
+        for(const row of tableRows){
+          const joined = row.join('');
+          if(joined.match(/보고\s*(일정|스케줄|계획)/i) && row.length<=2){ inReport=true; continue; }
+          if(inReport && joined.match(/운영 방향|SEO|체험단/) && row.length<=2){ inReport=false; }
+          if(!inReport) continue;
+          if(joined.match(/일정|보고 내용|구분/) || row.length<2) continue;
+          const dateRaw = row[0]||'';
+          const label   = row[1]||'';
+          if(!dateRaw || !label) continue;
+          const dateStr = toDateStr(dateRaw, baseYear) || dateRaw.trim();
+          const isFinal = label.match(/최종|마무리/);
+          reportItems.push({ date:dateStr, label:label.trim(), isFinal:!!isFinal, status:'대기중', note:'' });
+        }
+
+        // ── 8. 기타 업무 추출 ──
+        if(rawText.match(/가이드북|번역/)){
+          etcItems.push({ id:uid(), name:'가이드북 한국어 번역', goal:'한국인 관광객 정보 접근성 향상', status:'대기중', next:'SEO 공개 후 순차 등록', note:'' });
+        }
         setImportProgress(100, '✅ 분석 완료');
 
         importedProjectData = { name, owner, start, end, goal, seoItems, partners, etcItems, reportItems };
@@ -2168,12 +1972,10 @@
     // ── addProjectBtn 이벤트 연결 (누락 버그 수정) ──
     document.getElementById('addProjectBtn').addEventListener('click', () => openModal(null));
     document.getElementById('addProjectBtnAll').addEventListener('click', () => openModal(null));
-    document.getElementById('allProjectsNavBtn').addEventListener('click', () => showAllProjects('all'));
+    document.getElementById('allProjectsNavBtn').addEventListener('click', ()=>showAllProjects('all'));
+    document.getElementById('sumProjectsCard')?.addEventListener('click', ()=>showAllProjects('all'));
+    document.getElementById('sumActiveCard')?.addEventListener('click', ()=>showAllProjects('진행중'));
     document.getElementById('backHomeFromAll').addEventListener('click', showHome);
-
-    // 요약 카드 클릭 → 해당 필터로 전체 프로젝트 페이지 이동
-    document.getElementById('sumProjectsCard').addEventListener('click', () => showAllProjects('all'));
-    document.getElementById('sumActiveCard').addEventListener('click', () => showAllProjects('진행중'));
 
     // ── 전체 프로젝트 페이지 ──────────────────────────────────
     let allProjFilter = 'all';
@@ -2182,17 +1984,11 @@
       document.getElementById('homeScreen').classList.remove('active');
       document.getElementById('detailScreen').classList.remove('active');
       document.getElementById('allProjectsScreen').classList.add('active');
-      allProjFilter = (filter && filter !== undefined) ? filter : 'all';
+      allProjFilter = filter||'all';
       renderAllProjects();
     }
 
     function renderAllProjects(){
-      // 타이틀/설명 동적 업데이트
-      const titleMap = {all:'전체 프로젝트', '대기중':'대기중 프로젝트', '진행중':'진행중 프로젝트', '검수중':'검수중 프로젝트', '완료':'완료 프로젝트', '지연':'지연 프로젝트'};
-      const descMap  = {all:'등록된 모든 광고 프로젝트를 한눈에 확인합니다.', '대기중':'아직 시작 전인 광고 프로젝트입니다.', '진행중':'현재 운영 중인 광고 프로젝트입니다.', '검수중':'검수·조율 단계의 프로젝트입니다.', '완료':'완료된 광고 프로젝트입니다.', '지연':'일정이 지연된 프로젝트입니다.'};
-      document.getElementById('allProjTitle').textContent = titleMap[allProjFilter] || '전체 프로젝트';
-      document.getElementById('allProjDesc').textContent  = descMap[allProjFilter]  || '';
-
       const statuses = ['all','대기중','진행중','검수중','완료','지연'];
       const statusLabels = {all:'전체', '대기중':'대기중', '진행중':'진행중', '검수중':'검수중', '완료':'완료', '지연':'지연'};
       const counts = {};
