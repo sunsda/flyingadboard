@@ -1948,7 +1948,7 @@
       document.getElementById('importDropzone').style.display='none';
       setImportProgress(10, '📄 파일 읽는 중...');
       try {
-        const JSZip = window.JSZip;
+        const JSZip = window.JSZip || globalThis.JSZip;
         if(!JSZip) throw new Error('JSZip 라이브러리 로드 실패. 페이지를 새로고침해주세요.');
         const arrayBuffer = await file.arrayBuffer();
         const zip = await JSZip.loadAsync(arrayBuffer);
@@ -1956,235 +1956,168 @@
 
         setImportProgress(40, '📑 문서 텍스트 추출 중...');
 
-        // XML → 순수 텍스트 (행/셀 구분 보존)
-        const rawText = xmlText
-          .replace(/<w:br[^>]*\/>/g, '\n')
-          .replace(/<\/w:tr>/g, '\n')
-          .replace(/<\/w:tc>/g, '\t')
-          .replace(/<[^>]+>/g, '')
-          .replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&quot;/g,'"').replace(/&#xA;/g,'\n')
-          .replace(/[^\S\n\t]+/g,' ')
-          .replace(/\n{3,}/g,'\n\n')
-          .trim();
+        // DOM 파서로 테이블 구조 보존
+        const xmlDoc2 = new DOMParser().parseFromString(xmlText, 'application/xml');
+        const tables2 = [];
+        for(const tbl of xmlDoc2.getElementsByTagName('w:tbl')){
+          const rows2 = [];
+          for(const tr of tbl.getElementsByTagName('w:tr')){
+            const cells = Array.from(tr.getElementsByTagName('w:tc'))
+              .map(tc => Array.from(tc.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim());
+            if(cells.some(c=>c)) rows2.push(cells);
+          }
+          if(rows2.length) tables2.push(rows2);
+        }
+        const rawLines2 = [];
+        for(const p2 of xmlDoc2.getElementsByTagName('w:p')){
+          const t = Array.from(p2.getElementsByTagName('w:t')).map(n=>n.textContent).join('').trim();
+          if(t) rawLines2.push(t);
+        }
+        const rawText = rawLines2.join('\n');
 
         setImportProgress(70, '🔍 일정 데이터 파싱 중...');
 
-        const lines = rawText.split('\n').map(l=>l.trim()).filter(Boolean);
-        const tableRows = lines.map(r => r.split('\t').map(c=>c.trim()).filter(Boolean));
+        const lines = rawLines2;
+        // 기존 tableRows 호환용 (flatten)
+        const tableRows = tables2.flat();
 
-        // ── 유틸: 연도 없는 날짜에 기준 연도 보충 ──
-        // baseYear: 운영 시작 연도
-        let baseYear = new Date().getFullYear();
-
-        // 날짜 문자열 → YYYY.MM.DD
-        const toDateStr = (s, refYear) => {
-          if(!s) return '';
-          const y = refYear || baseYear;
-          // YYYY년 M월 D일
-          let m = s.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일/);
-          if(m) return `${m[1]}.${String(m[2]).padStart(2,'0')}.${String(m[3]).padStart(2,'0')}`;
-          // M월 D일 (연도 없음)
+        // ── 날짜 헬퍼 ──
+        const BY2 = new Date().getFullYear();
+        let baseYear = BY2;
+        const toDateStr = (raw, by) => {
+          if(!raw) return '';
+          by = by || baseYear;
+          const s = String(raw);
+          let m;
+          m = s.match(/(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일?/);
+          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`;
+          m = s.match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/);
+          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${m[3].padStart(2,'0')}`;
           m = s.match(/(\d{1,2})월\s*(\d{1,2})일/);
-          if(m) return `${y}.${String(m[1]).padStart(2,'0')}.${String(m[2]).padStart(2,'0')}`;
-          // YYYY.MM.DD 또는 YYYY-MM-DD
-          m = s.match(/(\d{4})[.\-](\d{1,2})[.\-](\d{1,2})/);
-          if(m) return `${m[1]}.${String(m[2]).padStart(2,'0')}.${String(m[3]).padStart(2,'0')}`;
+          if(m) return `${by}.${m[1].padStart(2,'0')}.${m[2].padStart(2,'0')}`;
+          return '';
+        };
+        const monthToDate2 = (raw, by, isEnd) => {
+          if(!raw) return '';
+          by = by || baseYear;
+          let m = String(raw).match(/(\d{4})년\s*(\d{1,2})월/);
+          if(m) return `${m[1]}.${m[2].padStart(2,'0')}.${isEnd?'30':'01'}`;
+          m = String(raw).match(/(\d{1,2})월/);
+          if(m) return `${by}.${m[1].padStart(2,'0')}.${isEnd?'30':'01'}`;
           return '';
         };
 
-        // ── 1. 프로젝트명 ──
+        // ── 1. 기본정보 ──
         let name = '', owner = '', start = '', end = '', goal = '';
         const seoItems = [], partners = [], etcItems = [], reportItems = [];
 
-        // 프로젝트명: 프로젝트명 행 또는 첫 번째 굵은 제목
-        for(const row of tableRows){
-          const joined = row.join(' ');
-          if(joined.includes('프로젝트명')){
-            const idx = row.findIndex(c=>c.includes('프로젝트명'));
-            if(row[idx+1]) { name = row[idx+1].trim(); break; }
+        // 제목: 첫 번째 긴 줄
+        for(const line of lines){
+          if(line.length > 4 && line.length < 100 && !line.match(/^(항목|내용|구분|운영|SEO|체험|보고|\d+\.)/)){
+            name = line.replace(/\*+/g,'').trim(); break;
           }
         }
-        if(!name){
-          // 제목줄에서 (첫 번째 긴 줄)
-          const titleLine = lines.find(l => l.length > 6 && l.length < 60 && !l.includes('\t') && !l.match(/^\d+\./));
-          if(titleLine) name = titleLine.replace(/^#+\s*/, '').replace(/\*+/g,'').trim();
+        // 2열 개요 테이블
+        for(const tbl of tables2){
+          if(!tbl.every(r=>r.length===2)) continue;
+          for(const row of tbl){
+            const k=row[0].replace(/[\s\*]/g,''), v=row[1].trim();
+            if(!v) continue;
+            if(!name && k.match(/프로젝트명|광고명|캠페인명/)) name=v;
+            if(!owner && k.match(/담당|클라이언트|발주|운영사/)) owner=v;
+            if(k.match(/진행기간|운영기간|기간/)){
+              let m2=v.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{4})년\s*(\d{1,2})월/);
+              if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[3]}-${m2[4].padStart(2,'0')}-30`; }
+              else { m2=v.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
+                if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[1]}-${m2[3].padStart(2,'0')}-30`; } }
+            }
+            if(!goal && k.match(/목적|방향|목표/)) goal=v;
+          }
         }
-        if(!name && rawText.includes('나키진손')) name = '나키진손 광고 운영';
+        // 기간 fallback: 텍스트에서
+        if(!start){
+          let m2=rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{4})년\s*(\d{1,2})월/);
+          if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[3]}-${m2[4].padStart(2,'0')}-30`; }
+          else { m2=rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
+            if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[1]}-${m2[3].padStart(2,'0')}-30`; } }
+        }
         if(!name) name = file.name.replace(/\.docx$/i,'').replace(/[_\-]/g,' ').trim();
-
-        // ── 2. 운영 기간 ──
-        // YYYY년 M월 ~ YYYY년 M월 또는 YYYY년 M월 ~ M월
-        const fullPeriod = rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{4})년\s*(\d{1,2})월/);
-        if(fullPeriod){
-          baseYear = parseInt(fullPeriod[1]);
-          start = `${fullPeriod[1]}-${String(fullPeriod[2]).padStart(2,'0')}-01`;
-          const ey=fullPeriod[3], em=fullPeriod[4];
-          end = `${ey}-${String(em).padStart(2,'0')}-${new Date(+ey,+em,0).getDate()}`;
-        } else {
-          // YYYY년 M월 ~ M월 (같은 해)
-          const shortPeriod = rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
-          if(shortPeriod){
-            baseYear = parseInt(shortPeriod[1]);
-            start = `${shortPeriod[1]}-${String(shortPeriod[2]).padStart(2,'0')}-01`;
-            const em=shortPeriod[3];
-            end = `${shortPeriod[1]}-${String(em).padStart(2,'0')}-${new Date(+shortPeriod[1],+em,0).getDate()}`;
-          }
-        }
-
-        // ── 3. 담당자 ──
-        for(const row of tableRows){
-          const joined = row.join(' ');
-          if(joined.match(/담당|클라이언트|Client/i)){
-            const idx = row.findIndex(c=>c.match(/담당|클라이언트|Client/i));
-            if(row[idx+1] && row[idx+1].length < 40) { owner = row[idx+1].trim(); break; }
-          }
-        }
-        if(!owner && rawText.includes('플라잉재팬') && rawText.includes('나키진손')) owner = '플라잉재팬 / 나키진손';
-        if(!owner && name) owner = name.replace(/마케팅 운영|광고 운영|운영/g,'').trim() || '담당 미정';
         if(!owner) owner = '담당 미정';
 
-        // ── 4. 운영 목적/방향 ──
-        const goalIdx = lines.findIndex(l=>l.match(/운영 방향|운영 목적|목적|방향/));
-        if(goalIdx>=0){
-          const goalLines = [];
-          for(let i=goalIdx+1; i<Math.min(goalIdx+8,lines.length); i++){
-            const l = lines[i];
-            if(l.match(/^\d+\.|^#|^【/) ) break;
-            goalLines.push(l.replace(/^[-·•\-]\s*/,'').trim());
+        // ── 2. SEO 파싱 ──
+        for(const tbl of tables2){
+          const hdr=(tbl[0]||[]).join('');
+          const hasSeoHdr=hdr.match(/초안|발행|콘텐츠|SEO.*일정/i);
+          const hasSeoRows=tbl.some(r=>(r[0]||'').match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i));
+          if(!hasSeoHdr && !hasSeoRows) continue;
+          for(const row of tbl){
+            const first=(row[0]||'').trim();
+            if(first.match(/^(콘텐츠|구분|번호|SEO안|회차|차수|초안|발행)$/i)) continue;
+            if(!first.match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i)) continue;
+            const label=first.replace(/^SEO\s*/i,'').trim();
+            const roundName=label.match(/안$|차$|회차$/) ? `SEO ${label}` : `SEO ${label}안`;
+            let draft='',review='',publish='',theme='';
+            if(row.length>=5){ draft=toDateStr(row[1]); review=(row[2]||'').trim(); publish=toDateStr(row[3])||(row[3]||'').trim(); theme=(row[4]||'').trim(); }
+            else if(row.length>=4){ draft=toDateStr(row[1]); publish=toDateStr(row[2]); theme=(row[3]||'').trim(); }
+            else if(row.length>=3){ draft=toDateStr(row[1]); publish=toDateStr(row[2]); }
+            else if(row.length>=2){ draft=toDateStr(row[1]); }
+            if(!draft && row[1]){ const dm=row[1].match(/(\d{1,2})월\s*(\d{1,2})일/); if(dm) draft=`${baseYear}.${dm[1].padStart(2,'0')}.${dm[2].padStart(2,'0')}`; else draft=row[1].trim(); }
+            seoItems.push({round:roundName,draft,review,publish,theme,status:'대기중'});
           }
-          goal = goalLines.filter(Boolean).join(' ').slice(0,300);
-        }
-        if(!goal && rawText.match(/SEO|가이드북|플라잉패스|체험단/)){
-          goal = '문서 기반 광고 운영 일정 관리 및 검색 유입 확대';
         }
 
-        // ── 5. SEO 일정 파싱 ──
-        let inSeo = false;
-        let seoIdx = 0;
-        for(const row of tableRows){
-          const joined = row.join('');
-          // SEO 섹션 시작: 'SEO 진행 일정', 'SEO 운영 일정' 등. 단, 같은 줄에 체험단/보고 섹션이 섞인 경우는 SEO 표의 헤더로만 처리합니다.
-          if(joined.match(/SEO\s*(진행|콘텐츠|일정|운영)\s*(일정|스케줄)?/)){ inSeo=true; }
-          // 체험단/보고/운영 방향 섹션으로 넘어가면 SEO 파싱 종료
-          if(inSeo && joined.match(/체험단\s*운영\s*일정|플라잉패스\s*운영\s*일정|광고\s*결과\s*보고\s*일정|보고\s*일정|운영\s*방향/)){
-            if(!(row[0] && row[0].match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i))) inSeo=false;
-          }
-          if(!inSeo) continue;
-          if(joined.match(/^(회차|콘텐츠|초안|발행|검수|구분)/)) continue;
-          // 첫 셀이 SEO N안 / SEO N회차 / N안 / N회차인 행만 SEO 콘텐츠로 등록
-          if(!row[0] || !row[0].match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i)) continue;
-          if(row.length < 2) continue;
-
-          seoIdx++;
-          const roundLabel = row[0].replace(/^SEO\s*/i,'').trim();
-          const roundName  = `SEO ${roundLabel}`;
-
-          let draft='', review='', publish='', theme='';
-
-          // 컬럼: [회차, 초안전달일, 검수기간, 발행일, SEO테마]
-          draft   = toDateStr(row[1], baseYear);
-          if(row.length >= 4){
-            // row[2]: 검수기간(날짜범위 텍스트), row[3]: 발행일
-            const hasDateIn3 = row[3] && row[3].match(/\d+년|\d+월\s*\d+일/);
-            if(hasDateIn3){
-              review  = row[2].trim();
-              publish = toDateStr(row[3], baseYear);
-              theme   = (row[4]||'').trim();
-            } else {
-              publish = toDateStr(row[2], baseYear);
-              theme   = (row[3]||'').trim();
+        // ── 3. 체험단 파싱 ──
+        for(const tbl of tables2){
+          const hdr=(tbl[0]||[]).join('');
+          const isP=hdr.match(/체험단|플라잉패스|제휴/)||tbl.some(r=>(r[0]||'').match(/체험단|모집|설문/));
+          if(!isP) continue;
+          if(hdr.match(/초안|발행/)&&!hdr.match(/체험단/)) continue;
+          for(const row of tbl){
+            const first=(row[0]||'').trim();
+            if(first.match(/^(월|구분|시기|항목|기간|진행\s*내용|세부\s*내용)$/)) continue;
+            if(row.length<2) continue;
+            if(first.match(/^\d+월$|^\d+[~～]\d+월$/)){
+              const c=(row[1]||'').trim(), d=(row[2]||'').trim();
+              partners.push({period:first,content:d?`${c} · ${d}`:c,owner:'체험단 운영',status:'대기중'});
+            } else if(first.length>1&&first.length<30&&!first.match(/^\d+안$|^\d+차$/)){
+              const period=(row[1]||'').trim(),ct=(row[2]||'').trim(),note=(row[3]||'').trim();
+              if(period||ct) partners.push({period:period||'-',content:first+(ct?` · ${ct}`:'')+(note?` (${note})`:''),owner:'체험단 운영',status:'대기중'});
             }
-          } else if(row.length >= 3){
-            publish = toDateStr(row[2], baseYear);
-          }
-
-          // draft가 비어있으면 텍스트에서 직접 추출
-          if(!draft && row[1]){
-            const dm = row[1].match(/(\d{1,2})월\s*(\d{1,2})일/);
-            if(dm) draft = `${baseYear}.${String(dm[1]).padStart(2,'0')}.${String(dm[2]).padStart(2,'0')}`;
-            else draft = row[1].trim();
-          }
-
-          seoItems.push({ round:roundName, draft, review, publish, theme, status:'대기중' });
-        }
-
-        // fallback: 섹션 헤더 없이 테이블만 있는 경우
-        if(!seoItems.length){
-          for(const row of tableRows){
-            if(row.length < 2) continue;
-            if(!row[0].match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i)) continue;
-            if(row.join('').match(/^(회차|초안|발행|검수)/)) continue;
-            const idx2 = seoItems.length + 1;
-            seoItems.push({
-              round: `SEO ${idx2}안`,
-              draft: toDateStr(row[1], baseYear),
-              review: '',
-              publish: toDateStr(row[2]||'', baseYear),
-              theme: (row[3]||'').trim(),
-              status: '대기중'
-            });
           }
         }
 
-        // ── 5-1. 일반 일정표 보정: '1안 / 5월 7일 전달 / 5월 21일 발행' 형식 ──
-        if(!seoItems.length){
-          const textRows = tableRows.filter(r => r.length >= 3);
-          textRows.forEach(row => {
-            if(!row[0] || !row[0].match(/^\d+\s*안$/)) return;
-            const idx = seoItems.length + 1;
-            seoItems.push({
-              round: `SEO ${row[0].trim()}`,
-              draft: toDateStr(row[1], baseYear),
-              review: '',
-              publish: toDateStr(row[2], baseYear),
-              theme: row[3] || `${name || '광고'} SEO 콘텐츠 ${idx}안`,
-              status: '대기중'
-            });
-          });
+        // ── 4. 결과보고 파싱 ──
+        for(const tbl of tables2){
+          const hdr=(tbl[0]||[]).join('');
+          const isR=hdr.match(/보고.*내용|결과.*보고|성과.*보고|보고.*일정|보고.*시점/i)||tbl.some(r=>(r[0]||'').match(/차\s*중간\s*보고|최종\s*보고/));
+          if(!isR) continue;
+          for(const row of tbl){
+            const c0=(row[0]||'').trim(),c1=(row[1]||'').trim(),c2=(row[2]||'').trim();
+            if(c0.match(/^(일정|구분|보고\s*구분|날짜|월)$/)||c1.match(/^(보고\s*내용|보고\s*시점|내용)$/)) continue;
+            if(!c0||(!c1&&!c2)) continue;
+            let date='',label='';
+            const c0L=c0.match(/보고|리포트/i), c1D=toDateStr(c1)||c1.match(/\d+월/);
+            if(c0L&&c1D){ label=c0; date=toDateStr(c1)||monthToDate2(c1,baseYear,true); }
+            else if(toDateStr(c0)||c0.match(/\d+월/)){ date=toDateStr(c0)||monthToDate2(c0,baseYear,true); label=c1; }
+            else if(c0.match(/보고|리포트/)&&c1.match(/\d+월/)){ label=c0+(c2?` - ${c2}`:''); date=monthToDate2(c1,baseYear,true); }
+            if(!date||!label) continue;
+            reportItems.push({date,label,isFinal:!!label.match(/최종|마무리/),status:'대기중',note:''});
+          }
         }
 
-        // ── 6. 체험단/제휴 파싱 ──
-        // 중요: '운영 항목 상세'에 있는 'NAVER 체험단 운영' 설명 문장은 섹션 시작으로 보지 않고,
-        // 실제 표 헤더인 '체험단 운영 일정 / 월 / 진행 내용 / 세부 내용'부터만 체험단으로 분리합니다.
-        let inPartner = false;
-        for(const row of tableRows){
-          const joined = row.join('');
-          const first = row[0] || '';
-          const isPartnerHeader = joined.match(/체험단\s*운영\s*일정|플라잉패스\s*운영\s*일정|제휴처\s*운영\s*(일정|계획|방향)?/i);
-          const isOtherHeader = joined.match(/SEO\s*(진행|운영)\s*일정|광고\s*결과\s*보고\s*일정|보고\s*일정|운영\s*방향/i);
-          if(isPartnerHeader){ inPartner=true; continue; }
-          if(inPartner && isOtherHeader){ inPartner=false; }
-          if(!inPartner) continue;
-          if(row.length < 2) continue;
-          if(first.match(/^(월|시기|항목|기간|내용|진행\s*내용|세부\s*내용)/)) continue;
-          // SEO 행(1안, 2안, 1~2회차 등)은 체험단으로 절대 넣지 않습니다.
-          if(first.match(/^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|회차)/i)) continue;
-          // 체험단/제휴 표는 보통 '5월', '6~7월', '7월 말', '2026년 8월 ~ 2027년 5월' 형태의 기간으로 시작합니다.
-          const isPeriod = first.match(/월|년|~|말|중/);
-          if(!isPeriod || first.length > 35) continue;
-          partners.push({ period:first, content:row[1]||'', owner:row[2]||'체험단 운영', status:'대기중' });
+        // ── 5. 기타업무 ──
+        for(const tbl of tables2){
+          const hdr=(tbl[0]||[]).join('');
+          if(hdr.match(/DM|발송/)&&!hdr.match(/SEO|체험단|보고/)){
+            for(const row of tbl){
+              const f=(row[0]||'').trim();
+              if(f.match(/^(월|구분)$/)) continue;
+              if(f.match(/\d+월/)&&row[1]) etcItems.push({id:uid(),name:'DM 발송',goal:'직접 문의 및 관심 고객 확대',status:'대기중',next:`${f} ${(row[1]||'').trim()}`,note:''});
+            }
+          }
         }
+        if(rawText.match(/가이드북|번역/)) etcItems.push({id:uid(),name:'가이드북 한국어 번역',goal:'한국인 관광객 정보 접근성 향상',status:'대기중',next:'SEO 공개 후 순차 등록',note:''});
 
-        // ── 7. 보고 일정 파싱 ──
-        let inReport = false;
-        for(const row of tableRows){
-          const joined = row.join('');
-          if(joined.match(/보고\s*(일정|스케줄|계획)/i) && row.length<=2){ inReport=true; continue; }
-          if(inReport && joined.match(/운영 방향|SEO|체험단/) && row.length<=2){ inReport=false; }
-          if(!inReport) continue;
-          if(joined.match(/일정|보고 내용|구분/) || row.length<2) continue;
-          const dateRaw = row[0]||'';
-          const label   = row[1]||'';
-          if(!dateRaw || !label) continue;
-          const dateStr = toDateStr(dateRaw, baseYear) || dateRaw.trim();
-          const isFinal = label.match(/최종|마무리/);
-          reportItems.push({ date:dateStr, label:label.trim(), isFinal:!!isFinal, status:'대기중', note:'' });
-        }
-
-        // ── 8. 기타 업무 추출 ──
-        if(rawText.match(/가이드북|번역/)){
-          etcItems.push({ id:uid(), name:'가이드북 한국어 번역', goal:'한국인 관광객 정보 접근성 향상', status:'대기중', next:'SEO 공개 후 순차 등록', note:'' });
-        }
         setImportProgress(100, '✅ 분석 완료');
 
         importedProjectData = { name, owner, start, end, goal, seoItems, partners, etcItems, reportItems };
