@@ -1785,9 +1785,12 @@
         // ── 3. 체험단 파싱 ──
         for(const tbl of tables){
           const hdr=(tbl[0]||[]).join('');
-          const isP=hdr.match(/체험단|플라잉패스|제휴/)||tbl.some(r=>(r[0]||'').match(/체험단|모집|설문/));
+          const isP=hdr.match(/체험단|플라잉패스|제휴/)
+            || tbl.some(r=>(r[0]||'').match(/체험단|모집|설문/))
+            || tbl.some(r=>r.some(c=>(c||'').match(/체험단/)))
+            || (hdr.match(/월/)&&hdr.match(/진행\s*내용/));
           if(!isP) continue;
-          if(hdr.match(/초안|발행/)&&!hdr.match(/체험단/)) continue;
+          if(hdr.match(/초안|발행|운영\s*기간|주요\s*실행/)&&!hdr.match(/체험단/)) continue;
           for(const row of tbl){
             const first=(row[0]||'').trim();
             if(first.match(/^(월|구분|시기|항목|기간|진행\s*내용|세부\s*내용)$/)) continue;
@@ -1838,7 +1841,7 @@
           if(!isR) continue;
           for(const row of tbl){
             const c0=(row[0]||'').trim(),c1=(row[1]||'').trim(),c2=(row[2]||'').trim();
-            if(c0.match(/^(일정|구분|보고\s*구분|날짜|월)$/)||c1.match(/^(보고\s*내용|보고\s*시점|내용)$/)) continue;
+            if(c0.match(/^(구분|보고\s*구분|날짜)$/)||c1.match(/^(보고\s*내용|보고\s*시점|내용|주요\s*내용)$/)) continue;
             if(!c0) continue;
             let date='',label='';
             // 패턴A: 보고구분|보고시점(N월)|보고내용 — 3열
