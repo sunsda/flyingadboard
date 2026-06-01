@@ -1987,6 +1987,9 @@
           // YYYY.MM ~ YYYY.M 형식 (예: 2025.10 ~ 2026.2)
           if(!start){ m2=rawText.match(/(\d{4})\.(\d{1,2})\s*[~～]\s*(\d{4})\.(\d{1,2})/);
             if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[3]}-${m2[4].padStart(2,'0')}-30`; } }
+          // (YYYY년 M월 ~ M월) 형식
+          if(!start){ m2=rawText.match(/[（(](\d{4})년\s*(\d{1,2})월\s*[~～]\s*(\d{1,2})월[)）]/);
+            if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[1]}-${m2[3].padStart(2,'0')}-30`; } }
         }
         if(!name) name=file.name.replace(/\.docx$/i,'').replace(/[_\-]/g,' ').trim();
         if(!owner) owner='담당 미정';
@@ -2086,6 +2089,49 @@
               }
             }
           }
+        }
+
+        // ── 2-1. 기간|주요 내용|담당|비고 혼합 테이블 파싱 (TAKOYAKILAB 스타일) ──
+        // 여러 월별 테이블에서 SEO/체험단 분리
+        for(const tbl of tables){
+          const hdr=(tbl[0]||[]).join('');
+          if(!hdr.match(/기간/) || !hdr.match(/주요.*내용|담당/)) continue;
+          // 날짜|주요일정|담당 형식과 동일하므로 SEO 일반 파싱에서 제외됨 → 여기서 처리
+          const seoMap = {}; // round → {draft, publish}
+          for(const row of tbl){
+            const period=(row[0]||'').trim(), content=(row[1]||'').trim();
+            if(period.match(/^(기간|날짜)$/)) continue;
+            if(!content) continue;
+            // SEO 초안 전달
+            const draftM = content.match(/SEO.*?(\d+)차.*?(초안|전달)/i);
+            if(draftM){
+              const round = `SEO ${draftM[1]}차`;
+              if(!seoMap[round]) seoMap[round] = {round, draft:'', review:'', publish:'', theme:'', status:'대기중'};
+              seoMap[round].draft = parseMD(period.replace(/[（(][^)）]*[)）]/g,'').trim(), baseYear)
+                || extractDate(period) || period;
+            }
+            // SEO 발행
+            const pubM = content.match(/SEO.*?(\d+)차.*?(발행|공개)/i);
+            if(pubM){
+              const round = `SEO ${pubM[1]}차`;
+              if(!seoMap[round]) seoMap[round] = {round, draft:'', review:'', publish:'', theme:'', status:'대기중'};
+              seoMap[round].publish = parseMD(period.replace(/[（(][^)）]*[)）]/g,'').trim(), baseYear)
+                || extractDate(period) || period;
+            }
+            // 체험단 행
+            if(content.match(/체험단/) && !content.match(/SEO/)){
+              const monM = period.match(/(\d{1,2})월|(\d{1,2})\//);
+              const monLabel = monM ? (monM[1]||monM[2])+'월' : period;
+              const existing = partners.find(p=>p._mixKey===monLabel);
+              if(!existing){
+                partners.push({period:monLabel||period, content:content, owner:'체험단 운영', status:'대기중', _mixKey:monLabel});
+              }
+            }
+          }
+          // SEO 결과 병합 (기존 seoItems에 없는 것만)
+          Object.values(seoMap).forEach(s => {
+            if(!seoItems.find(x=>x.round===s.round)) seoItems.push(s);
+          });
         }
 
         // ── 3-1. 월별 운영표에서 SEO fallback 파싱
