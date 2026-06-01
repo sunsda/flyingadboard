@@ -397,7 +397,7 @@
     function bootMainIfRecentSession(){
       if(hasValidSession()){
         showApp();
-        try { load(); renderTrash(); render(); } catch(e) { console.warn('초기 렌더 오류:', e); }
+        try { load(); routeAfterLoad(); } catch(e) { console.warn('초기 렌더 오류:', e); }
       }
     }
 
@@ -422,8 +422,7 @@
           rememberSession(Date.now());
           showApp();
           load();
-          renderTrash();
-          render();
+          routeAfterLoad();
         }
       } catch(e){
         errEl.textContent = '로그인 중 오류가 발생했습니다: ' + e.message;
@@ -436,8 +435,7 @@
       clearSession();
       showApp();
       load();
-      renderTrash();
-      render();
+      routeAfterLoad();
     });
 
     // 새로고침 시에는 최근 24시간 세션이 있으면 먼저 메인 화면을 바로 보여줍니다.
@@ -460,8 +458,7 @@
           if(!getLoginAt()) rememberSession(loginAt);
           showApp();
           load();
-          renderTrash();
-          render();
+          routeAfterLoad();
         } else {
           clearSession();
           showLogin();
@@ -507,6 +504,39 @@
     let selectedProjectId = null;
     let currentTab = 'overview';
     let editingProjectId = null;
+
+    function getHashParams(){
+      const hash = String(location.hash || '').replace(/^#/, '');
+      const params = new URLSearchParams(hash);
+      return params;
+    }
+    function getRouteProjectId(){ return getHashParams().get('project') || ''; }
+    function getRouteTab(){ return getHashParams().get('tab') || 'overview'; }
+    function setHomeRoute(){
+      if(location.hash !== '#home') history.replaceState(null, '', location.pathname + location.search + '#home');
+    }
+    function setProjectRoute(projectId, tab){
+      if(!projectId) return;
+      const next = '#project=' + encodeURIComponent(projectId) + '&tab=' + encodeURIComponent(tab || currentTab || 'overview');
+      if(location.hash !== next) history.replaceState(null, '', location.pathname + location.search + next);
+    }
+    function routeAfterLoad(){
+      renderTrash();
+      const routeId = getRouteProjectId();
+      const routeTab = getRouteTab();
+      const found = routeId ? projects.find(p => p.id === routeId) : null;
+      if(found){
+        selectedProjectId = found.id;
+        currentTab = routeTab || 'overview';
+        document.getElementById('homeScreen').classList.remove('active');
+        document.getElementById('allProjectsScreen').classList.remove('active');
+        document.getElementById('detailScreen').classList.add('active');
+        const hb = document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='';
+        renderSummary(); renderHome(); renderMainCalendar(); renderDetail();
+      } else {
+        showHome(false);
+      }
+    }
 
     const tabs = [
       ['overview','개요'],['tasks','운영 태스크'],['content','콘텐츠'],['partners','체험단'],['etc','기타 업무'],['report','결과보고']
@@ -658,9 +688,11 @@
           if(data && Array.isArray(data) && data.length > 0){
             projects = data.map(d => makeProject(d));
             localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-            if(!selectedProjectId || !projects.some(p => p.id === selectedProjectId)) selectedProjectId = projects[0]?.id || null;
-            renderSummary(); renderHome(); renderMainCalendar();
-            if(selectedProjectId && document.getElementById('detailScreen').classList.contains('active')) renderDetail();
+            const rid = getRouteProjectId();
+            if(rid && projects.some(p => p.id === rid)) selectedProjectId = rid;
+            if(!selectedProjectId || !projects.some(p => p.id === selectedProjectId)) { const rid = getRouteProjectId(); selectedProjectId = (rid && projects.some(p => p.id === rid)) ? rid : (projects[0]?.id || null); }
+            if(rid && selectedProjectId === rid){ routeAfterLoad(); }
+            else { renderSummary(); renderHome(); renderMainCalendar(); if(selectedProjectId && document.getElementById('detailScreen').classList.contains('active')) renderDetail(); }
           }
           // 중요: Firebase가 비어 있어도 자동으로 localStorage 데이터를 업로드하지 않습니다.
           // 사용자가 저장/수정 액션을 했을 때만 save()를 통해 반영합니다.
@@ -861,31 +893,39 @@
       // 이벤트 위임 방식으로 교체 — 재렌더링 후에도 동작 보장
     }
 
-    function showHome(){ 
+    function showHome(updateHash=true){ 
+      if(updateHash) setHomeRoute();
       document.getElementById('homeScreen').classList.add('active'); 
       document.getElementById('detailScreen').classList.remove('active'); 
       document.getElementById('allProjectsScreen').classList.remove('active'); 
       const hb = document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='none';
       render(); 
     }
-    function showDetail(){ 
+    function showDetail(updateHash=true, tabName=null){ 
+      const p = getProject();
+      if(!p){ showHome(updateHash); return; }
+      selectedProjectId = p.id;
+      if(tabName) currentTab = tabName;
+      if(updateHash) setProjectRoute(selectedProjectId, currentTab || 'overview');
       document.getElementById('homeScreen').classList.remove('active'); 
       document.getElementById('detailScreen').classList.add('active'); 
       document.getElementById('allProjectsScreen').classList.remove('active'); 
       const hb = document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='';
-      currentTab='overview'; renderDetail(); 
+      if(!currentTab) currentTab='overview'; renderDetail(); 
     }
 
     function renderDetail(){
       const p = getProject(); if(!p){ showHome(); return; }
       selectedProjectId = p.id; const progress = taskProgress(p); const status = projectStatus(p); const n = nextItem(p); const done = p.seoItems.filter(i=>i.status==='완료').length;
-      document.getElementById('detailHead').innerHTML = `<div class="detail-top"><div class="detail-title"><h2>${escapeHtml(p.name)}</h2><p>${escapeHtml(p.owner)} · ${fmtDate(p.start)} ~ ${fmtDate(p.end)}</p></div><div class="actions"><button class="btn btn-secondary" id="editCurrentBtn" type="button">기본정보 수정</button><button class="btn btn-secondary" id="copyCurrentBtn" type="button">복사</button><button class="btn btn-danger" id="deleteCurrentBtn" type="button">삭제</button></div></div><div class="detail-metrics"><div class="metric" style="grid-column:span 2"><div class="label" style="margin-bottom:10px">상태</div><div style="display:flex;gap:6px;flex-wrap:wrap">${['대기중','진행중','검수중','완료','지연'].map(s=>`<button class="status-box-btn${s===status?' active':''}" data-pid="${p.id}" data-status="${s}" type="button" style="border:2px solid ${s===status?'transparent':'var(--line)'};border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${s===status?(s==='대기중'?'var(--purple)':(s==='진행중'?'var(--blue)':(s==='검수중'?'var(--yellow)':(s==='완료'?'var(--green)':'var(--red)')))):'#fff'};color:${s===status?'#fff':'var(--muted)'}">${s}</button>`).join('')}</div></div><div class="metric"><div class="label">완료율</div><strong>${progress}%</strong></div><div class="metric"><div class="label">다음 일정</div><strong>${escapeHtml(n?.draft || '-')}</strong></div><div class="metric"><div class="label">콘텐츠 완료</div><strong>${done}/${p.seoItems.length}</strong></div></div>`;
+      document.getElementById('detailHead').innerHTML = `<div class="detail-top"><div class="detail-title"><h2>${escapeHtml(p.name)}</h2><p>${escapeHtml(p.owner)} · ${fmtDate(p.start)} ~ ${fmtDate(p.end)}</p></div><div class="actions"><button class="btn btn-secondary" id="editCurrentBtn" type="button">기본정보 수정</button><button class="btn btn-secondary" id="copyLinkBtn" type="button">링크 복사</button><button class="btn btn-secondary" id="copyCurrentBtn" type="button">복사</button><button class="btn btn-danger" id="deleteCurrentBtn" type="button">삭제</button></div></div><div class="detail-metrics"><div class="metric" style="grid-column:span 2"><div class="label" style="margin-bottom:10px">상태</div><div style="display:flex;gap:6px;flex-wrap:wrap">${['대기중','진행중','검수중','완료','지연'].map(s=>`<button class="status-box-btn${s===status?' active':''}" data-pid="${p.id}" data-status="${s}" type="button" style="border:2px solid ${s===status?'transparent':'var(--line)'};border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${s===status?(s==='대기중'?'var(--purple)':(s==='진행중'?'var(--blue)':(s==='검수중'?'var(--yellow)':(s==='완료'?'var(--green)':'var(--red)')))):'#fff'};color:${s===status?'#fff':'var(--muted)'}">${s}</button>`).join('')}</div></div><div class="metric"><div class="label">완료율</div><strong>${progress}%</strong></div><div class="metric"><div class="label">다음 일정</div><strong>${escapeHtml(n?.draft || '-')}</strong></div><div class="metric"><div class="label">콘텐츠 완료</div><strong>${done}/${p.seoItems.length}</strong></div></div>`;
       document.getElementById('tabs').innerHTML = tabs.map(t=>`<button class="tab ${currentTab===t[0]?'active':''}" data-tab="${t[0]}" type="button">${t[1]}</button>`).join('');
-      document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{currentTab=btn.dataset.tab; renderDetail();}));
+      document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{currentTab=btn.dataset.tab; setProjectRoute(selectedProjectId,currentTab); renderDetail();}));
       const editBtn = document.getElementById('editCurrentBtn');
+      const linkBtn = document.getElementById('copyLinkBtn');
       const copyBtn2 = document.getElementById('copyCurrentBtn');
       const delBtn = document.getElementById('deleteCurrentBtn');
       if(editBtn) editBtn.onclick = ()=>openModal(p.id);
+      if(linkBtn) linkBtn.onclick = async ()=>{ const url = location.origin + location.pathname + '#project=' + encodeURIComponent(p.id) + '&tab=' + encodeURIComponent(currentTab || 'overview'); try{ await navigator.clipboard.writeText(url); }catch(e){} linkBtn.textContent='복사됨'; setTimeout(()=>{ if(linkBtn) linkBtn.textContent='링크 복사'; },1200); };
       if(copyBtn2) copyBtn2.onclick = ()=>copyProject(p.id);
       if(delBtn) delBtn.onclick = ()=>deleteProject(p.id);
       renderTab(p);
@@ -2501,6 +2541,7 @@
     let allProjFilter = 'all';
 
     function showAllProjects(filter){
+      if(location.hash !== '#projects') history.replaceState(null, '', location.pathname + location.search + '#projects');
       const hb = document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='';
       document.getElementById('homeScreen').classList.remove('active');
       document.getElementById('detailScreen').classList.remove('active');
@@ -2597,7 +2638,8 @@
     // ─────────────────────────────────────────────────────────
 
 
-    if(!auth){ load(); renderTrash(); render(); }
+    window.addEventListener('hashchange', () => { if(projects && projects.length) routeAfterLoad(); });
+    if(!auth){ load(); routeAfterLoad(); }
   </script>
 </body>
 </html>
