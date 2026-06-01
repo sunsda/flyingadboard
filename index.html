@@ -1074,7 +1074,7 @@
       if(!p.etcItems) p.etcItems = [];
       if(!p.etcItems.length){
         return `<section class="panel">
-          <div class="panel-title"><h3>기타 업무</h3><small>등록된 기타 업무 없음</small></div>
+          <div class="panel-title"><h3>기타 업무</h3><small>등록된 기타 업무 없음</small><button class="btn btn-secondary btn-small" id="addEtcItemBtn" type="button">+ 업무 추가</button></div>
           <div class="empty card" style="box-shadow:none;border-style:dashed">등록된 기타 업무가 없습니다.</div>
         </section>`;
       }
@@ -1101,7 +1101,7 @@
 
     function partnersHtml(p){
       const rows=(p.partners||[]);
-      if(!rows.length) return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small></div><div class="empty card" style="box-shadow:none;border-style:dashed">등록된 체험단 또는 제휴 운영 일정이 없습니다.</div></section>`;
+      if(!rows.length) return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small><button class="btn btn-secondary btn-small" id="addPartnerItemBtn" type="button">+ 체험단 추가</button></div><div class="empty card" style="box-shadow:none;border-style:dashed">등록된 체험단 또는 제휴 운영 일정이 없습니다.</div></section>`;
       const trs=rows.map((x,i)=>{
         if(x._editing) return `<tr style="background:#f8fafc;border-left:3px solid var(--purple)">
           <td colspan="5" style="padding:14px 16px">
