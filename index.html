@@ -593,11 +593,18 @@
       return '대기중';
     }
     function nextItem(project){
-      const pending = (project.seoItems || []).filter(i => i.status !== '완료').sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
+      const today = new Date(); today.setHours(0,0,0,0);
+      const pending = (project.seoItems || [])
+        .filter(i => i.status !== '완료')
+        .sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
+      const futurePending = pending.filter(i => parseDate(i.draft) >= today);
+      if(futurePending[0]) return futurePending[0];
       if(pending[0]) return pending[0];
-      const lastSeo = (project.seoItems || []).slice().sort((a,b)=>parseDate(b.publish)-parseDate(a.publish))[0];
-      if(lastSeo) return lastSeo;
-      const nextRep = (project.reportItems||[]).find(r=>r.status!=='완료');
+      const pendingRep = (project.reportItems||[])
+        .filter(r => r.status !== '완료')
+        .sort((a,b)=>parseDate(a.date)-parseDate(b.date));
+      const futureRep = pendingRep.filter(r => parseDate(r.date) >= today);
+      const nextRep = futureRep[0] || pendingRep[0];
       if(nextRep) return {round:nextRep.label, draft:nextRep.date, publish:nextRep.date};
       return null;
     }
