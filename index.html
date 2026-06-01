@@ -2001,16 +2001,16 @@
         // MM/DD 형식 날짜 변환 (연월 추론)
         function parseMD(s, refYear){
           if(!s) return '';
-          s = s.trim().replace(/\s/g,'');
+          // 요일, 괄호 제거: "01/08 (목)" → "01/08"
+          s = s.replace(/\s*[（(][^)）]*[)）]/g,'').trim();
           // MM/DD 형식
-          let m = s.match(/^(\d{1,2})\/(\d{1,2})$/);
+          let m = s.match(/^(\d{1,2})[\/\-](\d{1,2})$/);
           if(m){
             const mon=parseInt(m[1]), day=parseInt(m[2]);
-            // 연도 추론: start가 있으면 그 연도 기준
             let yr = refYear || baseYear;
             return `${yr}.${String(mon).padStart(2,'0')}.${String(day).padStart(2,'0')}`;
           }
-          return extractDate(s) || s;
+          return extractDate(s) || '';
         }
         for(const tbl of tables){
           const hdr=(tbl[0]||[]).join('');
@@ -2018,10 +2018,18 @@
           const hasSeoRows=tbl.some(r=>(r[0]||'').match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i));
           if(!hasSeoHdr&&!hasSeoRows) continue;
           // 차수|초안|검수|발행 형식 (JTB 스타일)
-          const isJTBStyle = hdr.match(/차수|초안/) && hdr.match(/검수/) && hdr.match(/발행/);
+          // 날짜|주요내용|담당|비고 형식(월별 상세 일정표)은 SEO 파싱 제외
+          if(hdr.match(/날짜/)&&hdr.match(/주요.*내용|주요.*일정|담당/)) continue;
+          // 인스타그램/인플루언서 테이블 제외 (채널 컬럼)
+          if(hdr.match(/채널/)&&hdr.match(/제출|공개|초안/)) continue;
+          // 인스타그램/인플루언서 테이블도 제외 (채널 컬럼 있는 것)
+          if(hdr.match(/채널/)&&hdr.match(/제출|공개/)) continue;
+          // 회차|초안|확인|공개 또는 차수|초안|검수|발행
+          const isJTBStyle = (hdr.match(/회차|차수/) && hdr.match(/초안/) && hdr.match(/확인|검수/) && hdr.match(/공개|발행/));
           for(const row of tbl){
             const first=(row[0]||'').trim();
-            if(first.match(/^(콘텐츠|구분|번호|회차|차수|초안|발행)$/i)) continue;
+            if(first.match(/^(콘텐츠|구분|번호|회차|차수|초안|발행|공개|확인|검수)$/i)) continue;
+            if(first.match(/보고|리포트/i)) continue;
             if(!first.match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i)) continue;
             const label=first.replace(/^SEO\s*/i,'').trim();
             const roundName=label.match(/안$|차$|회차$/) ? `SEO ${label}` : `SEO ${label}안`;
@@ -2059,11 +2067,23 @@
             if(first.match(/^(월|구분|시기|항목|기간|진행\s*내용|세부\s*내용)$/)) continue;
             if(row.length<2) continue;
             if(first.match(/^\d+월$|^\d+[~～]\d+월$/)){
+              // 월|진행내용|세부내용 형식
               const c=(row[1]||'').trim(), d=(row[2]||'').trim();
               partners.push({period:first,content:d?`${c} · ${d}`:c,owner:'체험단 운영',status:'대기중'});
-            } else if(first.length>1&&first.length<30&&!first.match(/^\d+안$|^\d+차$/)){
+            } else if(first.length>1&&first.length<40&&!first.match(/^\d+안$|^\d+차$/)){
+              // 구분|일정|내용|비고 형식 (OVAS 스타일)
+              // 첫 행(모집 공지 등)의 날짜에서 월 추출해서 "N월 체험단"으로 묶기
               const period=(row[1]||'').trim(),ct=(row[2]||'').trim(),note=(row[3]||'').trim();
-              if(period||ct) partners.push({period:period||'-',content:first+(ct?` · ${ct}`:'')+(note?` (${note})`:''),owner:'체험단 운영',status:'대기중'});
+              // 월 추출 시도
+              const monM = period.match(/(\d{1,2})월/);
+              const mon = monM ? monM[1]+'월' : period;
+              // 모집 첫 행만 대표 항목으로 등록 (중복 월은 스킵, 새 월은 추가)
+              if(first.match(/모집|시작/) && (period||ct)){
+                const existing = partners.find(p => p._ovasKey === mon);
+                if(!existing){
+                  partners.push({period:mon||period||'-', content:`체험단 운영 (${ct||first})`, owner:'체험단 운영', status:'대기중', _ovasKey:mon});
+                }
+              }
             }
           }
         }
@@ -2097,13 +2117,34 @@
           }
         }
 
+        // OVAS 스타일 체험단 후처리: rawText에서 추가 운영 월 감지
+        if(partners.length > 0 && partners.some(p=>p._ovasKey)){
+          // "4월에도 동일한 구조로 N차 체험단 운영" 패턴
+          const extraMonths = [];
+          const m2 = rawText.match(/(\d{1,2})월에도\s*(동일|같은)/g);
+          if(m2) m2.forEach(mm => { const mon2 = mm.match(/(\d{1,2})월/)[1]+'월'; if(!partners.find(p=>p._ovasKey===mon2)) extraMonths.push(mon2); });
+          // 차수 패턴: "2차 체험단", "3차 체험단"
+          const m3 = rawText.match(/([2-9]차)\s*체험단/g);
+          if(m3 && m3.length >= 1 && extraMonths.length === 0){
+            // 추가 차수만큼 빈 항목 추가
+            const basePartner = partners.find(p=>p._ovasKey);
+            if(basePartner) m3.forEach((_, i) => {
+              const nextMon = `${i+2}차`;
+              if(!partners.find(p=>p.period===nextMon))
+                partners.push({period:`${nextMon} 운영`, content:'체험단 운영 (추가 차수)', owner:'체험단 운영', status:'대기중'});
+            });
+          }
+          extraMonths.forEach(mon2 => partners.push({period:mon2, content:'체험단 운영 (추가)', owner:'체험단 운영', status:'대기중'}));
+        }
+
         // ── 4. 결과보고 파싱 ──
         for(const tbl of tables){
           const hdr=(tbl[0]||[]).join('');
-          const isR=hdr.match(/보고.*내용|결과.*보고|보고.*일정|보고.*시점|주요.*내용/i)
-            ||tbl.some(r=>(r[0]||'').match(/차\s*중간\s*보고|최종\s*보고|^(1차|2차|최종)$/));
+          const isR=(hdr.match(/보고.*내용|결과.*보고|보고.*일정|보고.*시점/i)
+            ||(hdr.match(/주요.*내용/) && hdr.match(/구분|일정|날짜/))
+            ||tbl.some(r=>(r[0]||'').match(/차\s*중간\s*보고|최종\s*보고|^(1차|2차|최종)$/)));
           if(!isR) continue;
-          const isJTBReport=hdr.match(/구분/)&&hdr.match(/일정/)&&hdr.match(/주요/);
+          const isJTBReport=(hdr.match(/구분/)&&hdr.match(/일정|날짜/)&&hdr.match(/주요/));
           for(const row of tbl){
             const c0=(row[0]||'').trim(),c1=(row[1]||'').trim(),c2=(row[2]||'').trim();
             if(c0.match(/^(구분|보고\s*구분|날짜)$/)||c1.match(/^(보고\s*내용|보고\s*시점|내용|주요\s*내용|일정)$/)) continue;
@@ -2129,9 +2170,36 @@
           }
         }
 
-        // ── 5. 기타업무: DM발송 + 전체일정(촬영/소재/시작) ──
+        // ── 5. 기타업무: 인스타그램/인플루언서, 사이니지, DM, 전체일정 ──
         for(const tbl of tables){
           const hdr=(tbl[0]||[]).join('');
+
+          // 인스타그램/인플루언서 테이블 (회차|제출|확인|공개|채널)
+          if(hdr.match(/채널/)&&hdr.match(/제출|공개/)&&hdr.match(/확인/)){
+            for(const row of tbl){
+              const f=(row[0]||'').trim();
+              if(f.match(/^(회차|차수|구분)$/i)) continue;
+              if(!f) continue;
+              const draft=parseMD((row[1]||'').replace(/[（(][^)）]*[)）]/g,'').trim(), baseYear);
+              const pub=parseMD((row[3]||'').replace(/[（(][^)）]*[)）]/g,'').trim(), baseYear);
+              const channel=(row[4]||'').trim();
+              etcItems.push({id:uid(),name:`인스타그램 ${f}`,goal:`인플루언서 콘텐츠 ${channel?`(${channel})`:''}`,status:'대기중',next:draft||pub,note:channel});
+            }
+            continue;
+          }
+
+          // 사이니지 테이블 (항목|기간|담당|비고 + 사이니지/송출 키워드)
+          if(hdr.match(/항목/)&&hdr.match(/기간/)&&tbl.some(r=>r.join('').match(/사이니지|송출/))){
+            for(const row of tbl){
+              const f=(row[0]||'').trim(), d=(row[1]||'').trim(), note=(row[3]||'').trim();
+              if(f.match(/^(항목|구분)$/)) continue;
+              if(!f) continue;
+              const dateStr=parseMD(d.replace(/[（(][^)）]*[)）]/g,'').split('~')[0].trim(), baseYear)||extractDate(d)||d;
+              etcItems.push({id:uid(),name:`사이니지 - ${f}`,goal:'사이니지 광고 운영',status:'대기중',next:dateStr,note});
+            }
+            continue;
+          }
+
           // DM 발송 테이블
           if(hdr.match(/DM|발송/)&&!hdr.match(/SEO|체험단|보고/)){
             for(const row of tbl){
@@ -2140,7 +2208,8 @@
               if(f.match(/\d+월/)&&row[1]) etcItems.push({id:uid(),name:'DM 발송',goal:'직접 문의 및 관심 고객 확대',status:'대기중',next:`${f} ${(row[1]||'').trim()}`,note:''});
             }
           }
-          // 전체일정 테이블 (촬영/소재준비/시작 등)
+
+          // 전체일정 테이블
           if(hdr.match(/구분/)&&hdr.match(/일정/)&&hdr.match(/주요\s*내용/)&&!hdr.match(/운영\s*기간|콘텐츠/)){
             for(const row of tbl){
               const f=(row[0]||'').trim(), d=(row[1]||'').trim(), c=(row[2]||'').trim();
