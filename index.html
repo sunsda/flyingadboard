@@ -485,6 +485,8 @@
       'fj_ad_trash_blank_v2'
     ];
     let firebaseLoadedOnce = false;
+    let suppressRemoteUntil = 0;
+    let cloudSaveTimer = null;
     let projects = [];
     let trash = [];
     let trashOpen = false;
@@ -503,6 +505,8 @@
     }
     let selectedProjectId = null;
     let currentTab = 'overview';
+    let overviewEditMode = false;
+    let memoEditMode = false;
     let editingProjectId = null;
 
     function getHashParams(){
@@ -684,6 +688,9 @@
       if(canUseCloud){
         db.ref('dashboard/projects').on('value', snap => {
           firebaseLoadedOnce = true;
+          // 내가 방금 저장한 값이 Firebase에서 되돌아오는 동안에는 화면을 다시 그리지 않습니다.
+          // 메모/텍스트 입력 중 포커스가 끊기는 현상을 막기 위한 처리입니다.
+          if(Date.now() < suppressRemoteUntil) return;
           const data = snap.val();
           if(data && Array.isArray(data) && data.length > 0){
             projects = data.map(d => makeProject(d));
@@ -710,17 +717,29 @@
       if(!Array.isArray(trash)) trash = [];
       selectedProjectId = projects[0]?.id || null;
     }
-    function save(){
+    function canUseCloudNow(){
+      return db && !localMode && auth && auth.currentUser && auth.currentUser.email && auth.currentUser.email.endsWith('@' + ALLOWED_DOMAIN);
+    }
+    function saveLocalOnly(){
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
       localStorage.setItem(TRASH_KEY, JSON.stringify(trash));
-      // 로그인된 회사 계정일 때만 Firebase에 저장합니다. 로컬 모드는 클라우드 데이터를 건드리지 않습니다.
-      const canUseCloud = db && !localMode && auth && auth.currentUser && auth.currentUser.email && auth.currentUser.email.endsWith('@' + ALLOWED_DOMAIN);
+    }
+    function pushCloudNow(){
+      if(!canUseCloudNow()) return;
       try {
-        if(canUseCloud){
-          db.ref('dashboard/projects').set(projects);
-          db.ref('dashboard/trash').set(trash);
-        }
+        suppressRemoteUntil = Date.now() + 2500;
+        db.ref('dashboard/projects').set(projects);
+        db.ref('dashboard/trash').set(trash);
       } catch(e){ console.warn('Firebase 저장 실패:', e); }
+    }
+    function save(){
+      saveLocalOnly();
+      pushCloudNow();
+    }
+    function saveDebounced(delay=900){
+      saveLocalOnly();
+      clearTimeout(cloudSaveTimer);
+      cloudSaveTimer = setTimeout(pushCloudNow, delay);
     }
     function getProject(){ return projects.find(p => p.id === selectedProjectId) || projects[0]; }
 
@@ -917,15 +936,13 @@
     function renderDetail(){
       const p = getProject(); if(!p){ showHome(); return; }
       selectedProjectId = p.id; const progress = taskProgress(p); const status = projectStatus(p); const n = nextItem(p); const done = p.seoItems.filter(i=>i.status==='완료').length;
-      document.getElementById('detailHead').innerHTML = `<div class="detail-top"><div class="detail-title"><h2>${escapeHtml(p.name)}</h2><p>${escapeHtml(p.owner)} · ${fmtDate(p.start)} ~ ${fmtDate(p.end)}</p></div><div class="actions"><button class="btn btn-secondary" id="editCurrentBtn" type="button">기본정보 수정</button><button class="btn btn-secondary" id="copyLinkBtn" type="button">링크 복사</button><button class="btn btn-secondary" id="copyCurrentBtn" type="button">복사</button><button class="btn btn-danger" id="deleteCurrentBtn" type="button">삭제</button></div></div><div class="detail-metrics"><div class="metric" style="grid-column:span 2"><div class="label" style="margin-bottom:10px">상태</div><div style="display:flex;gap:6px;flex-wrap:wrap">${['대기중','진행중','검수중','완료','지연'].map(s=>`<button class="status-box-btn${s===status?' active':''}" data-pid="${p.id}" data-status="${s}" type="button" style="border:2px solid ${s===status?'transparent':'var(--line)'};border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${s===status?(s==='대기중'?'var(--purple)':(s==='진행중'?'var(--blue)':(s==='검수중'?'var(--yellow)':(s==='완료'?'var(--green)':'var(--red)')))):'#fff'};color:${s===status?'#fff':'var(--muted)'}">${s}</button>`).join('')}</div></div><div class="metric"><div class="label">완료율</div><strong>${progress}%</strong></div><div class="metric"><div class="label">다음 일정</div><strong>${escapeHtml(n?.draft || '-')}</strong></div><div class="metric"><div class="label">콘텐츠 완료</div><strong>${done}/${p.seoItems.length}</strong></div></div>`;
+      document.getElementById('detailHead').innerHTML = `<div class="detail-top"><div class="detail-title"><h2>${escapeHtml(p.name)}</h2><p>${escapeHtml(p.owner)} · ${fmtDate(p.start)} ~ ${fmtDate(p.end)}</p></div><div class="actions"><button class="btn btn-secondary" id="editCurrentBtn" type="button">기본정보 수정</button><button class="btn btn-secondary" id="copyCurrentBtn" type="button">복사</button><button class="btn btn-danger" id="deleteCurrentBtn" type="button">삭제</button></div></div><div class="detail-metrics"><div class="metric" style="grid-column:span 2"><div class="label" style="margin-bottom:10px">상태</div><div style="display:flex;gap:6px;flex-wrap:wrap">${['대기중','진행중','검수중','완료','지연'].map(s=>`<button class="status-box-btn${s===status?' active':''}" data-pid="${p.id}" data-status="${s}" type="button" style="border:2px solid ${s===status?'transparent':'var(--line)'};border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${s===status?(s==='대기중'?'var(--purple)':(s==='진행중'?'var(--blue)':(s==='검수중'?'var(--yellow)':(s==='완료'?'var(--green)':'var(--red)')))):'#fff'};color:${s===status?'#fff':'var(--muted)'}">${s}</button>`).join('')}</div></div><div class="metric"><div class="label">완료율</div><strong>${progress}%</strong></div><div class="metric"><div class="label">다음 일정</div><strong>${escapeHtml(n?.draft || '-')}</strong></div><div class="metric"><div class="label">콘텐츠 완료</div><strong>${done}/${p.seoItems.length}</strong></div></div>`;
       document.getElementById('tabs').innerHTML = tabs.map(t=>`<button class="tab ${currentTab===t[0]?'active':''}" data-tab="${t[0]}" type="button">${t[1]}</button>`).join('');
       document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{currentTab=btn.dataset.tab; setProjectRoute(selectedProjectId,currentTab); renderDetail();}));
       const editBtn = document.getElementById('editCurrentBtn');
-      const linkBtn = document.getElementById('copyLinkBtn');
       const copyBtn2 = document.getElementById('copyCurrentBtn');
       const delBtn = document.getElementById('deleteCurrentBtn');
       if(editBtn) editBtn.onclick = ()=>openModal(p.id);
-      if(linkBtn) linkBtn.onclick = async ()=>{ const url = location.origin + location.pathname + '#project=' + encodeURIComponent(p.id) + '&tab=' + encodeURIComponent(currentTab || 'overview'); try{ await navigator.clipboard.writeText(url); }catch(e){} linkBtn.textContent='복사됨'; setTimeout(()=>{ if(linkBtn) linkBtn.textContent='링크 복사'; },1200); };
       if(copyBtn2) copyBtn2.onclick = ()=>copyProject(p.id);
       if(delBtn) delBtn.onclick = ()=>deleteProject(p.id);
       renderTab(p);
@@ -961,6 +978,8 @@
     function overviewHtml(p){
       const progress=taskProgress(p);
       const actions=buildNextActions(p);
+      const goalText = p.goal || '광고 운영 목적을 입력해주세요.';
+      const memoText = p.memos || '';
       const actionCards=actions.length?actions.map(a=>`
         <div class="next-action-card" data-tab="${a.tab}" style="background:${a.color};border:1px solid ${a.textColor}22;border-radius:12px;padding:12px 14px;cursor:pointer;transition:.18s">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px">
@@ -970,15 +989,33 @@
           <div style="font-weight:700;font-size:14px;color:${a.textColor};margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.title)}</div>
           <div style="font-size:12px;color:${a.textColor};opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.desc)}</div>
         </div>`).join(''):`<div style="color:var(--muted);font-size:13px;padding:12px 0">등록된 일정이 없거나 모두 완료되었습니다.</div>`;
+
+      const goalBlock = overviewEditMode ? `
+        <div class="field full"><label>운영 목적</label><textarea class="search" id="overviewGoalEdit" style="width:100%;min-height:130px">${escapeHtml(p.goal||'')}</textarea></div>
+        <div style="display:flex;gap:8px;margin-top:12px">
+          <button class="btn btn-primary btn-small" id="overviewSaveBtn" type="button">저장</button>
+          <button class="btn btn-secondary btn-small" id="overviewCancelBtn" type="button">취소</button>
+        </div>
+        <small id="overviewSaveMsg" style="display:block;margin-top:8px;color:var(--muted)">수정 후 저장을 누르면 반영됩니다.</small>` : `
+        <div class="field full"><label>운영 목적</label>
+          <div style="white-space:pre-wrap;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:130px;background:#fff;line-height:1.65">${escapeHtml(goalText)}</div>
+        </div>
+        <button class="btn btn-secondary btn-small" id="overviewEditBtn" type="button" style="margin-top:12px">수정하기</button>`;
+
+      const memoBlock = memoEditMode ? `
+        <textarea class="search" id="memoTextEdit" style="width:100%;min-height:120px">${escapeHtml(p.memos||'')}</textarea>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn btn-primary btn-small" id="memoSaveBtn" type="button">저장</button>
+          <button class="btn btn-secondary btn-small" id="memoCancelBtn" type="button">취소</button>
+        </div>` : `
+        <div style="white-space:pre-wrap;border:1px solid var(--line);border-radius:14px;padding:14px;min-height:120px;background:#fff;line-height:1.65;color:${memoText?'var(--text)':'var(--muted)'}">${escapeHtml(memoText || '등록된 메모가 없습니다.')}</div>
+        <button class="btn btn-secondary btn-small" id="memoEditBtn" type="button" style="margin-top:10px">수정하기</button>`;
+
       return `
         <section class="panel">
           <div class="panel-title"><h3>광고 개요</h3><small>다음 액션은 각 탭 데이터 기준으로 자동 연동됩니다.</small></div>
           <div class="two-col">
-            <div>
-              <div class="field full"><label>운영 목적</label><textarea class="search" id="overviewGoal" style="width:100%;min-height:130px">${escapeHtml(p.goal||'')}</textarea></div>
-              <button class="btn btn-primary btn-small" id="overviewSaveBtn" type="button" style="margin-top:12px">저장</button>
-              <small id="overviewSaveMsg" style="display:block;margin-top:8px;color:var(--muted)">입력 후 저장을 누르면 반영됩니다.</small>
-            </div>
+            <div>${goalBlock}</div>
             <div>
               <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.04em;text-transform:uppercase">다음 액션 <span style="font-weight:400;opacity:.7">· 클릭하면 해당 탭으로 이동</span></div>
               <div style="display:grid;gap:8px">${actionCards}</div>
@@ -1002,7 +1039,7 @@
           </section>
           <section class="panel">
             <div class="panel-title"><h3>메모</h3><small>내부 운영 메모</small></div>
-            <textarea class="search" id="memoText" style="width:100%;min-height:120px">${escapeHtml(p.memos)}</textarea>
+            ${memoBlock}
           </section>
         </div>
         ${calendarHtml(p)}`;
@@ -1373,9 +1410,8 @@
         save(); renderDetail(); renderSummary();
       }));
       const risk = document.getElementById('riskSelect'); if(risk) risk.addEventListener('change',()=>{p.risk=risk.value; save(); renderDetail(); renderSummary();});
-      const report = document.getElementById('reportNote'); if(report) report.addEventListener('input',()=>{p.reportNote=report.value; save();});
-      const memo = document.getElementById('memoText'); if(memo) memo.addEventListener('input',()=>{p.memos=memo.value; save();});
-      const opNote = document.getElementById('operationNote'); if(opNote) opNote.addEventListener('input',()=>{p.operationNote=opNote.value; save();});
+      const report = document.getElementById('reportNote'); if(report) report.addEventListener('input',()=>{p.reportNote=report.value; saveDebounced();});
+      const opNote = document.getElementById('operationNote'); if(opNote) opNote.addEventListener('input',()=>{p.operationNote=opNote.value; saveDebounced();});
       // SEO 수정/저장 버튼
       // SEO/체험단 수정·저장은 메인 클릭 핸들러에서 처리
       // 결과보고 날짜/라벨
@@ -1418,17 +1454,31 @@
         card.addEventListener('mouseleave',()=>{card.style.opacity='1';card.style.transform='';});
         card.addEventListener('click',()=>{currentTab=card.dataset.tab;renderDetail();});
       });
+      const overviewEditBtn = document.getElementById('overviewEditBtn');
+      if(overviewEditBtn) overviewEditBtn.addEventListener('click',()=>{ overviewEditMode = true; renderDetail(); });
+      const overviewCancelBtn = document.getElementById('overviewCancelBtn');
+      if(overviewCancelBtn) overviewCancelBtn.addEventListener('click',()=>{ overviewEditMode = false; renderDetail(); });
       const overviewSaveBtn = document.getElementById('overviewSaveBtn');
       if(overviewSaveBtn) overviewSaveBtn.addEventListener('click',()=>{
-        const goalEl = document.getElementById('overviewGoal');
+        const goalEl = document.getElementById('overviewGoalEdit');
         if(goalEl) p.goal = goalEl.value.trim();
-        save(); renderSummary();
-        const msg = document.getElementById('overviewSaveMsg');
-        if(msg){ msg.textContent='저장되었습니다.'; setTimeout(()=>{ if(msg) msg.textContent='입력 후 저장을 누르면 반영됩니다.'; },1600); }
+        overviewEditMode = false;
+        save(); renderSummary(); renderDetail();
+      });
+      const memoEditBtn = document.getElementById('memoEditBtn');
+      if(memoEditBtn) memoEditBtn.addEventListener('click',()=>{ memoEditMode = true; renderDetail(); });
+      const memoCancelBtn = document.getElementById('memoCancelBtn');
+      if(memoCancelBtn) memoCancelBtn.addEventListener('click',()=>{ memoEditMode = false; renderDetail(); });
+      const memoSaveBtn = document.getElementById('memoSaveBtn');
+      if(memoSaveBtn) memoSaveBtn.addEventListener('click',()=>{
+        const memoEl = document.getElementById('memoTextEdit');
+        if(memoEl) p.memos = memoEl.value;
+        memoEditMode = false;
+        save(); renderDetail();
       });
       document.querySelectorAll('.report-note-input').forEach(inp => inp.addEventListener('input', () => {
         if(!p.reportItems) return;
-        p.reportItems[Number(inp.dataset.index)].note = inp.value; save();
+        p.reportItems[Number(inp.dataset.index)].note = inp.value; saveDebounced();
       }));
       // 커스텀 태스크 인라인 편집
       document.querySelectorAll('.task-name-inp').forEach(el=>{
