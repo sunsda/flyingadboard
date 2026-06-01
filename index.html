@@ -1167,16 +1167,35 @@
       }
       const statusOpts = ['대기중','준비중','진행중','검수중','수정중','완료','지연'];
       const rows = p.etcItems.map((item,i) => {
+        if(item._editing) return `<tr style="background:#f8fafc;border-left:3px solid var(--yellow)">
+          <td colspan="6" style="padding:14px 16px">
+            <div style="display:grid;grid-template-columns:160px 1.4fr 130px 1fr 1fr auto;gap:8px;align-items:center">
+              <input class="etc-edit-input edit-field" data-idx="${i}" data-field="name" value="${escapeHtml(item.name||'')}" placeholder="업무명" />
+              <input class="etc-edit-input edit-field" data-idx="${i}" data-field="goal" value="${escapeHtml(item.goal||'')}" placeholder="목적 / 내용" />
+              <select class="etc-edit-input edit-field" data-idx="${i}" data-field="status">
+                ${statusOpts.map(o=>`<option ${o===(item.status||'대기중')?'selected':''}>${o}</option>`).join('')}
+              </select>
+              <input class="etc-edit-input edit-field" data-idx="${i}" data-field="next" value="${escapeHtml(item.next||'')}" placeholder="다음 일정" />
+              <input class="etc-edit-input edit-field" data-idx="${i}" data-field="note" value="${escapeHtml(item.note||'')}" placeholder="메모" />
+              <div style="display:flex;gap:6px;justify-content:flex-end">
+                <button class="btn btn-primary btn-small etc-save-btn" data-idx="${i}" type="button">저장</button>
+                <button class="btn btn-danger btn-small etc-cancel-btn" data-idx="${i}" type="button">취소</button>
+              </div>
+            </div>
+          </td>
+        </tr>`;
         const isDone = item.status === '완료';
         return `<tr class="${isDone?'done-row':''}">
           <td><b>${escapeHtml(item.name || '-')}</b></td>
           <td>${escapeHtml(item.goal || '-')}</td>
-          <td><select class="status-select status-${statusClass(item.status)}" data-type="etc" data-index="${i}">
-            ${statusOpts.map(o=>`<option ${o===item.status?'selected':''}>${o}</option>`).join('')}
-          </select></td>
+          <td><span class="badge ${statusClass(item.status)}" style="font-size:12px;padding:5px 10px">${escapeHtml(item.status || '대기중')}</span></td>
           <td>${escapeHtml(item.next || '-')}</td>
           <td>${escapeHtml(item.note || '-')}</td>
-          <td><button class="btn-icon etc-del-btn" data-idx="${i}" type="button" style="border:1px solid #fecaca;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff5f5;color:var(--red)">삭제</button></td>
+          <td style="white-space:nowrap">
+            <button class="btn-icon etc-edit-btn" data-idx="${i}" type="button" style="border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff;color:var(--muted)">수정</button>
+            ${isDone ? `<button class="btn-restore etc-undo-btn" data-idx="${i}" type="button">↩</button>` : `<button class="btn-seo-done etc-done-btn" data-idx="${i}" type="button">완료</button>`}
+            <button class="btn-icon etc-del-btn" data-idx="${i}" type="button" style="border:1px solid #fecaca;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff5f5;color:var(--red)">삭제</button>
+          </td>
         </tr>`;
       }).join('');
       const doneCount = p.etcItems.filter(x=>x.status==='완료').length;
@@ -1299,7 +1318,7 @@
       const addEtcBtn = document.getElementById('addEtcItemBtn');
       if(addEtcBtn) addEtcBtn.addEventListener('click', () => {
         if(!p.etcItems) p.etcItems=[];
-        p.etcItems.push({id:uid(),name:'새 업무',goal:'',status:'대기중',next:'',note:'',_editing:true});
+        p.etcItems.push({id:uid(),name:'',goal:'',status:'대기중',next:'',note:'',_editing:true});
         renderDetail();
       });
       const addReportBtn = document.getElementById('addReportItemBtn');
@@ -1875,6 +1894,25 @@
       if(partnerDelBtn){ const p=getProject(); if(!p) return; p.partners.splice(Number(partnerDelBtn.dataset.idx),1); save(); renderDetail(); renderSummary(); return; }
       const reportDelBtn = t.closest('.report-del-btn');
       if(reportDelBtn){ const p=getProject(); if(!p) return; p.reportItems.splice(Number(reportDelBtn.dataset.idx),1); save(); renderDetail(); renderSummary(); return; }
+      // 기타 업무 수정/저장/완료/취소
+      const etcEditBtn = t.closest('.etc-edit-btn');
+      if(etcEditBtn){ const p=getProject(); if(!p) return; const idx=Number(etcEditBtn.dataset.idx); (p.etcItems||[]).forEach((x,i)=>x._editing=(i===idx)); renderDetail(); return; }
+      const etcSaveBtn = t.closest('.etc-save-btn');
+      if(etcSaveBtn){ const p=getProject(); if(!p) return; const idx=Number(etcSaveBtn.dataset.idx); const row=etcSaveBtn.closest('tr');
+        row.querySelectorAll('.etc-edit-input').forEach(inp=>{ if(p.etcItems[idx]) p.etcItems[idx][inp.dataset.field]=inp.value; });
+        if(p.etcItems[idx]) p.etcItems[idx]._editing=false;
+        syncAllTasks(p); save(); renderDetail(); renderSummary(); return; }
+      const etcCancelBtn = t.closest('.etc-cancel-btn');
+      if(etcCancelBtn){ const p=getProject(); if(!p) return; const idx=Number(etcCancelBtn.dataset.idx); if(p.etcItems[idx]){
+          const item=p.etcItems[idx];
+          if(!(item.name||item.goal||item.next||item.note)) p.etcItems.splice(idx,1);
+          else item._editing=false;
+        }
+        syncAllTasks(p); save(); renderDetail(); renderSummary(); return; }
+      const etcDoneBtn = t.closest('.etc-done-btn');
+      if(etcDoneBtn){ const p=getProject(); if(!p) return; const idx=Number(etcDoneBtn.dataset.idx); if(p.etcItems[idx]) p.etcItems[idx].status='완료'; syncAllTasks(p); save(); renderDetail(); renderSummary(); return; }
+      const etcUndoBtn = t.closest('.etc-undo-btn');
+      if(etcUndoBtn){ const p=getProject(); if(!p) return; const idx=Number(etcUndoBtn.dataset.idx); if(p.etcItems[idx]) p.etcItems[idx].status='대기중'; syncAllTasks(p); save(); renderDetail(); renderSummary(); return; }
       const etcDelBtn = t.closest('.etc-del-btn');
       if(etcDelBtn){ const p=getProject(); if(!p) return; if(!p.etcItems) p.etcItems=[]; p.etcItems.splice(Number(etcDelBtn.dataset.idx),1); save(); renderDetail(); renderSummary(); return; }
 
