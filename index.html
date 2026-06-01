@@ -783,7 +783,7 @@
       const actions=[];
       const pendingSeo=(p.seoItems||[]).filter(i=>i.status!=='완료').sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
       if(pendingSeo.length){ const s=pendingSeo[0]; const dc=(p.seoItems||[]).filter(i=>i.status==='완료').length; actions.push({category:'콘텐츠',color:'var(--blue-soft)',textColor:'var(--blue)',title:s.round,desc:[s.draft&&`초안 ${s.draft}`,s.publish&&`발행 ${s.publish}`].filter(Boolean).join(' · ')||'일정 미정',sub:`${dc}/${p.seoItems.length} 완료`,tab:'content'}); }
-      else if((p.seoItems||[]).length){ actions.push({category:'콘텐츠',color:'var(--green-soft)',textColor:'var(--green)',title:전체 완료,desc:`${p.seoItems.length}건 발행 완료`,sub:'',tab:'content'}); }
+      else if((p.seoItems||[]).length){ actions.push({category:'콘텐츠',color:'var(--green-soft)',textColor:'var(--green)',title:'전체 완료',desc:`${p.seoItems.length}건 발행 완료`,sub:'',tab:'content'}); }
       const pendingP=(p.partners||[]).filter(x=>x.status!=='완료');
       if(pendingP.length){ const pt=pendingP[0]; const dc=(p.partners||[]).filter(x=>x.status==='완료').length; actions.push({category:'체험단',color:'var(--purple-soft)',textColor:'var(--purple)',title:pt.period,desc:pt.content||'-',sub:`${dc}/${p.partners.length} 완료`,tab:'partners'}); }
       const pendingE=(p.etcItems||[]).filter(x=>x.status!=='완료');
@@ -805,10 +805,10 @@
           </div>
           <div style="font-weight:700;font-size:14px;color:${a.textColor};margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.title)}</div>
           <div style="font-size:12px;color:${a.textColor};opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.desc)}</div>
-        </div>`).join(''):`<div style="color:var(--muted);font-size:13px;padding:12px 0">${등록된 일정이 없거나 모두 완료되었습니다.}</div>`;
+        </div>`).join(''):`<div style="color:var(--muted);font-size:13px;padding:12px 0">등록된 일정이 없거나 모두 완료되었습니다.</div>`;
       return `
         <section class="panel">
-          <div class="panel-title"><h3>광고 개요</h3><small>${다음 액션은 각 탭 데이터 기준으로 자동 연동됩니다.}</small></div>
+          <div class="panel-title"><h3>광고 개요</h3><small>다음 액션은 각 탭 데이터 기준으로 자동 연동됩니다.</small></div>
           <div class="two-col">
             <div>
               <div class="field full"><label>운영 목적</label><textarea class="search" id="overviewGoal" style="width:100%;min-height:130px">${escapeHtml(p.goal||'')}</textarea></div>
@@ -865,7 +865,7 @@
         const totalPart = p.partners.length;
         const hasActive = p.partners.some(x=>['진행중','조율중'].includes(x.status));
         const nextPart = p.partners.find(x=>x.status!=='완료');
-        passTask.next = nextPart ? `${nextPart.period} · ${nextPart.content}` : 전체 완료;
+        passTask.next = nextPart ? `${nextPart.period} · ${nextPart.content}` : '전체 완료';
         if(donePart===totalPart) passTask.status = '완료';
         else if(hasActive) passTask.status = '조율중';
         else if(donePart>0) passTask.status = '진행중';
@@ -878,7 +878,7 @@
         const done = p.etcItems.filter(x=>x.status==='완료').length;
         const total = p.etcItems.length;
         const nextEtc = p.etcItems.find(x=>x.status!=='완료');
-        guideTask.next = nextEtc ? `${nextEtc.name}${nextEtc.next ? ' · '+nextEtc.next : ''}` : 전체 완료;
+        guideTask.next = nextEtc ? `${nextEtc.name}${nextEtc.next ? ' · '+nextEtc.next : ''}` : '전체 완료';
         if(done===0) guideTask.status = '준비중';
         else if(done===total) guideTask.status = '완료';
         else guideTask.status = '진행중';
@@ -890,7 +890,7 @@
         const doneRep = ri.filter(r=>r.status==='완료').length;
         const totalRep = ri.length;
         const nextRep = ri.find(r=>r.status!=='완료');
-        repTask.next = nextRep ? `${nextRep.date} ${nextRep.label}` : 전체 완료;
+        repTask.next = nextRep ? `${nextRep.date} ${nextRep.label}` : '전체 완료';
         if(totalRep===0) repTask.status = '대기중';
         else if(doneRep===0) repTask.status = '대기중';
         else if(doneRep===totalRep) repTask.status = '보고완료';
@@ -932,7 +932,7 @@
       const sorted = p.seoItems.slice().sort((a,b)=> (a.status==='완료')-(b.status==='완료') || parseDate(a.draft)-parseDate(b.draft));
       return `
         <section class="panel">
-          <div class="panel-title"><h3>콘텐츠 관리</h3><small>${대기중은 가까운 일정순, 완료는 별도 구분}</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">${+ SEO 추가}</button></div>
+          <div class="panel-title"><h3>콘텐츠 관리</h3><small>대기중은 가까운 일정순, 완료는 별도 구분</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">${+ SEO 추가}</button></div>
           <div class="summary" style="grid-template-columns:repeat(3,1fr)">
             <div class="card"><div class="label">${SEO 발행 회차}</div><div class="value">${p.seoItems.length}회차</div></div>
             <div class="card"><div class="label">대기중</div><div class="value">${pending.length}건</div></div>
@@ -942,7 +942,7 @@
           <div class="section-head">완료</div>${done.length ? seoTable(p,done) : '<div class="empty card">완료된 콘텐츠가 없습니다.</div>'}
         </section>
         <section class="panel">
-          <div class="panel-title"><h3>전체 일정</h3><small>${가까운 미완료 일정이 우선 표시됩니다.}</small></div>
+          <div class="panel-title"><h3>전체 일정</h3><small>가까운 미완료 일정이 우선 표시됩니다.</small></div>
           ${seoTable(p,sorted)}
         </section>`;
     }
@@ -1080,7 +1080,7 @@
       if(!p.etcItems.length){
         return `<section class="panel">
           <div class="panel-title"><h3>기타 업무</h3><small>등록된 기타 업무 없음</small><button class="btn btn-secondary btn-small" id="addEtcItemBtn" type="button">${+ 업무 추가}</button></div>
-          <div class="empty card" style="box-shadow:none;border-style:dashed">${등록된 기타 업무가 없습니다.}</div>
+          <div class="empty card" style="box-shadow:none;border-style:dashed">등록된 기타 업무가 없습니다.</div>
         </section>`;
       }
       const statusOpts = ['대기중','준비중','진행중','검수중','수정중','완료','지연'];
@@ -1106,7 +1106,7 @@
 
     function partnersHtml(p){
       const rows=(p.partners||[]);
-      if(!rows.length) return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small><button class="btn btn-secondary btn-small" id="addPartnerItemBtn" type="button">${+ 체험단 추가}</button></div><div class="empty card" style="box-shadow:none;border-style:dashed">${등록된 체험단 또는 제휴 운영 일정이 없습니다.}</div></section>`;
+      if(!rows.length) return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small><button class="btn btn-secondary btn-small" id="addPartnerItemBtn" type="button">${+ 체험단 추가}</button></div><div class="empty card" style="box-shadow:none;border-style:dashed">등록된 체험단 또는 제휴 운영 일정이 없습니다.</div></section>`;
       const trs=rows.map((x,i)=>{
         if(x._editing) return `<tr style="background:#f8fafc;border-left:3px solid var(--purple)">
           <td colspan="5" style="padding:14px 16px">
