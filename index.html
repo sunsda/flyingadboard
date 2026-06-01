@@ -378,9 +378,28 @@
     const auth = (window.firebase && firebase.auth) ? firebase.auth() : null;
     const provider = (window.firebase && firebase.auth) ? new firebase.auth.GoogleAuthProvider() : null;
     let localMode = false;
+    const SESSION_KEY = 'fj_google_login_at';
+    const SESSION_MS = 24 * 60 * 60 * 1000;
+
+    function getLoginAt(){ return Number(localStorage.getItem(SESSION_KEY) || 0); }
+    function hasValidSession(){ const t=getLoginAt(); return !!t && (Date.now() - t < SESSION_MS); }
+    function rememberSession(ts){ localStorage.setItem(SESSION_KEY, String(ts || Date.now())); }
+    function clearSession(){ localStorage.removeItem(SESSION_KEY); }
+    function getUserLastLoginAt(user){
+      const raw = user && user.metadata && (user.metadata.lastSignInTime || user.metadata.lastLoginAt);
+      const parsed = raw ? new Date(raw).getTime() : 0;
+      return Number.isFinite(parsed) && parsed ? parsed : getLoginAt();
+    }
+
 
     function showLogin(){ document.getElementById('loginScreen').style.display='flex'; document.getElementById('mainApp').style.display='none'; }
     function showApp(){ document.getElementById('loginScreen').style.display='none'; document.getElementById('mainApp').style.display='block'; }
+    function bootMainIfRecentSession(){
+      if(hasValidSession()){
+        showApp();
+        try { load(); renderTrash(); render(); } catch(e) { console.warn('초기 렌더 오류:', e); }
+      }
+    }
 
     document.getElementById('googleLoginBtn').addEventListener('click', async () => {
       const errEl = document.getElementById('loginError');
@@ -395,9 +414,16 @@
         const result = await auth.signInWithPopup(provider);
         const email = result.user.email || '';
         if(!email.endsWith('@' + ALLOWED_DOMAIN)){
+          clearSession();
           await auth.signOut();
           errEl.textContent = `@${ALLOWED_DOMAIN} 이메일만 접근할 수 있습니다.`;
           errEl.style.display='block';
+        } else {
+          rememberSession(Date.now());
+          showApp();
+          load();
+          renderTrash();
+          render();
         }
       } catch(e){
         errEl.textContent = '로그인 중 오류가 발생했습니다: ' + e.message;
@@ -407,26 +433,42 @@
 
     document.getElementById('localModeLoginBtn')?.addEventListener('click', () => {
       localMode = true;
+      clearSession();
       showApp();
       load();
       renderTrash();
       render();
     });
 
+    // 새로고침 시에는 최근 24시간 세션이 있으면 먼저 메인 화면을 바로 보여줍니다.
+    // Firebase 인증 결과는 뒤에서 조용히 확인하고, 24시간 초과 시에만 로그인 화면으로 전환합니다.
+    bootMainIfRecentSession();
+
     if(auth){
-      auth.onAuthStateChanged(user => {
+      auth.onAuthStateChanged(async user => {
         if(localMode) return;
         if(user && user.email && user.email.endsWith('@' + ALLOWED_DOMAIN)){
+          const loginAt = getUserLastLoginAt(user) || Date.now();
+          if(Date.now() - loginAt >= SESSION_MS){
+            clearSession();
+            try { await auth.signOut(); } catch(e) {}
+            showLogin();
+            const errEl = document.getElementById('loginError');
+            if(errEl){ errEl.textContent = '보안을 위해 24시간이 지나 다시 로그인해야 합니다.'; errEl.style.display='block'; }
+            return;
+          }
+          if(!getLoginAt()) rememberSession(loginAt);
           showApp();
           load();
           renderTrash();
           render();
         } else {
+          clearSession();
           showLogin();
         }
       });
     } else {
-      showLogin();
+      if(!hasValidSession()) showLogin();
     }
 
         const ANTHROPIC_API_KEY = ''; // 브라우저에 API 키를 넣지 않도록 비활성화
