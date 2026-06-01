@@ -423,6 +423,149 @@
       background:linear-gradient(180deg,#f8fbff 0%,#f3f7ff 45%,#eef4ff 100%) !important;
     }
 
+    /* final main layout adjustments */
+    #homeScreen.active{display:block !important;}
+    .home-project-board{grid-column:auto !important;grid-row:auto !important;margin-bottom:22px !important;}
+    .compact-calendar-card{grid-column:auto !important;grid-row:auto !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-total{border-left-color:#2563eb !important;background:#ffffff !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-active{border-left-color:#06b6d4 !important;background:#f0fdff !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-month{border-left-color:#22c55e !important;background:#f0fdf4 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay{border-left-color:#94a3b8 !important;background:#f8fafc !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay.has-risk{border-left-color:#ef4444 !important;background:#fef2f2 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-active .label{color:#0891b2 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-month .label{color:#15803d !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay .label{color:#475569 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay.has-risk .label{color:#b91c1c !important;}
+
+
+
+    /* KPI cards: clean white cards with left accent line only */
+    .summary.pm-summary.blue-summary{
+      display:grid !important;
+      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+      gap:16px !important;
+      margin-bottom:22px !important;
+    }
+    .summary.pm-summary.blue-summary .card{
+      background:#ffffff !important;
+      border:1px solid #e5e7eb !important;
+      border-left-width:5px !important;
+      border-radius:20px !important;
+      padding:22px 24px !important;
+      min-height:128px !important;
+      box-shadow:0 2px 10px rgba(15,23,42,.045) !important;
+      overflow:hidden !important;
+      transform:none !important;
+    }
+    .summary.pm-summary.blue-summary .card::after{
+      display:none !important;
+      content:none !important;
+    }
+    .summary.pm-summary.blue-summary .card:hover{
+      transform:none !important;
+      box-shadow:0 6px 18px rgba(15,23,42,.07) !important;
+      border-top-color:#e5e7eb !important;
+      border-right-color:#e5e7eb !important;
+      border-bottom-color:#e5e7eb !important;
+    }
+    .summary.pm-summary.blue-summary .label{
+      font-size:14px !important;
+      font-weight:800 !important;
+      color:#64748b !important;
+      margin-bottom:12px !important;
+      letter-spacing:-.01em !important;
+      opacity:1 !important;
+    }
+    .summary.pm-summary.blue-summary .value{
+      font-size:42px !important;
+      line-height:1 !important;
+      font-weight:850 !important;
+      color:#0f172a !important;
+      margin:0 0 9px !important;
+      letter-spacing:-.05em !important;
+    }
+    .summary.pm-summary.blue-summary .sub{
+      font-size:13px !important;
+      font-weight:700 !important;
+      color:#94a3b8 !important;
+      margin-top:0 !important;
+      opacity:1 !important;
+    }
+    .summary.pm-summary.blue-summary .pm-kpi-total{border-left-color:#2563eb !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-active{border-left-color:#3b82f6 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-month{border-left-color:#22c55e !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay{border-left-color:#94a3b8 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay.has-risk{border-left-color:#ef4444 !important;background:#fff !important;}
+    @media(max-width:760px){
+      .summary.pm-summary.blue-summary .card{min-height:112px !important;padding:18px 20px !important;}
+      .summary.pm-summary.blue-summary .value{font-size:34px !important;}
+    }
+
+  
+    #allProjSummary.summary{grid-template-columns:repeat(4,1fr)!important;}
+    @media(max-width:1100px){#allProjSummary.summary{grid-template-columns:repeat(2,1fr)!important;}}
+    @media(max-width:760px){#allProjSummary.summary{grid-template-columns:1fr!important;}}
+  
+
+    /* clean final layout: KPI -> calendar -> projects */
+    #homeScreen.active{
+      display:block !important;
+    }
+    .summary.pm-summary.blue-summary{
+      display:grid !important;
+      grid-template-columns:repeat(4,minmax(0,1fr)) !important;
+      gap:16px !important;
+      margin-bottom:20px !important;
+    }
+    .summary.pm-summary.blue-summary .card{
+      background:#fff !important;
+      border:1px solid #e6ebf2 !important;
+      border-left-width:5px !important;
+      border-radius:20px !important;
+      min-height:118px !important;
+      padding:20px 22px !important;
+      box-shadow:0 8px 22px rgba(15,23,42,.045) !important;
+      overflow:hidden !important;
+      transform:none !important;
+    }
+    .summary.pm-summary.blue-summary .card::after{display:none !important;content:none !important;}
+    .summary.pm-summary.blue-summary .card:hover{transform:none !important;box-shadow:0 12px 28px rgba(15,23,42,.07) !important;}
+    .summary.pm-summary.blue-summary .label{font-size:13px !important;font-weight:850 !important;color:#64748b !important;margin-bottom:10px !important;}
+    .summary.pm-summary.blue-summary .value{font-size:38px !important;font-weight:900 !important;color:#0f172a !important;line-height:1 !important;margin:0 0 8px !important;}
+    .summary.pm-summary.blue-summary .sub{font-size:12px !important;font-weight:700 !important;color:#94a3b8 !important;margin:0 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-total{border-left-color:#2563eb !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-active{border-left-color:#3b82f6 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-month{border-left-color:#22c55e !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay{border-left-color:#94a3b8 !important;}
+    .summary.pm-summary.blue-summary .pm-kpi-delay.has-risk{border-left-color:#ef4444 !important;background:#fff !important;}
+
+    .compact-calendar-card{
+      padding:22px !important;
+      margin-bottom:20px !important;
+      border-radius:22px !important;
+      box-shadow:0 10px 26px rgba(15,23,42,.05) !important;
+      border:1px solid #e6ebf2 !important;
+      background:#fff !important;
+    }
+    .compact-calendar-card .panel-title h3{font-size:22px !important;letter-spacing:-.03em !important;}
+    #mainCalGrid .cal-day{min-height:94px !important;border-radius:12px !important;}
+    #mainCalGrid .cal-grid{gap:4px !important;}
+
+    .home-project-board{
+      padding:22px !important;
+      border-radius:22px !important;
+      box-shadow:0 10px 26px rgba(15,23,42,.05) !important;
+      border:1px solid #e6ebf2 !important;
+      background:#fff !important;
+    }
+    .board-title h3{font-size:22px !important;letter-spacing:-.03em !important;}
+    .project-toolbar{margin:14px 0 18px !important;}
+    .project-card{border-radius:18px !important;box-shadow:0 8px 20px rgba(15,23,42,.05) !important;border:1px solid #e6ebf2 !important;}
+    .project-card:hover{transform:translateY(-2px) !important;box-shadow:0 14px 30px rgba(37,99,235,.10) !important;border-color:#c8d7ff !important;}
+    .compact-flow-panel,.flow-panel{display:none !important;}
+    @media(max-width:1100px){.summary.pm-summary.blue-summary{grid-template-columns:repeat(2,1fr) !important;}}
+    @media(max-width:760px){.summary.pm-summary.blue-summary{grid-template-columns:1fr !important;}#mainCalGrid .cal-day{min-height:62px !important;}.compact-calendar-card,.home-project-board{padding:18px !important;}}
+
   </style>
 </head>
 <body>
@@ -463,6 +606,19 @@
     </section>
 
     <section id="homeScreen" class="screen active">
+      <section class="card compact-calendar-card">
+        <div class="panel-title" style="margin-bottom:0">
+          <h3 id="calTitleEl">월간 운영 캘린더</h3>
+          <small id="mainCalLegend" style="display:flex;gap:10px;flex-wrap:wrap"></small>
+        </div>
+        <div class="cal-nav" style="margin-top:14px">
+          <button class="btn btn-secondary btn-small" id="mainCalPrev" type="button">‹</button>
+          <h3 id="mainCalTitle" style="margin:0;flex:1;text-align:center;font-size:18px"></h3>
+          <button class="btn btn-secondary btn-small" id="mainCalNext" type="button">›</button>
+        </div>
+        <div id="mainCalGrid" style="margin-top:10px"></div>
+      </section>
+
       <section class="card home-project-board">
         <div class="panel-title board-title">
           <div>
@@ -487,28 +643,7 @@
         <section class="project-grid" id="projectGrid"></section>
       </section>
 
-      <section class="ops-panel card compact-ops-panel">
-        <div class="panel-title"><h3>다가오는 일정</h3><small>가까운 미완료 운영 일정을 확인합니다.</small></div>
-        <div class="ops-grid compact-ops-grid" id="weeklyTodoGrid"></div>
-      </section>
-
-      <section class="card compact-calendar-card">
-        <div class="panel-title" style="margin-bottom:0">
-          <h3 id="calTitleEl">전체 일정 캘린더</h3>
-          <small id="mainCalLegend" style="display:flex;gap:10px;flex-wrap:wrap"></small>
-        </div>
-        <div class="cal-nav" style="margin-top:14px">
-          <button class="btn btn-secondary btn-small" id="mainCalPrev" type="button">‹</button>
-          <h3 id="mainCalTitle" style="margin:0;flex:1;text-align:center;font-size:18px"></h3>
-          <button class="btn btn-secondary btn-small" id="mainCalNext" type="button">›</button>
-        </div>
-        <div id="mainCalGrid" style="margin-top:10px"></div>
-      </section>
-
-      <section class="flow-panel card compact-flow-panel">
-        <div class="panel-title"><h3>광고별 진행 흐름</h3><small>보조 현황입니다.</small></div>
-        <div class="flow-list" id="flowList"></div>
-      </section>
+      <div id="flowList" style="display:none"></div>
     </section>
 
 
@@ -856,6 +991,19 @@
     }
     function confirmRowDelete(label, onOk){
       customConfirm('삭제 확인', `${label || '이 항목'}을 삭제할까요?`, '삭제', 'btn-danger', onOk);
+    }
+    function confirmStatusToggle(label, done, onOk){
+      customConfirm(done ? '완료 처리' : '미완료 변경', `${label || '이 항목'}을 ${done ? '완료 처리' : '미완료 상태로 변경'}할까요?`, done ? '완료' : '변경', done ? 'btn-primary' : 'btn-secondary', onOk);
+    }
+    function markItemDone(item){
+      if(!item) return;
+      item.status = '완료';
+      item.completedAt = new Date().toISOString();
+    }
+    function markItemUndone(item){
+      if(!item) return;
+      item.status = '대기중';
+      delete item.completedAt;
     }
     let selectedProjectId = null;
     let currentTab = 'overview';
@@ -1246,11 +1394,11 @@
     function collectOpsItems(){
       const items=[];
       projects.forEach(p=>{
-        (p.seoItems||[]).forEach((x,i)=>{ const d=parseAnyDate(x.draft||x.publish); items.push({project:p, type:'콘텐츠', cls:'seo', tab:'content', title:x.round||x.theme||'SEO 콘텐츠', desc:x.theme||'', date:d, dateText:x.draft||x.publish||'-', status:x.status||'대기중', index:i}); });
-        (p.partners||[]).forEach((x,i)=>{ const d=parseAnyDate(x.date||x.next||x.period); items.push({project:p, type:'체험단', cls:'partner', tab:'partners', title:x.period||x.content||'체험단 운영', desc:x.content||'', date:d, dateText:x.date||x.next||x.period||'-', status:x.status||'대기중', index:i}); });
-        (p.etcItems||[]).forEach((x,i)=>{ const d=parseAnyDate(x.next||x.date); items.push({project:p, type:'기타업무', cls:'etc', tab:'etc', title:x.name||'기타 업무', desc:x.goal||x.note||'', date:d, dateText:x.next||x.date||'-', status:x.status||'대기중', index:i}); });
+        (p.seoItems||[]).forEach((x,i)=>{ const d=parseAnyDate(x.draft||x.publish); items.push({project:p, type:'콘텐츠', cls:'seo', tab:'content', title:x.round||x.theme||'SEO 콘텐츠', desc:x.theme||'', date:d, dateText:x.draft||x.publish||'-', status:x.status||'대기중', completedAt:x.completedAt||'', index:i}); });
+        (p.partners||[]).forEach((x,i)=>{ const d=parseAnyDate(x.date||x.next||x.period); items.push({project:p, type:'체험단', cls:'partner', tab:'partners', title:x.period||x.content||'체험단 운영', desc:x.content||'', date:d, dateText:x.date||x.next||x.period||'-', status:x.status||'대기중', completedAt:x.completedAt||'', index:i}); });
+        (p.etcItems||[]).forEach((x,i)=>{ const d=parseAnyDate(x.next||x.date); items.push({project:p, type:'기타업무', cls:'etc', tab:'etc', title:x.name||'기타 업무', desc:x.goal||x.note||'', date:d, dateText:x.next||x.date||'-', status:x.status||'대기중', completedAt:x.completedAt||'', index:i}); });
         const reports=(p.reportItems&&p.reportItems.length)?p.reportItems:[];
-        reports.forEach((x,i)=>{ const d=parseAnyDate(x.date); items.push({project:p, type:'결과보고', cls:'report', tab:'report', title:x.label||x.title||'결과보고', desc:x.memo||'', date:d, dateText:x.date||'-', status:x.status||'대기중', index:i}); });
+        reports.forEach((x,i)=>{ const d=parseAnyDate(x.date); items.push({project:p, type:'결과보고', cls:'report', tab:'report', title:x.label||x.title||'결과보고', desc:x.memo||'', date:d, dateText:x.date||'-', status:x.status||'대기중', completedAt:x.completedAt||'', index:i}); });
       });
       return items;
     }
@@ -1261,8 +1409,8 @@
       return item.date >= today && item.date <= end;
     }
     function isThisMonthDone(item){
-      if(item.status!=='완료') return false;
-      const d=item.date; if(!d) return false;
+      if(item.status!=='완료' || !item.completedAt) return false;
+      const d=parseAnyDate(item.completedAt); if(!d) return false;
       const today=new Date();
       return d.getFullYear()===today.getFullYear() && d.getMonth()===today.getMonth();
     }
@@ -2477,9 +2625,9 @@
       if(seoDelBtn){ const p=getProject(); if(!p) return; const idx=Number(seoDelBtn.dataset.idx); confirmRowDelete('콘텐츠 항목',()=>{ if(idx>=0&&idx<p.seoItems.length) p.seoItems.splice(idx,1); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return; }
       // 체험단 완료/취소
       const partnerDoneBtn = t.closest('.partner-done-btn');
-      if(partnerDoneBtn){ const p=getProject(); if(!p) return; const idx=Number(partnerDoneBtn.dataset.idx); confirmStatusToggle('체험단 항목', true, ()=>{ if(p.partners[idx]) p.partners[idx].status='완료'; save(); renderDetail(); renderSummary(); }); return; }
+      if(partnerDoneBtn){ const p=getProject(); if(!p) return; const idx=Number(partnerDoneBtn.dataset.idx); confirmStatusToggle('체험단 항목', true, ()=>{ if(p.partners[idx]) markItemDone(p.partners[idx]); save(); renderDetail(); renderSummary(); }); return; }
       const partnerUndoBtn = t.closest('.partner-undo-btn');
-      if(partnerUndoBtn){ const p=getProject(); if(!p) return; const idx=Number(partnerUndoBtn.dataset.idx); confirmStatusToggle('체험단 항목', false, ()=>{ if(p.partners[idx]) p.partners[idx].status='대기중'; save(); renderDetail(); renderSummary(); }); return; }
+      if(partnerUndoBtn){ const p=getProject(); if(!p) return; const idx=Number(partnerUndoBtn.dataset.idx); confirmStatusToggle('체험단 항목', false, ()=>{ if(p.partners[idx]) markItemUndone(p.partners[idx]); save(); renderDetail(); renderSummary(); }); return; }
       const partnerDelBtn = t.closest('.partner-del-btn');
       if(partnerDelBtn){ const p=getProject(); if(!p) return; const idx=Number(partnerDelBtn.dataset.idx); confirmRowDelete('체험단 항목',()=>{ p.partners.splice(idx,1); save(); renderDetail(); renderSummary(); }); return; }
       const reportEditBtn = t.closest('.report-edit-btn');
@@ -2515,9 +2663,9 @@
         }
         syncAllTasks(p); save(); renderDetail(); renderSummary(); return; }
       const etcDoneBtn = t.closest('.etc-done-btn');
-      if(etcDoneBtn){ const p=getProject(); if(!p) return; const idx=Number(etcDoneBtn.dataset.idx); confirmStatusToggle('기타 업무 항목', true, ()=>{ if(p.etcItems[idx]) p.etcItems[idx].status='완료'; syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return; }
+      if(etcDoneBtn){ const p=getProject(); if(!p) return; const idx=Number(etcDoneBtn.dataset.idx); confirmStatusToggle('기타 업무 항목', true, ()=>{ if(p.etcItems[idx]) markItemDone(p.etcItems[idx]); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return; }
       const etcUndoBtn = t.closest('.etc-undo-btn');
-      if(etcUndoBtn){ const p=getProject(); if(!p) return; const idx=Number(etcUndoBtn.dataset.idx); confirmStatusToggle('기타 업무 항목', false, ()=>{ if(p.etcItems[idx]) p.etcItems[idx].status='대기중'; syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return; }
+      if(etcUndoBtn){ const p=getProject(); if(!p) return; const idx=Number(etcUndoBtn.dataset.idx); confirmStatusToggle('기타 업무 항목', false, ()=>{ if(p.etcItems[idx]) markItemUndone(p.etcItems[idx]); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return; }
       const etcDelBtn = t.closest('.etc-del-btn');
       if(etcDelBtn){ const p=getProject(); if(!p) return; if(!p.etcItems) p.etcItems=[]; const idx=Number(etcDelBtn.dataset.idx); confirmRowDelete('기타 업무 항목',()=>{ p.etcItems.splice(idx,1); save(); renderDetail(); renderSummary(); }); return; }
 
@@ -2543,12 +2691,12 @@
       const seoCompleteBtn = t.closest('.seo-complete');
       if(seoCompleteBtn){
         const p = getProject(); if(!p) return; const idx=Number(seoCompleteBtn.dataset.idx);
-        confirmStatusToggle('콘텐츠 항목', true, ()=>{ p.seoItems[idx].status = '완료'; syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
+        confirmStatusToggle('콘텐츠 항목', true, ()=>{ markItemDone(p.seoItems[idx]); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
       }
       const seoUndoBtn = t.closest('.seo-undo');
       if(seoUndoBtn){
         const p = getProject(); if(!p) return; const idx=Number(seoUndoBtn.dataset.idx);
-        confirmStatusToggle('콘텐츠 항목', false, ()=>{ p.seoItems[idx].status = '대기중'; syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
+        confirmStatusToggle('콘텐츠 항목', false, ()=>{ markItemUndone(p.seoItems[idx]); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
       }
 
       // 보고 완료 원클릭
@@ -2556,12 +2704,12 @@
       if(reportDoneBtn){
         const p = getProject(); if(!p) return; const idx=Number(reportDoneBtn.dataset.idx);
         if(!p.reportItems) p.reportItems = generateReportItems(p.start, p.end);
-        confirmStatusToggle('결과보고 항목', true, ()=>{ p.reportItems[idx].status = '완료'; syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
+        confirmStatusToggle('결과보고 항목', true, ()=>{ markItemDone(p.reportItems[idx]); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
       }
       const reportUndoBtn = t.closest('.report-undo');
       if(reportUndoBtn){
         const p = getProject(); if(!p) return; const idx=Number(reportUndoBtn.dataset.idx);
-        confirmStatusToggle('결과보고 항목', false, ()=>{ p.reportItems[idx].status = '대기중'; syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
+        confirmStatusToggle('결과보고 항목', false, ()=>{ markItemUndone(p.reportItems[idx]); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return;
       }
 
       // 캘린더 월 이동
@@ -3120,7 +3268,6 @@
       statuses.forEach(s => counts[s] = s==='all' ? projects.length : projects.filter(p=>projectStatus(p)===s).length);
 
       // 요약 카드
-      const totalProgress = projects.length ? Math.round(projects.reduce((s,p)=>s+taskProgress(p),0)/projects.length) : 0;
       const doneCount = projects.filter(p=>projectStatus(p)==='완료').length;
       const riskCount = projects.filter(p=>p.risk!=='정상').length;
       const activeCount = projects.filter(p=>projectStatus(p)==='진행중'||projectStatus(p)==='검수중').length;
@@ -3128,7 +3275,6 @@
         <div class="card"><div class="label">전체 광고</div><div class="value">${projects.length}</div><div class="sub">전체 광고 프로젝트</div></div>
         <div class="card"><div class="label">진행중</div><div class="value" style="color:var(--blue)">${activeCount}</div><div class="sub">대기/완료 제외</div></div>
         <div class="card"><div class="label">완료</div><div class="value" style="color:var(--green)">${doneCount}</div><div class="sub">완료된 프로젝트</div></div>
-        <div class="card"><div class="label">평균 완료율</div><div class="value">${totalProgress}%</div><div class="sub">광고별 자동 계산</div></div>
         <div class="card"><div class="label">리스크 있음</div><div class="value" style="color:var(--red)">${riskCount}</div><div class="sub">주의·지연 포함</div></div>
       `;
 
