@@ -122,12 +122,13 @@
         <button class="btn btn-primary" id="addProjectBtn" type="button">+ 프로젝트 추가</button>
         <button class="btn btn-secondary" id="importDocBtn" type="button">문서로 추가</button>
         <button class="btn btn-secondary" type="button" onclick="window.print()">출력</button>
+        <button class="btn btn-secondary" id="langToggleBtn" type="button" style="font-weight:700;min-width:44px">日</button>
       </div>
     </section>
 
     <section class="summary">
-      <div class="card clickable" id="sumProjectsCard" style="cursor:pointer" title="전체 프로젝트 보기"><div class="label">등록 광고</div><div class="value" id="sumProjects">0</div><div class="sub">전체 광고 프로젝트</div></div>
-      <div class="card clickable" id="sumActiveCard" style="cursor:pointer" title="진행중 프로젝트 보기"><div class="label">진행중</div><div class="value" id="sumActive">0</div><div class="sub">대기/완료 제외</div></div>
+      <div class="card clickable" id="sumProjectsCard" style="cursor:pointer" title="전체 프로젝트 보기"><div class="label">${t('regAd')}</div><div class="value" id="sumProjects">0</div><div class="sub">${t('regAdSub')}</div></div>
+      <div class="card clickable" id="sumActiveCard" style="cursor:pointer" title="진행중 프로젝트 보기"><div class="label">${t('active')}</div><div class="value" id="sumActive">0</div><div class="sub">${t('activeSub')}</div></div>
       <div class="card"><div class="label">평균 완료율</div><div class="value" id="sumProgress">0%</div><div class="sub">광고별 자동 계산</div></div>
       <div class="card"><div class="label">가장 가까운 일정</div><div class="value" id="sumNext">-</div><div class="sub" id="sumNextName">등록된 일정 없음</div></div>
     </section>
@@ -141,7 +142,7 @@
       <!-- 전체 캘린더 -->
       <section class="card" style="padding:22px;margin-bottom:18px">
         <div class="panel-title" style="margin-bottom:0">
-          <h3>전체 일정 캘린더</h3>
+          <h3>${t('calTitle')}</h3>
           <small id="mainCalLegend" style="display:flex;gap:10px;flex-wrap:wrap"></small>
         </div>
         <div class="cal-nav" style="margin-top:14px">
@@ -154,7 +155,7 @@
 
       <div class="toolbar">
         <div class="filters">
-          <input class="search" id="searchInput" placeholder="광고명 / 담당 / 상태 검색" />
+          <input class="search" id="searchInput" placeholder="${t('search')}" />
           <div id="statusFilterBtns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
           <select class="select" id="statusFilter" style="display:none">
             <option value="all">전체 상태</option><option value="대기중">대기중</option><option value="진행중">진행중</option><option value="검수중">검수중</option><option value="완료">완료</option><option value="지연">지연</option>
@@ -355,7 +356,7 @@
       <div id="mtab-tasks" class="mtab-content hidden">
         <div style="margin-bottom:12px;color:var(--muted);font-size:13px">프로젝트에 포함할 운영 태스크를 설정합니다. 추가 후에도 태스크 탭에서 수정할 수 있습니다.</div>
         <div id="modalTaskList"></div>
-        <button class="btn btn-secondary btn-small" id="addModalTaskBtn" type="button" style="margin-top:10px">+ 태스크 추가</button>
+        <button class="btn btn-secondary btn-small" id="addModalTaskBtn" type="button" style="margin-top:10px">${t('addTask')}</button>
       </div>
 
       <div class="modal-actions">
@@ -401,6 +402,197 @@
       }
     });
 
+    // ── 언어 설정 ──
+    let LANG = localStorage.getItem('dashboard_lang') || 'ko';
+
+    const I18N = {
+      ko: {
+        title: '광고 프로젝트 관리 대시보드',
+        subtitle: '메인페이지에서 광고별 진행 흐름을 확인하고, 각 광고별 상세 페이지에서 일정·콘텐츠·운영 태스크를 관리합니다.',
+        backHome: '← 메인페이지',
+        allProjects: '전체 프로젝트',
+        addProject: '+ 프로젝트 추가',
+        importDoc: '문서로 추가',
+        print: '출력',
+        regAd: '등록 광고',
+        regAdSub: '전체 광고 프로젝트',
+        active: '진행중',
+        activeSub: '대기/완료 제외',
+        avgRate: '평균 완료율',
+        avgRateSub: '광고별 자동 계산',
+        nearDate: '가장 가까운 일정',
+        noSchedule: '등록된 일정 없음',
+        flowTitle: '광고별 진행 흐름',
+        flowSub: '가까운 일정과 완료율을 기준으로 정렬됩니다.',
+        calTitle: '전체 일정 캘린더',
+        allProjTitle: '전체 프로젝트',
+        allProjSub: '등록된 모든 광고 프로젝트를 한눈에 확인합니다.',
+        tabs: ['개요','운영 태스크','콘텐츠','체험단','기타 업무','결과보고'],
+        statusList: ['대기중','진행중','검수중','완료','지연'],
+        statusLabel: {all:'전체',wait:'대기중',active:'진행중',review:'검수중',done:'완료',risk:'지연'},
+        overviewTitle: '광고 개요',
+        overviewSub: '다음 액션은 각 탭 데이터 기준으로 자동 연동됩니다.',
+        goalLabel: '운영 목적',
+        saveBtn: '저장',
+        nextAction: '다음 액션',
+        completionRate: '전체 완료율',
+        riskTitle: '리스크',
+        memoTitle: '메모',
+        contentTab: '콘텐츠 관리',
+        contentSub: '대기중은 가까운 일정순, 완료는 별도 구분',
+        addSeo: '+ SEO 추가',
+        seoCount: 'SEO 발행 회차',
+        pending: '대기중',
+        done: '완료',
+        inProgress: '진행중 / 대기중',
+        allSchedule: '전체 일정',
+        allScheduleSub: '가까운 미완료 일정이 우선 표시됩니다.',
+        partnerTitle: '체험단 / 제휴 운영',
+        partnerSub: 'SEO 콘텐츠와 분리된 체험단/제휴 일정',
+        addPartner: '+ 체험단 추가',
+        noPartner: '${t('noPartner')}',
+        etcTitle: '기타 업무',
+        addEtc: '+ 업무 추가',
+        noEtc: '${t('noEtc')}',
+        reportTitle: '결과 보고 일정',
+        reportSub: '운영 기간 기준 자동 생성',
+        addReport: '+ 보고 추가',
+        reportCount: '전체 보고 횟수',
+        nextReport: '다음 보고',
+        allDone: t('allDone'),
+        colRound: '회차', colDraft: '초안 제출일', colReview: '검수 기간', colPublish: '공개일', colTheme: 'SEO 테마', colStatus: '상태',
+        colPeriod: '시기', colContent: '진행 내용', colOwner: '세부 내용 / 담당',
+        colTask: '태스크', colGoal: '운영 목적', colRate: '진행률', colNext: '다음 일정',
+        colReport: '보고일', colDiv: '구분', colMemo: '메모',
+        editBtn: '수정', saveBtn2: '저장', cancelBtn: '취소', doneBtn: '완료', undoBtn: '↩', delBtn: '삭제',
+        editInfo: '기본정보 수정', copyBtn: '복사', deleteBtn: '삭제',
+        taskTitle: '운영 태스크', taskSub: '상태·진행률은 각 탭 데이터 기준 자동 계산 / 커스텀 태스크는 직접 편집',
+        addTask: '+ 태스크 추가',
+        autoLink: t('autoLink'),
+        noScheduleDesc: '${t('noScheduleDesc')}',
+        seoRound: 'SEO 회차명 (예: SEO 1안)',
+        seoReviewPlh: '예: ~3월 13일',
+        seoThemePlh: '테마',
+        trash: '휴지통',
+        search: '광고명 / 담당 / 상태 검색',
+        filterAll: '전체',
+        riskNormal: '정상', riskCaution: '주의', riskDelay: '지연',
+      },
+      ja: {
+        title: '広告プロジェクト管理ダッシュボード',
+        subtitle: 'メインページで広告ごとの進捗を確認し、各広告の詳細ページでスケジュール・コンテンツ・運営タスクを管理します。',
+        backHome: '← メインへ',
+        allProjects: '全プロジェクト',
+        addProject: '+ プロジェクト追加',
+        importDoc: '書類から追加',
+        print: '印刷',
+        regAd: '登録広告',
+        regAdSub: '全広告プロジェクト',
+        active: '進行中',
+        activeSub: '待機/完了除く',
+        avgRate: '平均完了率',
+        avgRateSub: '広告別自動計算',
+        nearDate: '直近のスケジュール',
+        noSchedule: '登録済みスケジュールなし',
+        flowTitle: '広告別進捗フロー',
+        flowSub: '直近のスケジュールと完了率で並び替えています。',
+        calTitle: '全体スケジュールカレンダー',
+        allProjTitle: '全プロジェクト',
+        allProjSub: '登録済みの全広告プロジェクトを一覧で確認できます。',
+        tabs: ['概要','運営タスク','コンテンツ','体験団','その他業務','結果報告'],
+        statusList: ['待機中','進行中','確認中','完了','遅延'],
+        statusLabel: {all:'全体',wait:'待機中',active:'進行中',review:'確認中',done:'完了',risk:'遅延'},
+        overviewTitle: '広告概要',
+        overviewSub: '次のアクションは各タブのデータを基に自動連動されます。',
+        goalLabel: '運営目的',
+        saveBtn: '保存',
+        nextAction: '次のアクション',
+        completionRate: '全体完了率',
+        riskTitle: 'リスク',
+        memoTitle: 'メモ',
+        contentTab: 'コンテンツ管理',
+        contentSub: '待機中は直近順、完了は別途表示',
+        addSeo: '+ SEO追加',
+        seoCount: 'SEO発行回数',
+        pending: '待機中',
+        done: '完了',
+        inProgress: '進行中 / 待機中',
+        allSchedule: '全スケジュール',
+        allScheduleSub: '直近の未完了スケジュールを優先表示します。',
+        partnerTitle: '体験団 / 提携運営',
+        partnerSub: 'SEOコンテンツとは別の体験団/提携スケジュール',
+        addPartner: '+ 体験団追加',
+        noPartner: '体験団または提携運営スケジュールが登録されていません。',
+        etcTitle: 'その他業務',
+        addEtc: '+ 業務追加',
+        noEtc: '登録されたその他業務がありません。',
+        reportTitle: '結果報告スケジュール',
+        reportSub: '運営期間基準で自動生成',
+        addReport: '+ 報告追加',
+        reportCount: '報告回数',
+        nextReport: '次の報告',
+        allDone: '全完了',
+        colRound: '回次', colDraft: '初稿提出日', colReview: '確認期間', colPublish: '公開日', colTheme: 'SEOテーマ', colStatus: 'ステータス',
+        colPeriod: '時期', colContent: '進行内容', colOwner: '詳細 / 担当',
+        colTask: 'タスク', colGoal: '運営目的', colRate: '進捗率', colNext: '次のスケジュール',
+        colReport: '報告日', colDiv: '区分', colMemo: 'メモ',
+        editBtn: '編集', saveBtn2: '保存', cancelBtn: 'キャンセル', doneBtn: '完了', undoBtn: '↩', delBtn: '削除',
+        editInfo: '基本情報編集', copyBtn: 'コピー', deleteBtn: '削除',
+        taskTitle: '運営タスク', taskSub: 'ステータス・進捗率は各タブデータ基準で自動計算 / カスタムタスクは直接編集',
+        addTask: '+ タスク追加',
+        autoLink: '自動連動',
+        noScheduleDesc: '登録済みスケジュールがないか、全て完了しています。',
+        seoRound: 'SEO回次名 (例: SEO 1稿)',
+        seoReviewPlh: '例: ~3月13日',
+        seoThemePlh: 'テーマ',
+        trash: 'ゴミ箱',
+        search: '広告名 / 担当 / ステータス検索',
+        filterAll: '全体',
+        riskNormal: '正常', riskCaution: '注意', riskDelay: '遅延',
+      }
+    };
+
+    function t(key){ return (I18N[LANG] || I18N.ko)[key] || I18N.ko[key] || key; }
+
+    function applyLang(){
+      // 헤더
+      document.querySelector('.header h1').textContent = t('title');
+      document.querySelector('.header p').textContent = t('subtitle');
+      const backBtn = document.getElementById('backHomeHeaderBtn');
+      if(backBtn) backBtn.textContent = t('backHome');
+      const allBtn = document.getElementById('allProjectsNavBtn');
+      if(allBtn) allBtn.textContent = t('allProjects');
+      const addBtn = document.getElementById('addProjectBtn');
+      if(addBtn) addBtn.textContent = t('addProject');
+      const importBtn = document.getElementById('importDocBtn');
+      if(importBtn) importBtn.textContent = t('importDoc');
+      const langBtn = document.getElementById('langToggleBtn');
+      if(langBtn) langBtn.textContent = LANG==='ko' ? '日' : '한';
+      // 요약 카드
+      const sumRegLabel = document.querySelector('#sumProjectsCard .label');
+      const sumRegSub = document.querySelector('#sumProjectsCard .sub');
+      if(sumRegLabel) sumRegLabel.textContent = t('regAd');
+      if(sumRegSub) sumRegSub.textContent = t('regAdSub');
+      const sumActLabel = document.querySelector('#sumActiveCard .label');
+      const sumActSub = document.querySelector('#sumActiveCard .sub');
+      if(sumActLabel) sumActLabel.textContent = t('active');
+      if(sumActSub) sumActSub.textContent = t('activeSub');
+      document.querySelector('#sumAvgCard .label')?.setAttribute('data-i18n','avgRate');
+      document.querySelector('#sumAvgCard .sub')?.setAttribute('data-i18n','avgRateSub');
+      // 다시 렌더
+      renderSummary();
+      if(document.getElementById('allProjectsScreen')?.classList.contains('active')) renderAllProjects();
+    }
+
+    document.addEventListener('DOMContentLoaded', ()=>{
+      document.getElementById('langToggleBtn')?.addEventListener('click', ()=>{
+        LANG = LANG==='ko' ? 'ja' : 'ko';
+        localStorage.setItem('dashboard_lang', LANG);
+        applyLang();
+        render();
+      });
+    });
+
     const ANTHROPIC_API_KEY = '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';
     const STORAGE_KEY = 'fj_ad_multi_page_dashboard_blank_v2';
     const TRASH_KEY = 'fj_ad_trash_blank_v2';
@@ -424,9 +616,8 @@
     let currentTab = 'overview';
     let editingProjectId = null;
 
-    const tabs = [
-      ['overview','개요'],['tasks','운영 태스크'],['content','콘텐츠'],['partners','체험단'],['etc','기타 업무'],['report','결과보고']
-    ];
+    const TABS_KO = ['overview','tasks','content','partners','etc','report'];
+    function getTabs(){ return TABS_KO.map((k,i)=>([k, t('tabs')[i]])); }
 
     const taskScore = {'대기중':0,'준비중':10,'초안 준비':25,'진행중':40,'조율중':45,'검수중':60,'수정중':75,'보고 준비':25,'작성중':55,'완료':100,'공개완료':100,'보고완료':100,'지연':0};
     const contentScore = {'대기중':0,'완료':100};
@@ -684,7 +875,17 @@
       }).join('');
     }
 
-    function render(){ renderSummary(); renderHome(); renderMainCalendar(); if(document.getElementById('detailScreen').classList.contains('active')) renderDetail(); }
+    function render(){
+      const h1=document.querySelector('.header h1'); if(h1) h1.textContent=t('title');
+      const hp=document.querySelector('.header p'); if(hp) hp.textContent=t('subtitle');
+      const backBtn=document.getElementById('backHomeHeaderBtn'); if(backBtn) backBtn.textContent=t('backHome');
+      const allBtn=document.getElementById('allProjectsNavBtn'); if(allBtn) allBtn.textContent=t('allProjects');
+      const addBtn=document.getElementById('addProjectBtn'); if(addBtn) addBtn.textContent=t('addProject');
+      const importBtn=document.getElementById('importDocBtn'); if(importBtn) importBtn.textContent=t('importDoc');
+      const langBtn=document.getElementById('langToggleBtn'); if(langBtn) langBtn.textContent=LANG==='ko'?'日':'한';
+      renderSummary(); renderHome(); renderMainCalendar();
+      if(document.getElementById('detailScreen').classList.contains('active')) renderDetail();
+    }
     function renderSummary(){
       const total = projects.length;
       const active = projects.filter(p => projectStatus(p) !== '완료' && projectStatus(p) !== '대기중').length;
@@ -694,6 +895,14 @@
       document.getElementById('sumActive').textContent = active;
       document.getElementById('sumProgress').textContent = avg + '%';
       document.getElementById('sumNext').textContent = allNext ? (allNext.n.draft || allNext.n.date || '-') : '-';
+      // 카드 라벨 i18n 갱신
+      document.querySelector('#sumProjectsCard .label') && (document.querySelector('#sumProjectsCard .label').textContent = t('regAd'));
+      document.querySelector('#sumProjectsCard .sub') && (document.querySelector('#sumProjectsCard .sub').textContent = t('regAdSub'));
+      document.querySelector('#sumActiveCard .label') && (document.querySelector('#sumActiveCard .label').textContent = t('active'));
+      document.querySelector('#sumActiveCard .sub') && (document.querySelector('#sumActiveCard .sub').textContent = t('activeSub'));
+      // 가장 가까운 일정 카드
+      const nearCard = document.querySelectorAll('.summary .card')[3];
+      if(nearCard) nearCard.querySelector('.label') && (nearCard.querySelector('.label').textContent = t('nearDate'));
       document.getElementById('sumNextName').textContent = allNext ? `${allNext.p.name} · ${allNext.n.round || allNext.n.label || ''}` : '등록된 일정 없음';
     }
 
@@ -724,7 +933,7 @@
         <span class="badge ${statusClass(status)}">${escapeHtml(status)}</span></div>
         <div class="progress-row"><span>완료율</span><span>${progress}%</span></div><div class="bar"><span style="width:${progress}%"></span></div>
         <div class="mini-grid"><div class="mini"><small>다음 일정</small><b>${escapeHtml(n?.draft || '-')}</b></div><div class="mini"><small>콘텐츠</small><b>${done}/${p.seoItems.length}</b></div><div class="mini"><small>리스크</small><b>${escapeHtml(p.risk)}</b></div></div>
-        <div class="card-actions"><button class="btn btn-primary btn-small open-detail" data-id="${p.id}" type="button">상세 페이지</button><button class="btn btn-secondary btn-small copy-project" data-id="${p.id}" type="button">복사</button><button class="btn btn-danger btn-small delete-project" data-id="${p.id}" type="button">삭제</button></div>
+        <div class="card-actions"><button class="btn btn-primary btn-small open-detail" data-id="${p.id}" type="button">상세 페이지</button><button class="btn btn-secondary btn-small copy-project" data-id="${p.id}" type="button">${t('copyBtn')}</button><button class="btn btn-danger btn-small delete-project" data-id="${p.id}" type="button">${t('delBtn')}</button></div>
       </article>`;
     }
 
@@ -750,7 +959,7 @@
     function renderDetail(){
       const p = getProject(); if(!p){ showHome(); return; }
       selectedProjectId = p.id; const progress = taskProgress(p); const status = projectStatus(p); const n = nextItem(p); const done = p.seoItems.filter(i=>i.status==='완료').length;
-      document.getElementById('detailHead').innerHTML = `<div class="detail-top"><div class="detail-title"><h2>${escapeHtml(p.name)}</h2><p>${escapeHtml(p.owner)} · ${fmtDate(p.start)} ~ ${fmtDate(p.end)}</p></div><div class="actions"><button class="btn btn-secondary" id="editCurrentBtn" type="button">기본정보 수정</button><button class="btn btn-secondary" id="copyCurrentBtn" type="button">복사</button><button class="btn btn-danger" id="deleteCurrentBtn" type="button">삭제</button></div></div><div class="detail-metrics"><div class="metric" style="grid-column:span 2"><div class="label" style="margin-bottom:10px">상태</div><div style="display:flex;gap:6px;flex-wrap:wrap">${['대기중','진행중','검수중','완료','지연'].map(s=>`<button class="status-box-btn${s===status?' active':''}" data-pid="${p.id}" data-status="${s}" type="button" style="border:2px solid ${s===status?'transparent':'var(--line)'};border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${s===status?(s==='대기중'?'var(--purple)':(s==='진행중'?'var(--blue)':(s==='검수중'?'var(--yellow)':(s==='완료'?'var(--green)':'var(--red)')))):'#fff'};color:${s===status?'#fff':'var(--muted)'}">${s}</button>`).join('')}</div></div><div class="metric"><div class="label">완료율</div><strong>${progress}%</strong></div><div class="metric"><div class="label">다음 일정</div><strong>${escapeHtml(n?.draft || '-')}</strong></div><div class="metric"><div class="label">콘텐츠 완료</div><strong>${done}/${p.seoItems.length}</strong></div></div>`;
+      document.getElementById('detailHead').innerHTML = `<div class="detail-top"><div class="detail-title"><h2>${escapeHtml(p.name)}</h2><p>${escapeHtml(p.owner)} · ${fmtDate(p.start)} ~ ${fmtDate(p.end)}</p></div><div class="actions"><button class="btn btn-secondary" id="editCurrentBtn" type="button">${t('editInfo')}</button><button class="btn btn-secondary" id="copyCurrentBtn" type="button">${t('copyBtn')}</button><button class="btn btn-danger" id="deleteCurrentBtn" type="button">${t('delBtn')}</button></div></div><div class="detail-metrics"><div class="metric" style="grid-column:span 2"><div class="label" style="margin-bottom:10px">상태</div><div style="display:flex;gap:6px;flex-wrap:wrap">${t('statusList').map(s=>`<button class="status-box-btn${s===status?' active':''}" data-pid="${p.id}" data-status="${s}" type="button" style="border:2px solid ${s===status?'transparent':'var(--line)'};border-radius:8px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;transition:all .15s;background:${s===status?(s==='대기중'?'var(--purple)':(s==='진행중'?'var(--blue)':(s==='검수중'?'var(--yellow)':(s==='완료'?'var(--green)':'var(--red)')))):'#fff'};color:${s===status?'#fff':'var(--muted)'}">${s}</button>`).join('')}</div></div><div class="metric"><div class="label">완료율</div><strong>${progress}%</strong></div><div class="metric"><div class="label">다음 일정</div><strong>${escapeHtml(n?.draft || '-')}</strong></div><div class="metric"><div class="label">콘텐츠 완료</div><strong>${done}/${p.seoItems.length}</strong></div></div>`;
       document.getElementById('tabs').innerHTML = tabs.map(t=>`<button class="tab ${currentTab===t[0]?'active':''}" data-tab="${t[0]}" type="button">${t[1]}</button>`).join('');
       document.querySelectorAll('.tab').forEach(btn=>btn.addEventListener('click',()=>{currentTab=btn.dataset.tab; renderDetail();}));
       const editBtn = document.getElementById('editCurrentBtn');
@@ -778,7 +987,7 @@
       const actions=[];
       const pendingSeo=(p.seoItems||[]).filter(i=>i.status!=='완료').sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
       if(pendingSeo.length){ const s=pendingSeo[0]; const dc=(p.seoItems||[]).filter(i=>i.status==='완료').length; actions.push({category:'콘텐츠',color:'var(--blue-soft)',textColor:'var(--blue)',title:s.round,desc:[s.draft&&`초안 ${s.draft}`,s.publish&&`발행 ${s.publish}`].filter(Boolean).join(' · ')||'일정 미정',sub:`${dc}/${p.seoItems.length} 완료`,tab:'content'}); }
-      else if((p.seoItems||[]).length){ actions.push({category:'콘텐츠',color:'var(--green-soft)',textColor:'var(--green)',title:'전체 완료',desc:`${p.seoItems.length}건 발행 완료`,sub:'',tab:'content'}); }
+      else if((p.seoItems||[]).length){ actions.push({category:'콘텐츠',color:'var(--green-soft)',textColor:'var(--green)',title:t('allDone'),desc:`${p.seoItems.length}건 발행 완료`,sub:'',tab:'content'}); }
       const pendingP=(p.partners||[]).filter(x=>x.status!=='완료');
       if(pendingP.length){ const pt=pendingP[0]; const dc=(p.partners||[]).filter(x=>x.status==='완료').length; actions.push({category:'체험단',color:'var(--purple-soft)',textColor:'var(--purple)',title:pt.period,desc:pt.content||'-',sub:`${dc}/${p.partners.length} 완료`,tab:'partners'}); }
       const pendingE=(p.etcItems||[]).filter(x=>x.status!=='완료');
@@ -800,18 +1009,18 @@
           </div>
           <div style="font-weight:700;font-size:14px;color:${a.textColor};margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.title)}</div>
           <div style="font-size:12px;color:${a.textColor};opacity:.75;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${escapeHtml(a.desc)}</div>
-        </div>`).join(''):`<div style="color:var(--muted);font-size:13px;padding:12px 0">등록된 일정이 없거나 모두 완료되었습니다.</div>`;
+        </div>`).join(''):`<div style="color:var(--muted);font-size:13px;padding:12px 0">${t('noScheduleDesc')}</div>`;
       return `
         <section class="panel">
-          <div class="panel-title"><h3>광고 개요</h3><small>다음 액션은 각 탭 데이터 기준으로 자동 연동됩니다.</small></div>
+          <div class="panel-title"><h3>${t('overviewTitle')}</h3><small>${t('overviewSub')}</small></div>
           <div class="two-col">
             <div>
-              <div class="field full"><label>운영 목적</label><textarea class="search" id="overviewGoal" style="width:100%;min-height:130px">${escapeHtml(p.goal||'')}</textarea></div>
+              <div class="field full"><label>${t('goalLabel')}</label><textarea class="search" id="overviewGoal" style="width:100%;min-height:130px">${escapeHtml(p.goal||'')}</textarea></div>
               <button class="btn btn-primary btn-small" id="overviewSaveBtn" type="button" style="margin-top:12px">저장</button>
               <small id="overviewSaveMsg" style="display:block;margin-top:8px;color:var(--muted)">입력 후 저장을 누르면 반영됩니다.</small>
             </div>
             <div>
-              <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.04em;text-transform:uppercase">다음 액션 <span style="font-weight:400;opacity:.7">· 클릭하면 해당 탭으로 이동</span></div>
+              <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:10px;letter-spacing:.04em;text-transform:uppercase">${t('nextAction')} <span style="font-weight:400;opacity:.7">· 클릭하면 해당 탭으로 이동</span></div>
               <div style="display:grid;gap:8px">${actionCards}</div>
               <div style="margin-top:16px">
                 <div style="display:flex;justify-content:space-between;font-size:13px;font-weight:700;margin-bottom:6px"><span>전체 완료율</span><span>${progress}%</span></div>
@@ -822,7 +1031,7 @@
         </section>
         <div class="two-col">
           <section class="panel">
-            <div class="panel-title"><h3>리스크</h3><small>광고 전체 리스크 상태</small></div>
+            <div class="panel-title"><h3>${t('riskTitle')}</h3><small>광고 전체 리스크 상태</small></div>
             <div class="field" style="max-width:220px"><label>리스크 상태</label>
               <select class="status-select ${statusClass(p.risk==='정상'?'완료':p.risk)}" id="riskSelect">
                 <option ${p.risk==='정상'?'selected':''}>정상</option>
@@ -832,7 +1041,7 @@
             </div>
           </section>
           <section class="panel">
-            <div class="panel-title"><h3>메모</h3><small>내부 운영 메모</small></div>
+            <div class="panel-title"><h3>${t('memoTitle')}</h3><small>내부 운영 메모</small></div>
             <textarea class="search" id="memoText" style="width:100%;min-height:120px">${escapeHtml(p.memos)}</textarea>
           </section>
         </div>
@@ -860,7 +1069,7 @@
         const totalPart = p.partners.length;
         const hasActive = p.partners.some(x=>['진행중','조율중'].includes(x.status));
         const nextPart = p.partners.find(x=>x.status!=='완료');
-        passTask.next = nextPart ? `${nextPart.period} · ${nextPart.content}` : '전체 완료';
+        passTask.next = nextPart ? `${nextPart.period} · ${nextPart.content}` : t('allDone');
         if(donePart===totalPart) passTask.status = '완료';
         else if(hasActive) passTask.status = '조율중';
         else if(donePart>0) passTask.status = '진행중';
@@ -873,7 +1082,7 @@
         const done = p.etcItems.filter(x=>x.status==='완료').length;
         const total = p.etcItems.length;
         const nextEtc = p.etcItems.find(x=>x.status!=='완료');
-        guideTask.next = nextEtc ? `${nextEtc.name}${nextEtc.next ? ' · '+nextEtc.next : ''}` : '전체 완료';
+        guideTask.next = nextEtc ? `${nextEtc.name}${nextEtc.next ? ' · '+nextEtc.next : ''}` : t('allDone');
         if(done===0) guideTask.status = '준비중';
         else if(done===total) guideTask.status = '완료';
         else guideTask.status = '진행중';
@@ -885,7 +1094,7 @@
         const doneRep = ri.filter(r=>r.status==='완료').length;
         const totalRep = ri.length;
         const nextRep = ri.find(r=>r.status!=='완료');
-        repTask.next = nextRep ? `${nextRep.date} ${nextRep.label}` : '전체 완료';
+        repTask.next = nextRep ? `${nextRep.date} ${nextRep.label}` : t('allDone');
         if(totalRep===0) repTask.status = '대기중';
         else if(doneRep===0) repTask.status = '대기중';
         else if(doneRep===totalRep) repTask.status = '보고완료';
@@ -916,9 +1125,9 @@
         return `<tr><td>${nameCell}</td><td>${goalCell}</td><td>${statusCell}</td><td><b>${progress}%</b></td><td>${nextCell}</td><td>${delCell}</td></tr>`;
       }).join('');
       return `<section class="panel">
-        <div class="panel-title"><h3>운영 태스크</h3><small>상태·진행률은 각 탭 데이터 기준 자동 계산 / 커스텀 태스크는 직접 편집</small></div>
-        <div style="margin-bottom:12px"><button class="btn btn-primary btn-small" id="addTaskBtn" type="button">+ 태스크 추가</button></div>
-        <table><thead><tr><th>태스크</th><th>운영 목적</th><th>상태</th><th>진행률</th><th>다음 일정</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+        <div class="panel-title"><h3>${t('taskTitle')}</h3><small>${t('taskSub')}</small></div>
+        <div style="margin-bottom:12px"><button class="btn btn-primary btn-small" id="addTaskBtn" type="button">${t('addTask')}</button></div>
+        <table><thead><tr><th>${t('colTask')}</th><th>${t('colGoal')}</th><th>${t('colStatus')}</th><th>${t('colRate')}</th><th>${t('colNext')}</th><th></th></tr></thead><tbody>${rows}</tbody></table>
       </section>`;
     }
     function contentHtml(p){
@@ -927,17 +1136,17 @@
       const sorted = p.seoItems.slice().sort((a,b)=> (a.status==='완료')-(b.status==='완료') || parseDate(a.draft)-parseDate(b.draft));
       return `
         <section class="panel">
-          <div class="panel-title"><h3>콘텐츠 관리</h3><small>대기중은 가까운 일정순, 완료는 별도 구분</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">+ SEO 추가</button></div>
+          <div class="panel-title"><h3>${t('contentTab')}</h3><small>${t('contentSub')}</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">${t('addSeo')}</button></div>
           <div class="summary" style="grid-template-columns:repeat(3,1fr)">
-            <div class="card"><div class="label">SEO 발행 회차</div><div class="value">${p.seoItems.length}회차</div></div>
-            <div class="card"><div class="label">대기중</div><div class="value">${pending.length}건</div></div>
-            <div class="card"><div class="label">완료</div><div class="value">${done.length}건</div></div>
+            <div class="card"><div class="label">${t('seoCount')}</div><div class="value">${p.seoItems.length}회차</div></div>
+            <div class="card"><div class="label">${t('pending')}</div><div class="value">${pending.length}건</div></div>
+            <div class="card"><div class="label">${t('done')}</div><div class="value">${done.length}건</div></div>
           </div>
-          <div class="section-head">진행중 / 대기중</div>${seoTable(p,pending)}
-          <div class="section-head">완료</div>${done.length ? seoTable(p,done) : '<div class="empty card">완료된 콘텐츠가 없습니다.</div>'}
+          <div class="section-head">${t('inProgress')}</div>${seoTable(p,pending)}
+          <div class="section-head">${t('done')}</div>${done.length ? seoTable(p,done) : '<div class="empty card">완료된 콘텐츠가 없습니다.</div>'}
         </section>
         <section class="panel">
-          <div class="panel-title"><h3>전체 일정</h3><small>가까운 미완료 일정이 우선 표시됩니다.</small></div>
+          <div class="panel-title"><h3>${t('allSchedule')}</h3><small>${t('allScheduleSub')}</small></div>
           ${seoTable(p,sorted)}
         </section>`;
     }
@@ -977,8 +1186,8 @@
               ${statusSelect('seo',idx,item.status)}
             </td>
             <td style="padding:10px 8px;white-space:nowrap;vertical-align:bottom">
-              <button class="btn btn-primary btn-small seo-save-btn" data-idx="${idx}" type="button">저장</button>
-              <button class="btn btn-danger btn-small seo-del-btn" data-idx="${idx}" type="button">취소</button>
+              <button class="btn btn-primary btn-small seo-save-btn" data-idx="${idx}" type="button">${t('saveBtn2')}</button>
+              <button class="btn btn-danger btn-small seo-del-btn" data-idx="${idx}" type="button">${t('cancelBtn')}</button>
             </td>
           </tr>`;
         }
@@ -988,13 +1197,13 @@
           <td style="max-width:180px">${escapeHtml(item.theme)}</td>
           <td>${statusSelect('seo',idx,item.status)}</td>
           <td style="white-space:nowrap">
-            <button class="btn-icon seo-edit-btn" data-idx="${idx}" type="button" style="border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff;color:var(--muted)">수정</button>
-            ${isDone?`<button class="btn-restore seo-undo" data-idx="${idx}" type="button">↩</button>`:`<button class="btn-seo-done seo-complete" data-idx="${idx}" type="button">완료</button>`}
+            <button class="btn-icon seo-edit-btn" data-idx="${idx}" type="button" style="border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff;color:var(--muted)">${t('editBtn')}</button>
+            ${isDone?`<button class="btn-restore seo-undo" data-idx="${idx}" type="button">↩</button>`:`<button class="btn-seo-done seo-complete" data-idx="${idx}" type="button">${t('doneBtn')}</button>`}
             <button class="btn-icon seo-del-btn" data-idx="${idx}" type="button" style="border:1px solid #fecaca;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff5f5;color:var(--red)">삭제</button>
           </td>
         </tr>`;
       }).join('');
-      return `<table><thead><tr><th>회차</th><th>초안 제출일</th><th>검수 기간</th><th>공개일</th><th>SEO 테마</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table><thead><tr><th>${t('colRound')}</th><th>${t('colDraft')}</th><th>${t('colReview')}</th><th>${t('colPublish')}</th><th>${t('colTheme')}</th><th>${t('colStatus')}</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
     }
     function calendarHtml(p){
       // 캘린더 표시 기준 월 (state는 data attr로 유지)
@@ -1074,8 +1283,8 @@
       if(!p.etcItems) p.etcItems = [];
       if(!p.etcItems.length){
         return `<section class="panel">
-          <div class="panel-title"><h3>기타 업무</h3><small>등록된 기타 업무 없음</small><button class="btn btn-secondary btn-small" id="addEtcItemBtn" type="button">+ 업무 추가</button></div>
-          <div class="empty card" style="box-shadow:none;border-style:dashed">등록된 기타 업무가 없습니다.</div>
+          <div class="panel-title"><h3>기타 업무</h3><small>등록된 기타 업무 없음</small><button class="btn btn-secondary btn-small" id="addEtcItemBtn" type="button">${t('addEtc')}</button></div>
+          <div class="empty card" style="box-shadow:none;border-style:dashed">${t('noEtc')}</div>
         </section>`;
       }
       const statusOpts = ['대기중','준비중','진행중','검수중','수정중','완료','지연'];
@@ -1094,14 +1303,14 @@
       }).join('');
       const doneCount = p.etcItems.filter(x=>x.status==='완료').length;
       return `<section class="panel">
-        <div class="panel-title"><h3>기타 업무</h3><small>${doneCount}/${p.etcItems.length} 완료</small><button class="btn btn-secondary btn-small" id="addEtcItemBtn" type="button">+ 업무 추가</button></div>
+        <div class="panel-title"><h3>기타 업무</h3><small>${doneCount}/${p.etcItems.length} 완료</small><button class="btn btn-secondary btn-small" id="addEtcItemBtn" type="button">${t('addEtc')}</button></div>
         <table><thead><tr><th>업무명</th><th>목적 / 내용</th><th>상태</th><th>다음 일정</th><th>메모</th><th></th></tr></thead><tbody>${rows}</tbody></table>
       </section>`;
     }
 
     function partnersHtml(p){
       const rows=(p.partners||[]);
-      if(!rows.length) return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small><button class="btn btn-secondary btn-small" id="addPartnerItemBtn" type="button">+ 체험단 추가</button></div><div class="empty card" style="box-shadow:none;border-style:dashed">등록된 체험단 또는 제휴 운영 일정이 없습니다.</div></section>`;
+      if(!rows.length) return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>등록된 체험단/제휴 일정 없음</small><button class="btn btn-secondary btn-small" id="addPartnerItemBtn" type="button">${t('addPartner')}</button></div><div class="empty card" style="box-shadow:none;border-style:dashed">${t('noPartner')}</div></section>`;
       const trs=rows.map((x,i)=>{
         if(x._editing) return `<tr style="background:#f8fafc;border-left:3px solid var(--purple)">
           <td colspan="5" style="padding:14px 16px">
@@ -1110,8 +1319,8 @@
               <input class="partner-edit-input edit-field" data-idx="${i}" data-field="content" value="${escapeHtml(x.content)}" placeholder="진행 내용"/>
               <input class="partner-edit-input edit-field" data-idx="${i}" data-field="owner" value="${escapeHtml(x.owner)}" placeholder="담당"/>
               <div style="display:flex;gap:6px">
-                <button class="btn btn-primary btn-small partner-save-btn" data-idx="${i}" type="button">저장</button>
-                <button class="btn btn-danger btn-small partner-del-btn" data-idx="${i}" type="button">취소</button>
+                <button class="btn btn-primary btn-small partner-save-btn" data-idx="${i}" type="button">${t('saveBtn2')}</button>
+                <button class="btn btn-danger btn-small partner-del-btn" data-idx="${i}" type="button">${t('cancelBtn')}</button>
               </div>
             </div>
           </td>
@@ -1119,12 +1328,12 @@
         const pDone = x.status==='완료';
         return `<tr class="${pDone?'done-row':''}"><td><b>${escapeHtml(x.period)}</b></td><td>${escapeHtml(x.content)}</td><td>${escapeHtml(x.owner)}</td>
           <td style="white-space:nowrap">
-            <button class="btn-icon partner-edit-btn" data-idx="${i}" type="button" style="border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff;color:var(--muted)">수정</button>
-            ${pDone ? `<button class="btn-restore partner-undo-btn" data-idx="${i}" type="button">↩</button>` : `<button class="btn-seo-done partner-done-btn" data-idx="${i}" type="button">완료</button>`}
+            <button class="btn-icon partner-edit-btn" data-idx="${i}" type="button" style="border:1px solid var(--line);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff;color:var(--muted)">${t('editBtn')}</button>
+            ${pDone ? `<button class="btn-restore partner-undo-btn" data-idx="${i}" type="button">↩</button>` : `<button class="btn-seo-done partner-done-btn" data-idx="${i}" type="button">${t('doneBtn')}</button>`}
             <button class="btn-icon partner-del-btn" data-idx="${i}" type="button" style="border:1px solid #fecaca;border-radius:7px;padding:5px 9px;cursor:pointer;font-size:13px;background:#fff5f5;color:var(--red)">삭제</button>
           </td></tr>`;
       }).join('');
-      return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>SEO 콘텐츠와 분리된 체험단/제휴 일정</small><button class="btn btn-secondary btn-small" id="addPartnerItemBtn" type="button">+ 체험단 추가</button></div><table><thead><tr><th>시기</th><th>진행 내용</th><th>세부 내용 / 담당</th><th>상태</th><th></th></tr></thead><tbody>${trs}</tbody></table></section>`;
+      return `<section class="panel"><div class="panel-title"><h3>체험단 / 제휴 운영</h3><small>${t('partnerSub')}</small><button class="btn btn-secondary btn-small" id="addPartnerItemBtn" type="button">${t('addPartner')}</button></div><table><thead><tr><th>${t('colPeriod')}</th><th>${t('colContent')}</th><th>${t('colOwner')}</th><th>${t('colStatus')}</th><th></th></tr></thead><tbody>${trs}</tbody></table></section>`;
     }
     function reportHtml(p){
       if(!p.reportItems || !p.reportItems.length){
@@ -1151,13 +1360,13 @@
       }).join('');
       return `
         <section class="panel">
-          <div class="panel-title"><h3>결과 보고 일정</h3><small>운영 기간 기준 자동 생성 · ${done}/${total} 완료</small><button class="btn btn-secondary btn-small" id="addReportItemBtn" type="button">+ 보고 추가</button></div>
+          <div class="panel-title"><h3>결과 보고 일정</h3><small>${t('reportSub')} · ${done}/${total} ${t('done')}</small><button class="btn btn-secondary btn-small" id="addReportItemBtn" type="button">${t('addReport')}</button></div>
           <div class="summary" style="grid-template-columns:repeat(3,1fr);margin-bottom:16px">
-            <div class="card"><div class="label">전체 보고 횟수</div><div class="value">${total}회</div></div>
-            <div class="card"><div class="label">완료</div><div class="value">${done}회</div></div>
-            <div class="card"><div class="label">다음 보고</div><div class="value" style="font-size:18px">${next ? next.date : '-'}</div><div class="sub">${next ? next.label : '전체 완료'}</div></div>
+            <div class="card"><div class="label">${t('reportCount')}</div><div class="value">${total}회</div></div>
+            <div class="card"><div class="label">${t('done')}</div><div class="value">${done}회</div></div>
+            <div class="card"><div class="label">${t('nextReport')}</div><div class="value" style="font-size:18px">${next ? next.date : '-'}</div><div class="sub">${next ? next.label : t('allDone')}</div></div>
           </div>
-          <table><thead><tr><th>보고일</th><th>구분</th><th>상태</th><th>메모</th><th></th></tr></thead><tbody>${rows}</tbody></table>
+          <table><thead><tr><th>${t('colReport')}</th><th>${t('colDiv')}</th><th>${t('colStatus')}</th><th>${t('colMemo')}</th><th></th></tr></thead><tbody>${rows}</tbody></table>
         </section>
         <section class="panel">
           <div class="panel-title"><h3>검수 · 운영 메모</h3><small>검수 진행 현황 및 운영 특이사항</small></div>
@@ -2354,7 +2563,7 @@
       const riskCount = projects.filter(p=>p.risk!=='정상').length;
       const activeCount = projects.filter(p=>projectStatus(p)==='진행중'||projectStatus(p)==='검수중').length;
       document.getElementById('allProjSummary').innerHTML = `
-        <div class="card"><div class="label">전체 광고</div><div class="value">${projects.length}</div><div class="sub">전체 광고 프로젝트</div></div>
+        <div class="card"><div class="label">전체 광고</div><div class="value">${projects.length}</div><div class="sub">${t('regAdSub')}</div></div>
         <div class="card"><div class="label">진행중</div><div class="value" style="color:var(--blue)">${activeCount}</div><div class="sub">대기/완료 제외</div></div>
         <div class="card"><div class="label">완료</div><div class="value" style="color:var(--green)">${doneCount}</div><div class="sub">완료된 프로젝트</div></div>
         <div class="card"><div class="label">평균 완료율</div><div class="value">${totalProgress}%</div><div class="sub">광고별 자동 계산</div></div>
@@ -2409,7 +2618,7 @@
           <div class="card-actions">
             <button class="btn btn-primary btn-small all-open-detail" data-id="${p.id}" type="button">상세 페이지</button>
             <button class="btn btn-secondary btn-small all-edit-project" data-id="${p.id}" type="button">수정</button>
-            <button class="btn btn-danger btn-small all-delete-project" data-id="${p.id}" type="button">삭제</button>
+            <button class="btn btn-danger btn-small all-delete-project" data-id="${p.id}" type="button">${t('delBtn')}</button>
           </div>
         </article>`;
       }).join('');
@@ -2429,6 +2638,11 @@
     }
     // ─────────────────────────────────────────────────────────
 
+    document.getElementById('langToggleBtn')?.addEventListener('click', ()=>{
+      LANG = LANG==='ko' ? 'ja' : 'ko';
+      localStorage.setItem('dashboard_lang', LANG);
+      render();
+    });
     load(); renderTrash(); render();
   </script>
 </body>
