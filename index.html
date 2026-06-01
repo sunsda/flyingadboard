@@ -126,6 +126,48 @@
     .trash-btn-wrap{display:flex;justify-content:flex-end;margin-bottom:12px}.trash-toggle{display:flex;align-items:center;gap:7px;background:white;border:1px solid var(--line);border-radius:14px;padding:10px 15px;font-weight:900;cursor:pointer;font-size:14px;color:var(--muted);transition:.15s}.trash-toggle:hover{border-color:#fca5a5;color:var(--red)}.trash-toggle .count{background:var(--red-soft);color:var(--red);border-radius:999px;padding:2px 8px;font-size:12px;font-weight:900}
     .trash-section{background:white;border:1.5px dashed #fca5a5;border-radius:24px;padding:20px;margin-bottom:18px}.trash-section-head{display:flex;align-items:center;gap:10px;margin-bottom:16px}.trash-section-head h3{margin:0;font-size:17px;color:var(--red)}.trash-section-head small{color:var(--muted);font-size:13px}.trash-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}.trash-card{background:#fff5f5;border:1px solid #fecaca;border-radius:18px;padding:16px;opacity:.85}.trash-card h4{margin:0 0 4px;font-size:16px;color:var(--text)}.trash-card p{margin:0 0 10px;color:var(--muted);font-size:13px}.trash-card .deleted-at{font-size:12px;color:#f87171;margin-bottom:12px}.trash-card-actions{display:flex;gap:8px}.btn-restore{background:#dcfce7;color:var(--green);border:0;border-radius:10px;padding:7px 12px;font-size:12px;font-weight:900;cursor:pointer}.btn-restore:hover{background:#bbf7d0}.btn-perma-delete{background:var(--red-soft);color:var(--red);border:0;border-radius:10px;padding:7px 12px;font-size:12px;font-weight:900;cursor:pointer}.btn-perma-delete:hover{background:#fecaca}
     @media(max-width:760px){.trash-grid{grid-template-columns:1fr}}@media(max-width:1100px){.summary,.project-grid,.detail-metrics,.two-col{grid-template-columns:1fr 1fr}.header,.detail-top{flex-direction:column}.actions{justify-content:flex-start}}@media(max-width:760px){.app{padding:18px}.summary,.project-grid,.detail-metrics,.two-col,.form-grid,.mini-grid{grid-template-columns:1fr}table{font-size:13px}th,td{padding:10px 8px}.toolbar{flex-direction:column;align-items:stretch}}
+
+
+    /* PM 홈 개편: 운영 액션 중심 디자인 */
+    .summary.pm-summary{grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:20px}
+    .summary.pm-summary .card{position:relative;overflow:hidden;padding:22px 22px 20px;border-radius:22px;min-height:142px;transition:all .2s ease;cursor:pointer;border-width:1.5px}
+    .summary.pm-summary .card::after{content:"";position:absolute;right:-28px;top:-28px;width:104px;height:104px;border-radius:50%;opacity:.22;background:currentColor}
+    .summary.pm-summary .card:hover{transform:translateY(-4px);box-shadow:0 18px 42px rgba(15,23,42,.11)}
+    .summary.pm-summary .label{font-weight:900;letter-spacing:-.02em;color:inherit;opacity:.78}
+    .summary.pm-summary .value{font-size:34px;line-height:1;margin:14px 0 8px}
+    .summary.pm-summary .sub{font-weight:700;color:inherit;opacity:.62}
+    .pm-kpi-week{background:linear-gradient(135deg,#eff6ff,#fff);color:#1d4ed8;border-color:#bfdbfe}
+    .pm-kpi-review{background:linear-gradient(135deg,#fff7ed,#fff);color:#b45309;border-color:#fed7aa}
+    .pm-kpi-month{background:linear-gradient(135deg,#f0fdf4,#fff);color:#15803d;border-color:#bbf7d0}
+    .pm-kpi-delay{background:linear-gradient(135deg,#f8fafc,#fff);color:#334155;border-color:#e2e8f0}
+    .pm-kpi-delay.has-risk{background:linear-gradient(135deg,#fef2f2,#fff);color:#b91c1c;border-color:#fecaca}
+    .ops-panel.pm-polished,.flow-panel.pm-polished{padding:26px;border-radius:26px;border-color:#e2e8f0;box-shadow:0 16px 40px rgba(15,23,42,.07)}
+    .ops-panel.pm-polished .panel-title h3,.flow-panel.pm-polished .panel-title h3{font-size:24px;letter-spacing:-.04em}
+    .ops-grid.pm-ops-grid{grid-template-columns:repeat(3,1fr);gap:14px}
+    .ops-grid.pm-ops-grid .ops-card{min-height:128px;border-radius:18px;padding:16px;border-width:1.5px;box-shadow:0 8px 20px rgba(15,23,42,.04)}
+    .ops-grid.pm-ops-grid .ops-card .ops-type{font-size:12px;margin-bottom:8px}
+    .ops-grid.pm-ops-grid .ops-card .ops-title{font-size:16px;color:#111827}
+    .flow-panel.pm-polished .flow-item{border-width:1.5px;border-radius:20px;background:#fff;min-width:230px;box-shadow:0 8px 22px rgba(15,23,42,.04)}
+    .flow-panel.pm-polished .flow-item.status-active{background:linear-gradient(135deg,#eff6ff,#fff);border-color:#bfdbfe}
+    .flow-panel.pm-polished .flow-item.status-done{background:linear-gradient(135deg,#f0fdf4,#fff);border-color:#bbf7d0}
+    .flow-panel.pm-polished .flow-item.status-review{background:linear-gradient(135deg,#fffbeb,#fff);border-color:#fde68a}
+    .flow-panel.pm-polished .flow-item.status-risk{background:linear-gradient(135deg,#fef2f2,#fff);border-color:#fecaca}
+    .flow-panel.pm-polished .flow-item.status-wait{background:linear-gradient(135deg,#f5f3ff,#fff);border-color:#ddd6fe}
+    .ops-list-head{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin:8px 0 18px}
+    .ops-list-head h2{margin:0;font-size:28px;letter-spacing:-.04em}
+    .ops-list-head p{margin:6px 0 0;color:var(--muted)}
+    .ops-list-panel{padding:24px;border-radius:26px;box-shadow:0 16px 40px rgba(15,23,42,.07)}
+    .ops-list-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+    .ops-list-card{border:1.5px solid var(--line);border-radius:18px;background:#fff;padding:17px;cursor:pointer;transition:.16s;min-height:145px;display:flex;flex-direction:column;gap:8px}
+    .ops-list-card:hover{transform:translateY(-3px);box-shadow:0 14px 34px rgba(15,23,42,.08);border-color:#93c5fd}
+    .ops-list-card .type{font-size:12px;font-weight:900;color:var(--muted)}
+    .ops-list-card .project{font-size:17px;font-weight:900;letter-spacing:-.02em}
+    .ops-list-card .title{font-size:14px;color:#334155;line-height:1.45}
+    .ops-list-card .date{margin-top:auto;font-size:13px;color:var(--muted);font-weight:800}
+    .ops-list-card.seo{background:linear-gradient(135deg,#eff6ff,#fff);border-color:#bfdbfe}.ops-list-card.partner{background:linear-gradient(135deg,#f5f3ff,#fff);border-color:#ddd6fe}.ops-list-card.etc{background:linear-gradient(135deg,#fffbeb,#fff);border-color:#fde68a}.ops-list-card.report{background:linear-gradient(135deg,#f0fdf4,#fff);border-color:#bbf7d0}.ops-list-card.delay{background:linear-gradient(135deg,#fef2f2,#fff);border-color:#fecaca}
+    @media(max-width:1100px){.summary.pm-summary,.ops-grid.pm-ops-grid,.ops-list-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:760px){.summary.pm-summary,.ops-grid.pm-ops-grid,.ops-list-grid{grid-template-columns:1fr}.ops-list-head{flex-direction:column}}
+
   </style>
 </head>
 <body>
@@ -158,19 +200,19 @@
       </div>
     </section>
 
-    <section class="summary">
-      <div class="card clickable kpi-focus" id="sumProjectsCard" style="cursor:pointer" title="이번 주 해야 할 일"><div class="label">이번 주 해야 할 일</div><div class="value" id="sumProjects">0</div><div class="sub">7일 내 처리할 항목</div></div>
-      <div class="card clickable kpi-review" id="sumActiveCard" style="cursor:pointer" title="검수 대기"><div class="label">검수 대기</div><div class="value" id="sumActive">0</div><div class="sub">검수중/수정중 항목</div></div>
-      <div class="card kpi-complete"><div class="label">이번 달 완료</div><div class="value" id="sumProgress">0</div><div class="sub">이번 달 완료 처리</div></div>
-      <div class="card kpi-risk"><div class="label">지연 프로젝트</div><div class="value" id="sumNext">0</div><div class="sub" id="sumNextName">지연 없음</div></div>
+    <section class="summary pm-summary">
+      <div class="card clickable pm-kpi-week" id="sumProjectsCard" style="cursor:pointer" title="이번 주 해야 할 일"><div class="label">이번 주 해야 할 일</div><div class="value" id="sumProjects">0</div><div class="sub">7일 내 처리할 항목</div></div>
+      <div class="card clickable pm-kpi-review" id="sumActiveCard" style="cursor:pointer" title="검수 대기"><div class="label">검수 대기</div><div class="value" id="sumActive">0</div><div class="sub">검수중/수정중 항목</div></div>
+      <div class="card clickable pm-kpi-month" id="sumProgressCard" title="이번 달 완료"><div class="label">이번 달 완료</div><div class="value" id="sumProgress">0</div><div class="sub">이번 달 완료 처리</div></div>
+      <div class="card clickable pm-kpi-delay" id="sumDelayCard" title="지연 프로젝트"><div class="label">지연 프로젝트</div><div class="value" id="sumNext">0</div><div class="sub" id="sumNextName">지연 없음</div></div>
     </section>
 
     <section id="homeScreen" class="screen active">
-      <section class="ops-panel card">
+      <section class="ops-panel card pm-polished">
         <div class="panel-title"><h3>이번 주 해야 할 일</h3><small>콘텐츠·체험단·기타업무·결과보고 중 7일 내 처리 항목</small></div>
-        <div class="ops-grid" id="weeklyTodoGrid"></div>
+        <div class="ops-grid pm-ops-grid" id="weeklyTodoGrid"></div>
       </section>
-      <section class="flow-panel card">
+      <section class="flow-panel card pm-polished">
         <div class="panel-title"><h3>광고별 진행 흐름</h3><small>가까운 일정과 완료율 기준으로 정렬됩니다.</small></div>
         <div class="flow-list" id="flowList"></div>
       </section>
@@ -204,6 +246,22 @@
         <div class="trash-grid" id="trashGrid"></div>
       </div>
       <section class="project-grid" id="projectGrid"></section>
+    </section>
+
+
+    <section id="opsListScreen" class="screen">
+      <div class="ops-list-head">
+        <div>
+          <h2 id="opsListTitle">업무 목록</h2>
+          <p id="opsListDesc">선택한 조건에 맞는 항목을 표시합니다.</p>
+        </div>
+        <button class="btn btn-secondary" type="button" id="opsListBackBtn">← 메인페이지로</button>
+      </div>
+      <section class="card ops-list-panel">
+        <div class="panel-title"><h3 id="opsListPanelTitle">목록</h3><small id="opsListCount">0건</small></div>
+        <div class="ops-list-grid" id="opsListGrid"></div>
+        <div class="empty hidden" id="opsListEmpty">표시할 항목이 없습니다.</div>
+      </section>
     </section>
 
     <section id="detailScreen" class="screen">
@@ -559,6 +617,15 @@
     }
     function routeAfterLoad(){
       renderTrash();
+      const hash = location.hash || '#home';
+      if(hash.startsWith('#ops=')){
+        showOpsList(decodeURIComponent(hash.replace('#ops=','')) || 'week');
+        return;
+      }
+      if(hash === '#projects'){
+        showAllProjects('all');
+        return;
+      }
       const routeId = getRouteProjectId();
       const routeTab = getRouteTab();
       const found = routeId ? projects.find(p => p.id === routeId) : null;
@@ -947,7 +1014,7 @@
       document.getElementById('sumProgress').textContent = monthDone.length;
       document.getElementById('sumNext').textContent = delayedProjects.length;
       document.getElementById('sumNextName').textContent = delayedProjects.length ? delayedProjects.slice(0,2).map(p=>p.name).join(', ') : '지연 없음';
-      const riskCard = document.getElementById('sumNext')?.closest('.card');
+      const riskCard = document.getElementById('sumDelayCard') || document.getElementById('sumNext')?.closest('.card');
       if(riskCard) riskCard.classList.toggle('has-risk', delayedProjects.length>0);
     }
 
@@ -997,6 +1064,7 @@
       document.getElementById('homeScreen').classList.add('active'); 
       document.getElementById('detailScreen').classList.remove('active'); 
       document.getElementById('allProjectsScreen').classList.remove('active'); 
+      document.getElementById('opsListScreen')?.classList.remove('active');
       const hb = document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='none';
       render(); 
     }
@@ -1007,8 +1075,10 @@
       if(tabName) currentTab = tabName;
       if(updateHash) setProjectRoute(selectedProjectId, currentTab || 'overview');
       document.getElementById('homeScreen').classList.remove('active'); 
+      document.getElementById('opsListScreen')?.classList.remove('active');
       document.getElementById('detailScreen').classList.add('active'); 
       document.getElementById('allProjectsScreen').classList.remove('active'); 
+      document.getElementById('opsListScreen')?.classList.remove('active');
       const hb = document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='';
       if(!currentTab) currentTab='overview'; renderDetail(); 
     }
@@ -2707,17 +2777,60 @@
     document.getElementById('addProjectBtn').addEventListener('click', () => openModal(null));
     document.getElementById('backHomeHeaderBtn')?.addEventListener('click', showHome);
     document.getElementById('allProjectsNavBtn')?.addEventListener('click', ()=>showAllProjects('all'));
-    document.getElementById('sumProjectsCard')?.addEventListener('click', ()=>{
-      document.querySelectorAll('.summary .card.clickable').forEach(c=>c.classList.remove('selected'));
-      document.getElementById('sumProjectsCard').classList.add('selected');
-      showAllProjects('all');
-    });
-    document.getElementById('sumActiveCard')?.addEventListener('click', ()=>{
-      document.querySelectorAll('.summary .card.clickable').forEach(c=>c.classList.remove('selected'));
-      document.getElementById('sumActiveCard').classList.add('selected');
-      showAllProjects('진행중');
-    });
+    document.getElementById('sumProjectsCard')?.addEventListener('click', ()=>showOpsList('week'));
+    document.getElementById('sumActiveCard')?.addEventListener('click', ()=>showOpsList('review'));
+    document.getElementById('sumProgressCard')?.addEventListener('click', ()=>showOpsList('month'));
+    document.getElementById('sumDelayCard')?.addEventListener('click', ()=>showOpsList('delay'));
+    document.getElementById('opsListBackBtn')?.addEventListener('click', ()=>showHome(true));
     // 메인으로 돌아오면 선택 해제
+
+    // ── 운영 KPI 목록 페이지 ──────────────────────────────────
+    let opsListKind = 'week';
+    function opsListConfig(kind){
+      return {
+        week:{title:'이번 주 해야 할 일',desc:'콘텐츠·체험단·기타업무·결과보고 중 7일 내 처리할 항목입니다.',panel:'이번 주 처리 항목'},
+        review:{title:'검수 대기',desc:'검수중·수정중·보고 준비 상태의 항목입니다.',panel:'검수/수정 대기 항목'},
+        month:{title:'이번 달 완료',desc:'이번 달에 완료 처리된 항목입니다.',panel:'이번 달 완료 항목'},
+        delay:{title:'지연 프로젝트',desc:'프로젝트 상태나 리스크가 지연으로 표시된 프로젝트입니다.',panel:'지연 프로젝트 목록'}
+      }[kind] || {title:'업무 목록',desc:'선택한 조건의 항목입니다.',panel:'목록'};
+    }
+    function getOpsListItems(kind){
+      const ops=collectOpsItems();
+      if(kind==='week') return ops.filter(inThisWeek).sort((a,b)=>(a.date||new Date(9999,0,1))-(b.date||new Date(9999,0,1)));
+      if(kind==='review') return ops.filter(x=>['검수중','수정중','보고 준비'].includes(x.status)).sort((a,b)=>(a.date||new Date(9999,0,1))-(b.date||new Date(9999,0,1)));
+      if(kind==='month') return ops.filter(isThisMonthDone).sort((a,b)=>(b.date||new Date(0))-(a.date||new Date(0)));
+      if(kind==='delay') return projects.filter(p => projectStatus(p)==='지연' || p.risk==='지연' || (p.tasks||[]).some(t=>t.status==='지연')).map(p=>({project:p,type:'프로젝트',cls:'delay',tab:'overview',title:p.name,desc:`리스크 ${p.risk || '-'} · 상태 ${projectStatus(p)}`,date:null,dateText:'지연',status:'지연'}));
+      return [];
+    }
+    function showOpsList(kind){
+      opsListKind=kind||'week';
+      if(location.hash !== `#ops=${opsListKind}`) history.replaceState(null,'',location.pathname+location.search+`#ops=${opsListKind}`);
+      const hb=document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='';
+      document.getElementById('homeScreen').classList.remove('active');
+      document.getElementById('detailScreen').classList.remove('active');
+      document.getElementById('allProjectsScreen').classList.remove('active');
+      document.getElementById('opsListScreen').classList.add('active');
+      renderOpsList();
+    }
+    function renderOpsList(){
+      const cfg=opsListConfig(opsListKind);
+      const items=getOpsListItems(opsListKind);
+      document.getElementById('opsListTitle').textContent=cfg.title;
+      document.getElementById('opsListDesc').textContent=cfg.desc;
+      document.getElementById('opsListPanelTitle').textContent=cfg.panel;
+      document.getElementById('opsListCount').textContent=`${items.length}건`;
+      const grid=document.getElementById('opsListGrid');
+      const empty=document.getElementById('opsListEmpty');
+      if(!items.length){ grid.innerHTML=''; empty.classList.remove('hidden'); return; }
+      empty.classList.add('hidden');
+      grid.innerHTML=items.map(item=>`<article class="ops-list-card ${item.cls||''}" data-pid="${item.project.id}" data-tab="${item.tab||'overview'}">
+        <div class="type">${escapeHtml(item.type)} · ${escapeHtml(item.date ? dateKey(item.date) : item.dateText || '-')}</div>
+        <div class="project">${escapeHtml(item.project.name)}</div>
+        <div class="title"><b>${escapeHtml(item.title || '-')}</b><br>${escapeHtml(item.desc || '')}</div>
+        <div class="date"><span class="badge ${statusClass(item.status)}" style="font-size:11px;padding:5px 9px">${escapeHtml(item.status || '-')}</span></div>
+      </article>`).join('');
+      grid.querySelectorAll('.ops-list-card').forEach(card=>card.addEventListener('click',()=>{ selectedProjectId=card.dataset.pid; currentTab=card.dataset.tab||'overview'; showDetail(true,currentTab); }));
+    }
 
     // ── 전체 프로젝트 페이지 ──────────────────────────────────
     let allProjFilter = 'all';
@@ -2727,6 +2840,7 @@
       const hb = document.getElementById('backHomeHeaderBtn'); if(hb) hb.style.display='';
       document.getElementById('homeScreen').classList.remove('active');
       document.getElementById('detailScreen').classList.remove('active');
+      document.getElementById('opsListScreen')?.classList.remove('active');
       document.getElementById('allProjectsScreen').classList.add('active');
       allProjFilter = filter||'all';
       renderAllProjects();
