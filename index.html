@@ -91,6 +91,22 @@
     .row-delete-btn:hover{background:#fee2e2}
     .row-toggle-btn:hover{background:#dcfce7}
     .row-toggle-btn.undo:hover{background:#ede9fe}
+
+    .kpi-focus{background:#eff6ff;border-color:#93c5fd}
+    .kpi-review{background:#fffbeb;border-color:#fde68a}
+    .kpi-complete{background:#f0fdf4;border-color:#86efac}
+    .kpi-risk{background:#fff;border-color:var(--line)}
+    .kpi-risk.has-risk{background:#fef2f2;border-color:#fecaca}
+    .ops-panel{padding:22px;margin-bottom:18px}
+    .ops-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+    .ops-card{border:1px solid var(--line);border-radius:16px;padding:14px;background:#fff;cursor:pointer;transition:.15s;min-height:118px}
+    .ops-card:hover{transform:translateY(-2px);box-shadow:var(--shadow-md)}
+    .ops-card.seo{background:#eff6ff;border-color:#bfdbfe}.ops-card.partner{background:#f5f3ff;border-color:#ddd6fe}.ops-card.etc{background:#fffbeb;border-color:#fde68a}.ops-card.report{background:#f0fdf4;border-color:#bbf7d0}.ops-card.delay{background:#fef2f2;border-color:#fecaca}
+    .ops-card .ops-type{font-size:11px;font-weight:900;margin-bottom:6px;color:var(--muted)}
+    .ops-card .ops-title{font-size:15px;font-weight:900;margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .ops-card .ops-meta{font-size:12px;color:var(--muted);line-height:1.45}
+    .flow-item.status-done{background:#f0fdf4;border-color:#bbf7d0}.flow-item.status-active{background:#eff6ff;border-color:#bfdbfe}.flow-item.status-review{background:#fffbeb;border-color:#fde68a}.flow-item.status-risk{background:#fef2f2;border-color:#fecaca}.flow-item.status-wait{background:#f5f3ff;border-color:#ddd6fe}
+    @media(max-width:1100px){.ops-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:760px){.ops-grid{grid-template-columns:1fr}}
     #confirmModal{z-index:200}
     .btn-seo-done{background:var(--green-soft);color:var(--green);border:0;border-radius:10px;padding:7px 13px;font-size:12px;font-weight:900;cursor:pointer;white-space:nowrap}.btn-seo-done:hover{background:#bbf7d0}
     /* 메인 캘린더 */
@@ -143,13 +159,17 @@
     </section>
 
     <section class="summary">
-      <div class="card clickable" id="sumProjectsCard" style="cursor:pointer" title="전체 프로젝트 보기"><div class="label">등록 광고</div><div class="value" id="sumProjects">0</div><div class="sub">전체 광고 프로젝트</div></div>
-      <div class="card clickable" id="sumActiveCard" style="cursor:pointer" title="진행중 프로젝트 보기"><div class="label">진행중</div><div class="value" id="sumActive">0</div><div class="sub">대기/완료 제외</div></div>
-      <div class="card"><div class="label">평균 완료율</div><div class="value" id="sumProgress">0%</div><div class="sub">광고별 자동 계산</div></div>
-      <div class="card"><div class="label">가장 가까운 일정</div><div class="value" id="sumNext">-</div><div class="sub" id="sumNextName">등록된 일정 없음</div></div>
+      <div class="card clickable kpi-focus" id="sumProjectsCard" style="cursor:pointer" title="이번 주 해야 할 일"><div class="label">이번 주 해야 할 일</div><div class="value" id="sumProjects">0</div><div class="sub">7일 내 처리할 항목</div></div>
+      <div class="card clickable kpi-review" id="sumActiveCard" style="cursor:pointer" title="검수 대기"><div class="label">검수 대기</div><div class="value" id="sumActive">0</div><div class="sub">검수중/수정중 항목</div></div>
+      <div class="card kpi-complete"><div class="label">이번 달 완료</div><div class="value" id="sumProgress">0</div><div class="sub">이번 달 완료 처리</div></div>
+      <div class="card kpi-risk"><div class="label">지연 프로젝트</div><div class="value" id="sumNext">0</div><div class="sub" id="sumNextName">지연 없음</div></div>
     </section>
 
     <section id="homeScreen" class="screen active">
+      <section class="ops-panel card">
+        <div class="panel-title"><h3>이번 주 해야 할 일</h3><small>콘텐츠·체험단·기타업무·결과보고 중 7일 내 처리 항목</small></div>
+        <div class="ops-grid" id="weeklyTodoGrid"></div>
+      </section>
       <section class="flow-panel card">
         <div class="panel-title"><h3>광고별 진행 흐름</h3><small>가까운 일정과 완료율 기준으로 정렬됩니다.</small></div>
         <div class="flow-list" id="flowList"></div>
@@ -884,17 +904,51 @@
       renderSummary(); renderHome(); renderMainCalendar();
       if(document.getElementById('detailScreen').classList.contains('active')) renderDetail();
     }
+    function parseAnyDate(v){
+      if(!v) return null;
+      const raw = String(v).trim().replace(/[~]/g,'').replace(/년|월/g,'.').replace(/일/g,'').replace(/-/g,'.');
+      const m = raw.match(/(20\d{2})[\.\/](\d{1,2})[\.\/](\d{1,2})/);
+      if(!m) return null;
+      const d = new Date(Number(m[1]), Number(m[2])-1, Number(m[3]));
+      return isNaN(d) ? null : d;
+    }
+    function dateKey(d){ return d ? `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')}` : '-'; }
+    function collectOpsItems(){
+      const items=[];
+      projects.forEach(p=>{
+        (p.seoItems||[]).forEach((x,i)=>{ const d=parseAnyDate(x.draft||x.publish); items.push({project:p, type:'콘텐츠', cls:'seo', tab:'content', title:x.round||x.theme||'SEO 콘텐츠', desc:x.theme||'', date:d, dateText:x.draft||x.publish||'-', status:x.status||'대기중', index:i}); });
+        (p.partners||[]).forEach((x,i)=>{ const d=parseAnyDate(x.date||x.next||x.period); items.push({project:p, type:'체험단', cls:'partner', tab:'partners', title:x.period||x.content||'체험단 운영', desc:x.content||'', date:d, dateText:x.date||x.next||x.period||'-', status:x.status||'대기중', index:i}); });
+        (p.etcItems||[]).forEach((x,i)=>{ const d=parseAnyDate(x.next||x.date); items.push({project:p, type:'기타업무', cls:'etc', tab:'etc', title:x.name||'기타 업무', desc:x.goal||x.note||'', date:d, dateText:x.next||x.date||'-', status:x.status||'대기중', index:i}); });
+        const reports=(p.reportItems&&p.reportItems.length)?p.reportItems:[];
+        reports.forEach((x,i)=>{ const d=parseAnyDate(x.date); items.push({project:p, type:'결과보고', cls:'report', tab:'report', title:x.label||x.title||'결과보고', desc:x.memo||'', date:d, dateText:x.date||'-', status:x.status||'대기중', index:i}); });
+      });
+      return items;
+    }
+    function inThisWeek(item){
+      if(!item.date || item.status==='완료') return false;
+      const today=new Date(); today.setHours(0,0,0,0);
+      const end=new Date(today); end.setDate(today.getDate()+7); end.setHours(23,59,59,999);
+      return item.date >= today && item.date <= end;
+    }
+    function isThisMonthDone(item){
+      if(item.status!=='완료') return false;
+      const d=item.date; if(!d) return false;
+      const today=new Date();
+      return d.getFullYear()===today.getFullYear() && d.getMonth()===today.getMonth();
+    }
     function renderSummary(){
-      const total = projects.length;
-      const active = projects.filter(p => projectStatus(p) !== '완료' && projectStatus(p) !== '대기중').length;
-      const avg = total ? Math.round(projects.reduce((s,p)=>s+taskProgress(p),0)/total) : 0;
-      const allNext = projects.map(p => ({p, n: nextItem(p)})).filter(x=>x.n).sort((a,b)=>parseDate(a.n.draft)-parseDate(b.n.draft))[0];
-      document.getElementById('sumProjects').textContent = total;
-      document.getElementById('sumActive').textContent = active;
-      document.getElementById('sumProgress').textContent = avg + '%';
-      document.getElementById('sumNext').textContent = allNext ? (allNext.n.draft || allNext.n.date || '-') : '-';
-
-      document.getElementById('sumNextName').textContent = allNext ? `${allNext.p.name} · ${allNext.n.round || allNext.n.label || ''}` : '등록된 일정 없음';
+      const ops = collectOpsItems();
+      const weekItems = ops.filter(inThisWeek).sort((a,b)=>(a.date||new Date(9999,0,1))-(b.date||new Date(9999,0,1)));
+      const reviewItems = ops.filter(x=>['검수중','수정중','보고 준비'].includes(x.status));
+      const monthDone = ops.filter(isThisMonthDone);
+      const delayedProjects = projects.filter(p => projectStatus(p)==='지연' || p.risk==='지연' || (p.tasks||[]).some(t=>t.status==='지연'));
+      document.getElementById('sumProjects').textContent = weekItems.length;
+      document.getElementById('sumActive').textContent = reviewItems.length;
+      document.getElementById('sumProgress').textContent = monthDone.length;
+      document.getElementById('sumNext').textContent = delayedProjects.length;
+      document.getElementById('sumNextName').textContent = delayedProjects.length ? delayedProjects.slice(0,2).map(p=>p.name).join(', ') : '지연 없음';
+      const riskCard = document.getElementById('sumNext')?.closest('.card');
+      if(riskCard) riskCard.classList.toggle('has-risk', delayedProjects.length>0);
     }
 
     function renderHome(){
@@ -908,10 +962,16 @@
       });
       const grid = document.getElementById('projectGrid');
       grid.innerHTML = filtered.length ? filtered.map(p => projectCardHtml(p)).join('') : '<div class="card empty">등록된 광고 프로젝트가 없습니다.</div>';
+      const weeklyGrid = document.getElementById('weeklyTodoGrid');
+      if(weeklyGrid){
+        const weekItems = collectOpsItems().filter(inThisWeek).sort((a,b)=>(a.date||new Date(9999,0,1))-(b.date||new Date(9999,0,1))).slice(0,8);
+        weeklyGrid.innerHTML = weekItems.length ? weekItems.map(item=>`<div class="ops-card ${item.cls}" data-pid="${item.project.id}" data-tab="${item.tab}"><div class="ops-type">${escapeHtml(item.type)} · ${escapeHtml(dateKey(item.date))}</div><div class="ops-title">${escapeHtml(item.project.name)}</div><div class="ops-meta"><b>${escapeHtml(item.title)}</b><br>${escapeHtml(item.desc || item.dateText || '')}</div></div>`).join('') : '<div class="card empty" style="grid-column:1/-1;padding:28px">이번 주에 처리할 일정이 없습니다.</div>';
+        weeklyGrid.querySelectorAll('.ops-card').forEach(card=>card.addEventListener('click',()=>{ selectedProjectId=card.dataset.pid; currentTab=card.dataset.tab||'overview'; showDetail(true,currentTab); }));
+      }
       const flow = document.getElementById('flowList');
       flow.innerHTML = sorted.map(p => {
         const n = nextItem(p); const progress = taskProgress(p); const status = projectStatus(p);
-        return `<div class="flow-item" data-flow-id="${p.id}"><span class="badge ${statusClass(status)}">${escapeHtml(status)}</span><strong>${escapeHtml(p.name)}</strong><p>다음: ${escapeHtml(n?.draft || '-')} · ${escapeHtml(n?.round || '-')}</p><div class="bar" style="margin-top:10px"><span style="width:${progress}%"></span></div><p style="margin-top:6px;color:var(--muted)">완료율 ${progress}%</p></div>`;
+        return `<div class="flow-item status-${statusClass(status)}" data-flow-id="${p.id}"><span class="badge ${statusClass(status)}">${escapeHtml(status)}</span><strong>${escapeHtml(p.name)}</strong><p>다음: ${escapeHtml(n?.draft || '-')} · ${escapeHtml(n?.round || '-')}</p><div class="bar" style="margin-top:10px"><span style="width:${progress}%"></span></div><p style="margin-top:6px;color:var(--muted)">완료율 ${progress}%</p></div>`;
       }).join('');
       bindHomeEvents();
     }
