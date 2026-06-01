@@ -709,7 +709,7 @@
       const grid = document.getElementById('projectGrid');
       grid.innerHTML = filtered.length ? filtered.map(p => projectCardHtml(p)).join('') : '<div class="card empty">등록된 광고 프로젝트가 없습니다.</div>';
       const flow = document.getElementById('flowList');
-      flow.innerHTML = sorted.slice(0,4).map(p => {
+      flow.innerHTML = sorted.map(p => {
         const n = nextItem(p); const progress = taskProgress(p); const status = projectStatus(p);
         return `<div class="flow-item" data-flow-id="${p.id}"><span class="badge ${statusClass(status)}">${escapeHtml(status)}</span><strong>${escapeHtml(p.name)}</strong><p>다음: ${escapeHtml(n?.draft || '-')} · ${escapeHtml(n?.round || '-')}</p><div class="bar" style="margin-top:10px"><span style="width:${progress}%"></span></div><p style="margin-top:6px;color:var(--muted)">완료율 ${progress}%</p></div>`;
       }).join('');
@@ -1984,6 +1984,9 @@
           if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[3]}-${m2[4].padStart(2,'0')}-30`; }
           else { m2=rawText.match(/(\d{4})년\s*(\d{1,2})월\s*[~～\-]\s*(\d{1,2})월/);
             if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[1]}-${m2[3].padStart(2,'0')}-30`; } }
+          // YYYY.MM ~ YYYY.M 형식 (예: 2025.10 ~ 2026.2)
+          if(!start){ m2=rawText.match(/(\d{4})\.(\d{1,2})\s*[~～]\s*(\d{4})\.(\d{1,2})/);
+            if(m2){ baseYear=parseInt(m2[1]); start=`${m2[1]}-${m2[2].padStart(2,'0')}-01`; end=`${m2[3]}-${m2[4].padStart(2,'0')}-30`; } }
         }
         if(!name) name=file.name.replace(/\.docx$/i,'').replace(/[_\-]/g,' ').trim();
         if(!owner) owner='담당 미정';
@@ -1995,11 +1998,27 @@
         }
 
         // ── 2. SEO 파싱 ──
+        // MM/DD 형식 날짜 변환 (연월 추론)
+        function parseMD(s, refYear){
+          if(!s) return '';
+          s = s.trim().replace(/\s/g,'');
+          // MM/DD 형식
+          let m = s.match(/^(\d{1,2})\/(\d{1,2})$/);
+          if(m){
+            const mon=parseInt(m[1]), day=parseInt(m[2]);
+            // 연도 추론: start가 있으면 그 연도 기준
+            let yr = refYear || baseYear;
+            return `${yr}.${String(mon).padStart(2,'0')}.${String(day).padStart(2,'0')}`;
+          }
+          return extractDate(s) || s;
+        }
         for(const tbl of tables){
           const hdr=(tbl[0]||[]).join('');
           const hasSeoHdr=hdr.match(/초안|발행|콘텐츠|SEO.*일정/i);
           const hasSeoRows=tbl.some(r=>(r[0]||'').match(/^\d+안$|^\d+차$|^(SEO\s*)?\d+(\s*[~\-]\s*\d+)?\s*(안|차|회차)/i));
           if(!hasSeoHdr&&!hasSeoRows) continue;
+          // 차수|초안|검수|발행 형식 (JTB 스타일)
+          const isJTBStyle = hdr.match(/차수|초안/) && hdr.match(/검수/) && hdr.match(/발행/);
           for(const row of tbl){
             const first=(row[0]||'').trim();
             if(first.match(/^(콘텐츠|구분|번호|회차|차수|초안|발행)$/i)) continue;
@@ -2007,7 +2026,13 @@
             const label=first.replace(/^SEO\s*/i,'').trim();
             const roundName=label.match(/안$|차$|회차$/) ? `SEO ${label}` : `SEO ${label}안`;
             let draft='',review='',publish='',theme='';
-            if(row.length>=5){ draft=extractDate(row[1]); review=(row[2]||'').trim(); publish=extractDate(row[3])||(row[3]||'').trim(); theme=(row[4]||'').trim(); }
+            if(isJTBStyle && row.length>=4){
+              // 차수|초안|검수|발행 — 날짜가 MM/DD 형식
+              draft   = parseMD(row[1], baseYear);
+              review  = parseMD(row[2], baseYear);
+              publish = parseMD(row[3], baseYear);
+              theme   = (row[4]||'').trim();
+            } else if(row.length>=5){ draft=extractDate(row[1]); review=(row[2]||'').trim(); publish=extractDate(row[3])||(row[3]||'').trim(); theme=(row[4]||'').trim(); }
             else if(row.length>=4){ draft=extractDate(row[1]); publish=extractDate(row[2]); theme=(row[3]||'').trim(); }
             else if(row.length>=3){ draft=extractDate(row[1]); publish=extractDate(row[2]); }
             else if(row.length>=2){ draft=extractDate(row[1]); }
@@ -2026,7 +2051,9 @@
             || tbl.some(r=>r.some(c=>(c||'').match(/체험단/)))
             || (hdr.match(/월/)&&hdr.match(/진행\s*내용/));
           if(!isP) continue;
-          if(hdr.match(/초안|발행|운영\s*기간|주요\s*실행/)&&!hdr.match(/체험단/)) continue;
+          if(hdr.match(/초안|발행|운영\s*기간|주요\s*실행|차수/)&&!hdr.match(/체험단/)) continue;
+          // 항목|일정|담당|비고 형식 (JTB 체험단 테이블)
+          const isJTBPartner = hdr.match(/항목/)&&hdr.match(/일정/)&&hdr.match(/담당/);
           for(const row of tbl){
             const first=(row[0]||'').trim();
             if(first.match(/^(월|구분|시기|항목|기간|진행\s*내용|세부\s*내용)$/)) continue;
@@ -2073,23 +2100,27 @@
         // ── 4. 결과보고 파싱 ──
         for(const tbl of tables){
           const hdr=(tbl[0]||[]).join('');
-          const isR=hdr.match(/보고.*내용|결과.*보고|보고.*일정|보고.*시점/i)||tbl.some(r=>(r[0]||'').match(/차\s*중간\s*보고|최종\s*보고/));
+          const isR=hdr.match(/보고.*내용|결과.*보고|보고.*일정|보고.*시점|주요.*내용/i)
+            ||tbl.some(r=>(r[0]||'').match(/차\s*중간\s*보고|최종\s*보고|^(1차|2차|최종)$/));
           if(!isR) continue;
+          const isJTBReport=hdr.match(/구분/)&&hdr.match(/일정/)&&hdr.match(/주요/);
           for(const row of tbl){
             const c0=(row[0]||'').trim(),c1=(row[1]||'').trim(),c2=(row[2]||'').trim();
-            if(c0.match(/^(구분|보고\s*구분|날짜)$/)||c1.match(/^(보고\s*내용|보고\s*시점|내용|주요\s*내용)$/)) continue;
+            if(c0.match(/^(구분|보고\s*구분|날짜)$/)||c1.match(/^(보고\s*내용|보고\s*시점|내용|주요\s*내용|일정)$/)) continue;
             if(!c0) continue;
             let date='',label='';
-            // 패턴A: 보고구분|보고시점(N월)|보고내용 — 3열
-            if(c0.match(/보고|리포트/i)&&c1.match(/\d+월/)){
-              label=c0+(c2?` - ${c2}`:'');
-              date=monthOnly(c1,baseYear,true);
+            if(isJTBReport){
+              // 구분(1차/2차/최종)|일정(MM/DD (요일))|주요 내용
+              const dateRaw=c1.replace(/\s*\([^)]*\)/g,'').trim();
+              label=(c0.match(/최종/) ? '최종 보고' : `${c0} 중간 보고`)+(c2?` - ${c2}`:'');
+              date=parseMD(dateRaw,baseYear)||extractDate(c1)||monthOnly(c1,baseYear,true);
             }
-            // 패턴B: 날짜|보고내용
+            else if(c0.match(/보고|리포트/i)&&c1.match(/\d+월/)){
+              label=c0+(c2?` - ${c2}`:''); date=monthOnly(c1,baseYear,true);
+            }
             else if(extractDate(c0)||c0.match(/\d+월/)){
               date=extractDate(c0)||monthOnly(c0,baseYear,true); label=c1||(c2||'');
             }
-            // 패턴C: 보고구분|날짜|내용
             else if(c0.match(/보고|리포트/i)&&(extractDate(c1)||c1.match(/\d+월/))){
               label=c0; date=extractDate(c1)||monthOnly(c1,baseYear,true);
             }
