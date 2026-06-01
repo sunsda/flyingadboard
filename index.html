@@ -127,8 +127,8 @@
     </section>
 
     <section class="summary">
-      <div class="card clickable" id="sumProjectsCard" style="cursor:pointer" title="전체 프로젝트 보기"><div class="label">${t('regAd')}</div><div class="value" id="sumProjects">0</div><div class="sub">${t('regAdSub')}</div></div>
-      <div class="card clickable" id="sumActiveCard" style="cursor:pointer" title="진행중 프로젝트 보기"><div class="label">${t('active')}</div><div class="value" id="sumActive">0</div><div class="sub">${t('activeSub')}</div></div>
+      <div class="card clickable" id="sumProjectsCard" style="cursor:pointer" title="전체 프로젝트 보기"><div class="label">등록 광고</div><div class="value" id="sumProjects">0</div><div class="sub">전체 광고 프로젝트</div></div>
+      <div class="card clickable" id="sumActiveCard" style="cursor:pointer" title="진행중 프로젝트 보기"><div class="label">진행중</div><div class="value" id="sumActive">0</div><div class="sub">대기/완료 제외</div></div>
       <div class="card"><div class="label">평균 완료율</div><div class="value" id="sumProgress">0%</div><div class="sub">광고별 자동 계산</div></div>
       <div class="card"><div class="label">가장 가까운 일정</div><div class="value" id="sumNext">-</div><div class="sub" id="sumNextName">등록된 일정 없음</div></div>
     </section>
@@ -142,7 +142,7 @@
       <!-- 전체 캘린더 -->
       <section class="card" style="padding:22px;margin-bottom:18px">
         <div class="panel-title" style="margin-bottom:0">
-          <h3>${t('calTitle')}</h3>
+          <h3 id="calTitleEl">전체 일정 캘린더</h3>
           <small id="mainCalLegend" style="display:flex;gap:10px;flex-wrap:wrap"></small>
         </div>
         <div class="cal-nav" style="margin-top:14px">
@@ -155,7 +155,7 @@
 
       <div class="toolbar">
         <div class="filters">
-          <input class="search" id="searchInput" placeholder="${t('search')}" />
+          <input class="search" id="searchInput" placeholder="광고명 / 담당 / 상태 검색" />
           <div id="statusFilterBtns" style="display:flex;gap:6px;flex-wrap:wrap"></div>
           <select class="select" id="statusFilter" style="display:none">
             <option value="all">전체 상태</option><option value="대기중">대기중</option><option value="진행중">진행중</option><option value="검수중">검수중</option><option value="완료">완료</option><option value="지연">지연</option>
@@ -883,6 +883,10 @@
       const addBtn=document.getElementById('addProjectBtn'); if(addBtn) addBtn.textContent=t('addProject');
       const importBtn=document.getElementById('importDocBtn'); if(importBtn) importBtn.textContent=t('importDoc');
       const langBtn=document.getElementById('langToggleBtn'); if(langBtn) langBtn.textContent=LANG==='ko'?'日':'한';
+      // 정적 HTML 텍스트 갱신
+      const calH3=document.getElementById('calTitleEl'); if(calH3) calH3.textContent=t('calTitle');
+      const searchInp=document.getElementById('searchInput'); if(searchInp) searchInp.placeholder=t('search');
+      const nearLabel=document.querySelector('.summary .card:nth-child(4) .label'); if(nearLabel) nearLabel.textContent=t('nearDate');
       renderSummary(); renderHome(); renderMainCalendar();
       if(document.getElementById('detailScreen').classList.contains('active')) renderDetail();
     }
@@ -2563,7 +2567,7 @@
       const riskCount = projects.filter(p=>p.risk!=='정상').length;
       const activeCount = projects.filter(p=>projectStatus(p)==='진행중'||projectStatus(p)==='검수중').length;
       document.getElementById('allProjSummary').innerHTML = `
-        <div class="card"><div class="label">전체 광고</div><div class="value">${projects.length}</div><div class="sub">${t('regAdSub')}</div></div>
+        <div class="card"><div class="label">전체 광고</div><div class="value">${projects.length}</div><div class="sub">전체 광고 프로젝트</div></div>
         <div class="card"><div class="label">진행중</div><div class="value" style="color:var(--blue)">${activeCount}</div><div class="sub">대기/완료 제외</div></div>
         <div class="card"><div class="label">완료</div><div class="value" style="color:var(--green)">${doneCount}</div><div class="sub">완료된 프로젝트</div></div>
         <div class="card"><div class="label">평균 완료율</div><div class="value">${totalProgress}%</div><div class="sub">광고별 자동 계산</div></div>
