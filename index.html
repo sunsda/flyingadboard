@@ -814,6 +814,33 @@
     }
     .summary.pm-summary.blue-summary .pm-kpi-delay:hover .value{color:#dc2626 !important;}
 
+
+    /* SEO 단계형 운영 UI */
+    .seo-step-wrap{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+    .seo-step-chip{display:inline-flex;align-items:center;justify-content:center;min-width:76px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;border:1px solid #e5e7eb;background:#f8fafc;color:#64748b;white-space:nowrap}
+    .seo-step-chip.draft-empty{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
+    .seo-step-chip.draft-writing{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+    .seo-step-chip.draft-done{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}
+    .seo-step-chip.review-wait{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
+    .seo-step-chip.review-active{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+    .seo-step-chip.review-ok{background:#ecfdf5;color:#15803d;border-color:#86efac}
+    .seo-step-chip.review-reject{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+    .seo-step-chip.publish-wait{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}
+    .seo-step-chip.publish-done{background:#ecfdf5;color:#15803d;border-color:#86efac}
+    .seo-step-chip.review-none{background:#f1f5f9;color:#475569;border-color:#cbd5e1}
+    .seo-action-btn{border:1px solid #dbe7fb;background:#fff;color:#334155;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:900;cursor:pointer;transition:.15s;white-space:nowrap}
+    .seo-action-btn:hover{border-color:#93c5fd;color:#1d4ed8;background:#eff6ff}
+    .seo-action-btn.primary{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+    .seo-action-btn.green{background:#ecfdf5;color:#15803d;border-color:#bbf7d0}
+    .seo-action-btn.orange{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+    .seo-action-btn.red{background:#fff5f5;color:#dc2626;border-color:#fecaca}
+    .seo-stage-table th,.seo-stage-table td{vertical-align:middle}
+    .seo-stage-table .seo-title-cell{max-width:230px;line-height:1.45}
+    .seo-edit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}
+    .seo-edit-grid .wide{grid-column:span 2}
+    @media(max-width:1000px){.seo-edit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+    @media(max-width:760px){.seo-edit-grid{grid-template-columns:1fr}.seo-edit-grid .wide{grid-column:auto}}
+
   </style>
 </head>
 <body>
@@ -1367,7 +1394,14 @@
     }
     function parseDate(v){ const d = new Date(String(v).replace(/\./g,'-')); return isNaN(d) ? new Date('2999-12-31') : d; }
     function fmtDate(v){ return String(v || '-').replace(/-/g,'.'); }
-    function statusClass(status){ if(status==='완료'||status==='공개완료'||status==='보고완료') return 'done'; if(status==='지연') return 'risk'; if(status==='검수중'||status==='조율중') return 'review'; if(status==='진행중'||status==='초안 준비'||status==='수정중'||status==='작성중') return 'active'; return 'wait'; }
+    function statusClass(status){
+      const st = String(status || '');
+      if(st==='완료'||st==='공개완료'||st==='보고완료'||st==='발행완료') return 'done';
+      if(st==='지연'||st==='반려') return 'risk';
+      if(st.includes('검수')||st==='조율중'||st==='승인') return 'review';
+      if(st==='진행중'||st==='초안 준비'||st==='초안 작성중'||st==='초안 제출'||st==='제출완료'||st==='수정중'||st==='작성중'||st==='발행대기') return 'active';
+      return 'wait';
+    }
 
     // 운영 기간으로 월별 보고 일정 자동 생성
     // 규칙: 시작월 다음달부터 매월 말 정기보고, 종료월 다음달에 마무리 보고
@@ -1578,8 +1612,8 @@
         const col = PROJECT_COLORS[pi % PROJECT_COLORS.length];
         // SEO 초안/공개
         p.seoItems.forEach(item => {
-          if(item.draft)   addEv(item.draft,   {label:`📝 ${p.name} · ${item.round} 초안`, col, done:item.status==='완료', pid:p.id, tab:'content'});
-          if(item.publish) addEv(item.publish, {label:`🚀 ${p.name} · ${item.round} 공개`, col, done:item.status==='완료', pid:p.id, tab:'content'});
+          if(item.draft)   addEv(item.draft,   {label:`${p.name} · ${item.round} 초안`, col, done:item.status==='완료', pid:p.id, tab:'content'});
+          if(item.publish) addEv(item.publish, {label:`${p.name} · ${item.round} 공개`, col, done:item.status==='완료', pid:p.id, tab:'content'});
         });
         // 결과 보고
         const ri = p.reportItems || generateReportItems(p.start, p.end);
@@ -1953,7 +1987,7 @@
         : '<div class="empty card" style="margin-top:12px">완료된 콘텐츠가 없습니다.</div>';
       return `
         <section class="panel">
-          <div class="panel-title"><h3>콘텐츠 관리</h3><small>진행중/대기중만 우선 표시하고, 완료 항목은 접어서 관리합니다.</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">+ SEO 추가</button></div>
+          <div class="panel-title"><h3>콘텐츠 관리</h3><small>초안·검수·발행 단계를 분리해서 관리합니다.</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">+ SEO 추가</button></div>
           <div class="summary" style="grid-template-columns:repeat(3,1fr)">
             <div class="card"><div class="label">SEO 발행 회차</div><div class="value">${p.seoItems.length}회차</div></div>
             <div class="card"><div class="label">대기중</div><div class="value">${pending.length}건</div></div>
@@ -1970,68 +2004,110 @@
       if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
       return '';
     }
+    function seoDraftStatus(item){
+      if(item.draftStatus) return item.draftStatus;
+      if(item.status==='완료' || item.publishStatus==='발행완료') return '제출완료';
+      return item.draft ? '미작성' : '미작성';
+    }
+    function seoReviewRequired(item){ return item.reviewRequired === false ? false : true; }
+    function seoReviewStatus(item){
+      if(!seoReviewRequired(item)) return '검수없음';
+      if(item.reviewStatus) return item.reviewStatus;
+      if(item.status==='완료' || item.publishStatus==='발행완료') return '승인';
+      if(item.status && String(item.status).includes('검수')) return '검수중';
+      if(seoDraftStatus(item)==='제출완료') return '검수대기';
+      return '검수대기';
+    }
+    function seoPublishStatus(item){
+      if(item.publishStatus) return item.publishStatus;
+      if(item.status==='완료') return '발행완료';
+      if(!seoReviewRequired(item) && seoDraftStatus(item)==='제출완료') return '발행대기';
+      if(seoReviewStatus(item)==='승인') return '발행대기';
+      return '발행대기';
+    }
+    function deriveSeoStatus(item){
+      if(seoPublishStatus(item)==='발행완료') return '완료';
+      const draft = seoDraftStatus(item);
+      const review = seoReviewStatus(item);
+      const publish = seoPublishStatus(item);
+      if(publish==='발행대기' && (review==='승인' || !seoReviewRequired(item))) return '발행대기';
+      if(review==='검수중') return '검수중(발행대기)';
+      if(review==='반려') return '반려';
+      if(review==='검수대기' && draft==='제출완료') return '검수대기';
+      if(draft==='작성중') return '초안 작성중';
+      if(draft==='제출완료') return '초안 제출';
+      return '대기중';
+    }
+    function seoStepChip(kind, value){
+      let cls='';
+      if(kind==='draft') cls = value==='제출완료' ? 'draft-done' : (value==='작성중' ? 'draft-writing' : 'draft-empty');
+      if(kind==='review') cls = value==='검수없음' ? 'review-none' : (value==='승인' ? 'review-ok' : (value==='검수중' ? 'review-active' : (value==='반려' ? 'review-reject' : 'review-wait')));
+      if(kind==='publish') cls = value==='발행완료' ? 'publish-done' : 'publish-wait';
+      return `<span class="seo-step-chip ${cls}">${escapeHtml(value)}</span>`;
+    }
+    function seoUrlCell(item){
+      const url = safeUrl(item.contentUrl || item.url || '');
+      const memo = item.note ? `<div style="margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45;max-width:220px;white-space:normal">${escapeHtml(item.note)}</div>` : `<div style="margin-top:6px;color:var(--muted);font-size:12px">메모 없음</div>`;
+      const link = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="btn btn-secondary btn-small" style="display:inline-flex;text-decoration:none;padding:5px 9px">URL 열기</a>` : `<span style="color:var(--muted);font-size:12px">URL 없음</span>`;
+      return `${link}${memo}`;
+    }
+    function seoNextActionButtons(item, idx){
+      if(seoPublishStatus(item)==='발행완료') return `<button class="seo-action-btn seo-stage-btn" data-idx="${idx}" data-action="publish-undo" type="button">발행 취소</button>`;
+      const draft = seoDraftStatus(item);
+      const reviewRequired = seoReviewRequired(item);
+      const review = seoReviewStatus(item);
+      if(draft!=='제출완료') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">초안 제출</button>`;
+      if(reviewRequired && review==='검수대기') return `<button class="seo-action-btn orange seo-stage-btn" data-idx="${idx}" data-action="review-request" type="button">검수 요청</button>`;
+      if(reviewRequired && review==='검수중') return `<button class="seo-action-btn green seo-stage-btn" data-idx="${idx}" data-action="review-approve" type="button">승인</button><button class="seo-action-btn red seo-stage-btn" data-idx="${idx}" data-action="review-reject" type="button">반려</button>`;
+      if(reviewRequired && review==='반려') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">재제출</button>`;
+      return `<button class="seo-action-btn green seo-stage-btn" data-idx="${idx}" data-action="publish-complete" type="button">발행 완료</button>`;
+    }
+
     function seoTable(p,items){
       const rows = items.map(item => {
-        const idx=p.seoItems.indexOf(item); const isDone=item.status==='완료';
-        const url = safeUrl(item.contentUrl || item.url || '');
-        const urlView = url
-          ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="btn btn-secondary btn-small" style="display:inline-flex;text-decoration:none;padding:5px 9px">URL 열기</a>`
-          : `<span style="color:var(--muted);font-size:12px">URL 없음</span>`;
-        const noteView = item.note
-          ? `<div style="margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45;max-width:220px;white-space:normal">${escapeHtml(item.note)}</div>`
-          : `<div style="margin-top:6px;color:var(--muted);font-size:12px">메모 없음</div>`;
+        const idx=p.seoItems.indexOf(item); const isDone=seoPublishStatus(item)==='발행완료' || item.status==='완료';
+        const autoStatus = deriveSeoStatus(item);
+        if(!item.status || item.status==='대기중' || item.status==='진행중' || item.status==='검수중' || item.status==='완료') item.status = autoStatus;
         if(item._editing){
           return `<tr style="background:#f8fafc;border-left:3px solid var(--blue)">
-            <td style="padding:10px 8px">
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">회차명</div>
-              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="round" value="${escapeHtml(item.round)}" placeholder="SEO 1안" style="font-weight:700"/>
-            </td>
-            <td style="padding:10px 8px">
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 제출일</div>
-              <input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="draft" value="${toDateInput(item.draft)}" style="width:100%"/>
-            </td>
-            <td style="padding:10px 8px">
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 기간</div>
-              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="review" value="${escapeHtml(item.review)}" placeholder="예: ~3월 13일"/>
-            </td>
-            <td style="padding:10px 8px">
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">공개일</div>
-              <input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="publish" value="${toDateInput(item.publish)}" style="width:100%"/>
-            </td>
-            <td style="padding:10px 8px">
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">SEO 테마</div>
-              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="theme" value="${escapeHtml(item.theme)}" placeholder="테마"/>
-            </td>
-            <td style="padding:10px 8px;min-width:210px">
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">콘텐츠 URL</div>
-              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="contentUrl" value="${escapeHtml(item.contentUrl || item.url || '')}" placeholder="https://..."/>
-              <div style="font-size:11px;color:var(--muted);margin:8px 0 4px">메모</div>
-              <textarea class="seo-edit-input edit-field" data-idx="${idx}" data-field="note" placeholder="콘텐츠 관련 메모" style="min-height:64px;resize:vertical">${escapeHtml(item.note || '')}</textarea>
-            </td>
-            <td style="padding:10px 8px">
-              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">상태</div>
-              ${statusSelect('seo',idx,item.status)}
-            </td>
-            <td style="padding:10px 8px;white-space:nowrap;vertical-align:bottom">
-              <button class="btn btn-primary btn-small seo-save-btn" data-idx="${idx}" type="button">저장</button>
-              <button class="btn btn-secondary btn-small seo-cancel-btn" data-idx="${idx}" type="button">취소</button>
+            <td colspan="9" style="padding:14px 16px">
+              <div class="seo-edit-grid">
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">회차</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="round" value="${escapeHtml(item.round||'')}" placeholder="SEO 1안" style="font-weight:700"/></div>
+                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">제목 / SEO 테마</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="theme" value="${escapeHtml(item.theme||'')}" placeholder="콘텐츠 제목 또는 SEO 테마"/></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">담당</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="owner" value="${escapeHtml(item.owner||p.owner||'')}" placeholder="담당자"/></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 제출일</div><input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="draft" value="${toDateInput(item.draft)}" /></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 기간</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="review" value="${escapeHtml(item.review||'')}" placeholder="예: 7월 3일 ~ 7월 10일"/></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">공개일</div><input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="publish" value="${toDateInput(item.publish)}" /></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="draftStatus"><option ${seoDraftStatus(item)==='미작성'?'selected':''}>미작성</option><option ${seoDraftStatus(item)==='작성중'?'selected':''}>작성중</option><option ${seoDraftStatus(item)==='제출완료'?'selected':''}>제출완료</option></select></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 여부</div><select class="seo-review-required edit-field" data-idx="${idx}"><option value="true" ${seoReviewRequired(item)?'selected':''}>검수 필요</option><option value="false" ${!seoReviewRequired(item)?'selected':''}>검수 없음</option></select></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="reviewStatus"><option ${seoReviewStatus(item)==='검수대기'?'selected':''}>검수대기</option><option ${seoReviewStatus(item)==='검수중'?'selected':''}>검수중</option><option ${seoReviewStatus(item)==='승인'?'selected':''}>승인</option><option ${seoReviewStatus(item)==='반려'?'selected':''}>반려</option></select></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">발행 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="publishStatus"><option ${seoPublishStatus(item)==='발행대기'?'selected':''}>발행대기</option><option ${seoPublishStatus(item)==='발행완료'?'selected':''}>발행완료</option></select></div>
+                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">콘텐츠 URL</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="contentUrl" value="${escapeHtml(item.contentUrl || item.url || '')}" placeholder="https://..."/></div>
+                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">메모</div><textarea class="seo-edit-input edit-field" data-idx="${idx}" data-field="note" placeholder="콘텐츠 관련 메모" style="min-height:64px;resize:vertical">${escapeHtml(item.note || '')}</textarea></div>
+                <div style="display:flex;gap:6px;justify-content:flex-end;align-items:end">
+                  <button class="btn btn-primary btn-small seo-save-btn" data-idx="${idx}" type="button">저장</button>
+                  <button class="btn btn-secondary btn-small seo-cancel-btn" data-idx="${idx}" type="button">취소</button>
+                </div>
+              </div>
             </td>
           </tr>`;
         }
         return `<tr class="${isDone?'done-row':''}">
-          <td><b>${escapeHtml(item.round)}</b><br><small style="color:var(--muted)">${escapeHtml(p.owner)}</small></td>
-          <td>${escapeHtml(item.draft)}</td><td>${escapeHtml(item.review)}</td><td>${escapeHtml(item.publish)}</td>
-          <td style="max-width:180px">${escapeHtml(item.theme)}</td>
-          <td>${urlView}${noteView}</td>
-          <td><span class="badge ${statusClass(item.status)}" style="font-size:12px;padding:5px 10px">${escapeHtml(item.status || '대기중')}</span></td>
+          <td><b>${escapeHtml(item.round||'-')}</b><br><small style="color:var(--muted)">${escapeHtml(item.owner || p.owner || '담당 미정')}</small></td>
+          <td class="seo-title-cell"><b>${escapeHtml(item.theme || '-')}</b><br><small style="color:var(--muted)">${escapeHtml(item.draft || '-')} · ${escapeHtml(item.publish || '-')}</small></td>
+          <td>${seoStepChip('draft', seoDraftStatus(item))}</td>
+          <td>${seoStepChip('review', seoReviewStatus(item))}<br><small style="color:var(--muted)">${escapeHtml(item.review || '')}</small></td>
+          <td>${seoStepChip('publish', seoPublishStatus(item))}</td>
+          <td>${seoUrlCell(item)}</td>
+          <td><span class="badge ${statusClass(autoStatus)}" style="font-size:12px;padding:5px 10px">${escapeHtml(autoStatus)}</span></td>
           <td><div class="row-actions">
             <button class="row-edit-btn seo-edit-btn" data-idx="${idx}" type="button">수정</button>
-            ${isDone ? `<button class="row-toggle-btn undo seo-undo" data-idx="${idx}" type="button">미완료</button>` : `<button class="row-toggle-btn seo-complete" data-idx="${idx}" type="button">완료</button>`}
+            ${seoNextActionButtons(item,idx)}
             <button class="row-delete-btn seo-del-btn" data-idx="${idx}" type="button">삭제</button>
           </div></td>
         </tr>`;
       }).join('');
-      return `<table><thead><tr><th>회차</th><th>초안 제출일</th><th>검수 기간</th><th>공개일</th><th>SEO 테마</th><th>URL / 메모</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="seo-stage-table"><thead><tr><th>회차</th><th>제목</th><th>초안</th><th>검수</th><th>발행</th><th>URL / 메모</th><th>상태</th><th>작업</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
     function calendarHtml(p){
       // 캘린더 표시 기준 월 (state는 data attr로 유지)
@@ -2048,8 +2124,8 @@
         evMap[key].push(ev);
       };
       p.seoItems.forEach(item => {
-        if(item.draft)   addEv(item.draft,   {label:`📝 ${item.round} 초안`, cls:'seo-draft', done: item.status==='완료'});
-        if(item.publish) addEv(item.publish, {label:`🚀 ${item.round} 공개`, cls:'seo-publish', done: item.status==='완료'});
+        if(item.draft)   addEv(item.draft,   {label:`${item.round} 초안`, cls:'seo-draft', done: item.status==='완료'});
+        if(item.publish) addEv(item.publish, {label:`${item.round} 공개`, cls:'seo-publish', done: item.status==='완료'});
       });
       const ri = p.reportItems || generateReportItems(p.start, p.end);
       ri.forEach(r => {
@@ -2844,9 +2920,20 @@
       if(seoEditBtn){ const p=getProject(); if(!p) return; const idx=Number(seoEditBtn.dataset.idx); p.seoItems.forEach((s,i)=>s._editing=(i===idx)); renderDetail(); return; }
       const seoSaveBtn = t.closest('.seo-save-btn');
       if(seoSaveBtn){ const p=getProject(); if(!p) return; const idx=Number(seoSaveBtn.dataset.idx);
-        seoSaveBtn.closest('tr').querySelectorAll('.seo-edit-input').forEach(inp=>{ if(p.seoItems[idx]) p.seoItems[idx][inp.dataset.field]=inp.value; });
-        seoSaveBtn.closest('tr').querySelectorAll('.seo-edit-date').forEach(inp=>{ if(p.seoItems[idx]&&inp.value) p.seoItems[idx][inp.dataset.field]=inp.value.replace(/-/g,'.'); });
-        if(p.seoItems[idx]) p.seoItems[idx]._editing=false; save(); renderDetail(); renderSummary(); return; }
+        const row = seoSaveBtn.closest('tr');
+        row.querySelectorAll('.seo-edit-input').forEach(inp=>{ if(p.seoItems[idx]) p.seoItems[idx][inp.dataset.field]=inp.value; });
+        row.querySelectorAll('.seo-edit-date').forEach(inp=>{ if(p.seoItems[idx]&&inp.value) p.seoItems[idx][inp.dataset.field]=inp.value.replace(/-/g,'.'); });
+        const req = row.querySelector('.seo-review-required');
+        if(req && p.seoItems[idx]) p.seoItems[idx].reviewRequired = req.value === 'true';
+        if(p.seoItems[idx]){
+          const item = p.seoItems[idx];
+          if(!seoReviewRequired(item)) item.reviewStatus = '검수없음';
+          item.status = deriveSeoStatus(item);
+          if(seoPublishStatus(item)==='발행완료') { item.status='완료'; if(!item.completedAt) item.completedAt=new Date().toISOString(); }
+          else { delete item.completedAt; }
+          item._editing=false;
+        }
+        syncAllTasks(p); save(); renderDetail(); renderSummary(); renderMainCalendar(); return; }
       const seoCancelBtn = t.closest('.seo-cancel-btn');
       if(seoCancelBtn){ const p=getProject(); if(!p) return; const idx=Number(seoCancelBtn.dataset.idx); if(p.seoItems[idx]){
           const item=p.seoItems[idx];
@@ -2868,6 +2955,28 @@
           else item._editing=false;
         }
         save(); renderDetail(); renderSummary(); return; }
+      // SEO 단계 버튼
+      const seoStageBtn = t.closest('.seo-stage-btn');
+      if(seoStageBtn){
+        const p=getProject(); if(!p) return;
+        const idx=Number(seoStageBtn.dataset.idx);
+        const item=p.seoItems[idx]; if(!item) return;
+        const action=seoStageBtn.dataset.action;
+        if(action==='draft-submit'){
+          item.draftStatus='제출완료';
+          if(seoReviewRequired(item)) item.reviewStatus='검수대기';
+          else item.publishStatus='발행대기';
+        }
+        if(action==='review-request') item.reviewStatus='검수중';
+        if(action==='review-approve') { item.reviewStatus='승인'; item.publishStatus='발행대기'; }
+        if(action==='review-reject') item.reviewStatus='반려';
+        if(action==='publish-complete') { item.publishStatus='발행완료'; item.status='완료'; item.completedAt=new Date().toISOString(); }
+        if(action==='publish-undo') { item.publishStatus='발행대기'; item.status=deriveSeoStatus(item); delete item.completedAt; }
+        if(action!=='publish-complete') item.status=deriveSeoStatus(item);
+        syncAllTasks(p); save(); renderDetail(); renderSummary(); renderMainCalendar();
+        return;
+      }
+
       // SEO 삭제
       const seoDelBtn = t.closest('.seo-del-btn');
       if(seoDelBtn){ const p=getProject(); if(!p) return; const idx=Number(seoDelBtn.dataset.idx); confirmRowDelete('콘텐츠 항목',()=>{ if(idx>=0&&idx<p.seoItems.length) p.seoItems.splice(idx,1); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return; }
