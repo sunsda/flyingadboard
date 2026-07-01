@@ -841,17 +841,72 @@
     @media(max-width:1000px){.seo-edit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:760px){.seo-edit-grid{grid-template-columns:1fr}.seo-edit-grid .wide{grid-column:auto}}
 
+  
 
-
-    /* Calendar more modal */
-    .cal-more{display:inline-flex;align-items:center;border:1px solid #dbeafe;background:#fff;color:#2563eb;border-radius:999px;padding:2px 8px;margin-top:2px;font-size:11px;font-weight:800;cursor:pointer}
-    .cal-more:hover{border-color:#93c5fd;background:#eff6ff;color:#1d4ed8}
-    .calendar-day-list{display:grid;gap:8px;margin-top:12px}
-    .calendar-day-item{border:1px solid #e5eaf2;border-radius:14px;background:#fff;padding:12px 14px;cursor:pointer;transition:.15s}
-    .calendar-day-item:hover{border-color:#93c5fd;background:#f8fbff}
-    .calendar-day-item .cal-item-type{font-size:11px;font-weight:900;color:#64748b;margin-bottom:4px}
-    .calendar-day-item .cal-item-title{font-size:14px;font-weight:900;color:#0f172a;line-height:1.45}
-    .calendar-day-item .cal-item-meta{font-size:12px;color:#64748b;margin-top:3px}
+    /* SEO 단계형 표 정렬 및 진행률 기준 정리 */
+    .seo-stage-table th,
+    .seo-stage-table td{
+      vertical-align:middle !important;
+    }
+    .seo-stage-table th:nth-child(2),
+    .seo-stage-table td:nth-child(2){
+      min-width:180px;
+    }
+    .seo-stage-table th:nth-child(4),
+    .seo-stage-table td:nth-child(4){
+      min-width:126px;
+      text-align:left;
+    }
+    .seo-step-chip{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:74px;
+      height:30px;
+      padding:0 12px;
+      border-radius:999px;
+      font-size:12px;
+      font-weight:900;
+      line-height:1;
+      border:1px solid #e5e7eb;
+      background:#f8fafc;
+      color:#475569;
+      white-space:nowrap;
+    }
+    .seo-step-chip.draft-empty{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
+    .seo-step-chip.draft-writing{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
+    .seo-step-chip.draft-done{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}
+    .seo-step-chip.review-wait{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
+    .seo-step-chip.review-active{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+    .seo-step-chip.review-ok{background:#f0fdf4;color:#15803d;border-color:#86efac}
+    .seo-step-chip.review-reject{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+    .seo-step-chip.review-none{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
+    .seo-step-chip.publish-wait{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}
+    .seo-step-chip.publish-done{background:#ecfdf5;color:#15803d;border-color:#86efac}
+    .seo-review-cell{line-height:1.2}
+    .seo-sub-text{
+      margin-top:7px;
+      color:#64748b;
+      font-size:12px;
+      line-height:1.35;
+      white-space:normal;
+    }
+    .seo-action-btn{
+      border:1px solid #dbe7fb;
+      background:#fff;
+      border-radius:8px;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:900;
+      color:#334155;
+      cursor:pointer;
+      white-space:nowrap;
+    }
+    .seo-action-btn.primary{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
+    .seo-action-btn.orange{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
+    .seo-action-btn.green{background:#f0fdf4;color:#15803d;border-color:#86efac}
+    .seo-action-btn.red{background:#fef2f2;color:#dc2626;border-color:#fecaca}
+    .seo-action-btn:hover{filter:brightness(.98);border-color:#93c5fd}
 
   </style>
 </head>
@@ -1013,17 +1068,6 @@
     </div>
   </div>
 
-
-  <div class="modal-backdrop" id="calendarDayModal">
-    <div class="modal" style="max-width:560px">
-      <div class="modal-head">
-        <div><h2 id="calendarDayTitle">일정 전체보기</h2><p id="calendarDayDesc">선택한 날짜의 전체 일정을 확인합니다.</p></div>
-        <button class="close" type="button" id="calendarDayCloseBtn">×</button>
-      </div>
-      <div class="calendar-day-list" id="calendarDayList"></div>
-    </div>
-  </div>
-
   <div class="modal-backdrop" id="projectModal">
     <div class="modal" style="max-width:820px">
       <div class="modal-head">
@@ -1073,7 +1117,7 @@
           <div class="form-grid" style="margin-bottom:16px">
             <div class="field"><label>총 회차 수</label><input id="seoCount" type="number" min="1" max="24" value="12" /></div>
             <div class="field"><label>발행 간격</label><select id="seoInterval"><option value="monthly">매월 1회</option><option value="bimonthly">격월 1회</option></select></div>
-            <div class="field"><label>초안 제출 기준 (매월 몇 일)</label><input id="seoDraftDay" type="number" min="1" max="28" value="5" /></div>
+            <div class="field"><label>초안 작성 기준 (매월 몇 일)</label><input id="seoDraftDay" type="number" min="1" max="28" value="5" /></div>
             <div class="field"><label>공개일 기준 (초안 후 며칠 뒤)</label><input id="seoPublishOffset" type="number" min="5" max="30" value="10" /></div>
           </div>
           <button class="btn btn-secondary btn-small" id="genSeoBtn" type="button">🔄 일정 미리보기 생성</button>
@@ -1088,7 +1132,7 @@
             <table style="width:100%;font-size:13px;border-collapse:collapse">
               <thead><tr style="background:var(--gray)">
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap">회차</th>
-                <th style="padding:8px 10px;border-bottom:1px solid var(--line)">초안 제출일</th>
+                <th style="padding:8px 10px;border-bottom:1px solid var(--line)">초안 작성일</th>
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line)">검수 기간</th>
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line)">공개일</th>
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line)">SEO 테마</th>
@@ -1392,7 +1436,7 @@
     function buildAutoTasksFromData(data){
       const tasks = [];
       if(data.seoItems && data.seoItems.length){
-        tasks.push({key:'seo', name:'SEO 콘텐츠 운영', goal:'검색 유입 및 자연 유입 확대', status:'초안 준비', next:data.seoItems[0]?.draft ? `${data.seoItems[0].draft} 초안 제출` : ''});
+        tasks.push({key:'seo', name:'SEO 콘텐츠 운영', goal:'검색 유입 및 자연 유입 확대', status:'초안 준비', next:data.seoItems[0]?.draft ? `${data.seoItems[0].draft} 초안 작성` : ''});
       }
       if(data.etcItems && data.etcItems.length){
         tasks.push({key:'guide', name:'기타 업무', goal:'프로젝트 부가 업무 관리', status:'준비중', next:data.etcItems[0]?.next || data.etcItems[0]?.name || ''});
@@ -1422,7 +1466,7 @@
       if(st==='완료'||st==='공개완료'||st==='보고완료'||st==='발행완료') return 'done';
       if(st==='지연'||st==='반려') return 'risk';
       if(st.includes('검수')||st==='조율중'||st==='승인') return 'review';
-      if(st==='진행중'||st==='초안 준비'||st==='초안 작성중'||st==='초안 제출'||st==='제출완료'||st==='수정중'||st==='작성중'||st==='발행대기') return 'active';
+      if(st==='진행중'||st==='초안 준비'||st==='초안 작성중'||st==='작성완료'||st==='제출완료'||st==='수정중'||st==='작성중'||st==='발행대기') return 'active';
       return 'wait';
     }
 
@@ -1568,7 +1612,7 @@
 
     function taskProgress(project){
       const segs = [];
-      if(project.seoItems?.length) segs.push(Math.round(project.seoItems.filter(x=>x.status==='완료').length/project.seoItems.length*100));
+      if(project.seoItems?.length) segs.push(seoProgress(project.seoItems));
       if(project.partners?.length) segs.push(Math.round(project.partners.filter(x=>x.status==='완료').length/project.partners.length*100));
       if(project.etcItems?.length) segs.push(Math.round(project.etcItems.filter(x=>x.status==='완료').length/project.etcItems.length*100));
       const ri = project.reportItems?.length ? project.reportItems : (project.start&&project.end?generateReportItems(project.start,project.end):[]);
@@ -1615,7 +1659,6 @@
     ];
     let mainCalYear = new Date().getFullYear();
     let mainCalMonth = new Date().getMonth();
-    let mainCalendarEventMap = {};
 
     function renderMainCalendar(){
       const cy = mainCalYear, cm = mainCalMonth;
@@ -1635,28 +1678,16 @@
       projects.forEach((p, pi) => {
         const col = PROJECT_COLORS[pi % PROJECT_COLORS.length];
         // SEO 초안/공개
-        (p.seoItems || []).forEach(item => {
-          if(item.draft)   addEv(item.draft,   {label:`${p.name} · ${item.round || item.theme || 'SEO'} 초안`, type:'콘텐츠', desc:item.theme || '', col, done:item.status==='완료', pid:p.id, tab:'content'});
-          if(item.publish) addEv(item.publish, {label:`${p.name} · ${item.round || item.theme || 'SEO'} 공개`, type:'콘텐츠', desc:item.theme || '', col, done:item.status==='완료', pid:p.id, tab:'content'});
-        });
-        // 체험단 / 제휴
-        (p.partners || []).forEach(item => {
-          const d = item.date || item.next || item.period;
-          if(d) addEv(d, {label:`${p.name} · ${item.content || item.period || '체험단'}`, type:'체험단', desc:item.owner || '', col:{bg:'#f5f3ff',text:'#6d28d9'}, done:item.status==='완료', pid:p.id, tab:'partners'});
-        });
-        // 기타 업무
-        (p.etcItems || []).forEach(item => {
-          const d = item.next || item.date;
-          if(d) addEv(d, {label:`${p.name} · ${item.name || '기타 업무'}`, type:'기타업무', desc:item.goal || item.note || '', col:{bg:'#fffbeb',text:'#92400e'}, done:item.status==='완료', pid:p.id, tab:'etc'});
+        p.seoItems.forEach(item => {
+          if(item.draft)   addEv(item.draft,   {label:`${p.name} · ${item.round} 초안`, col, done:item.status==='완료', pid:p.id, tab:'content'});
+          if(item.publish) addEv(item.publish, {label:`${p.name} · ${item.round} 공개`, col, done:item.status==='완료', pid:p.id, tab:'content'});
         });
         // 결과 보고
         const ri = p.reportItems || generateReportItems(p.start, p.end);
         ri.forEach(r => {
-          addEv(r.date, {label:`${p.name} · ${r.isFinal?'마무리 보고':'결과 보고'}`, type:'결과보고', desc:r.label || '', col:{bg:'#fef9c3',text:'#854d0e'}, done:r.status==='완료', pid:p.id, tab:'report'});
+          addEv(r.date, {label:`📊 ${p.name} · ${r.isFinal?'마무리 보고':'결과 보고'}`, col:{bg:'#fef9c3',text:'#854d0e'}, done:r.status==='완료', pid:p.id, tab:'report'});
         });
       });
-
-      mainCalendarEventMap = evMap;
 
       // 달력 그리기
       const firstDay = new Date(cy, cm, 1).getDay();
@@ -1679,7 +1710,7 @@
         const more = evs.length - MAX_SHOW;
         const evHtml = shown.map(e =>
           `<div class="cal-event-main${e.done?' done-ev':''}" style="background:${e.col.bg};color:${e.col.text}" data-pid="${e.pid}" data-tab="${e.tab}" title="${escapeHtml(e.label)}">${escapeHtml(e.label)}</div>`
-        ).join('') + (more>0 ? `<div class="cal-more" data-key="${key}">+${more}개 더</div>` : '');
+        ).join('') + (more>0 ? `<div class="cal-more">+${more}개 더</div>` : '');
         cells += `<div class="cal-day${isToday?' today':''}${evs.length?' has-event':''}" data-key="${key}"><div class="cal-day-num">${d}</div>${evHtml}</div>`;
       }
       const trailing = (firstDay+daysInMonth)%7===0 ? 0 : 7-((firstDay+daysInMonth)%7);
@@ -1934,12 +1965,12 @@
       const seoTask = p.tasks.find(t=>t.key==='seo');
       if(seoTask){
         const pending = p.seoItems.filter(i=>i.status!=='완료').sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
-        seoTask.next = pending.length ? `${pending[0].draft} 초안 제출 (${pending[0].round})` : '전 회차 완료';
-        const doneCnt = p.seoItems.filter(i=>i.status==='완료').length;
+        seoTask.next = pending.length ? `${pending[0].draft} 초안 작성 (${pending[0].round})` : '전 회차 완료';
+        const progress = seoProgress(p.seoItems);
         const total = p.seoItems.length;
         if(total===0) seoTask.status = '대기중';
-        else if(doneCnt===0) seoTask.status = '초안 준비';
-        else if(doneCnt===total) seoTask.status = '완료';
+        else if(progress===0) seoTask.status = '대기중';
+        else if(progress>=100) seoTask.status = '완료';
         else seoTask.status = '진행중';
       }
       // 플라잉패스 — 파트너 상태 기반
@@ -1989,7 +2020,7 @@
       const autoKeys = new Set(['seo','guide','pass','report']);
       const rows = p.tasks.map((t,i) => {
         let progress;
-        if(t.key==='seo' && p.seoItems.length){ progress = Math.round(p.seoItems.filter(x=>x.status==='완료').length/p.seoItems.length*100); }
+        if(t.key==='seo' && p.seoItems.length){ progress = seoProgress(p.seoItems); }
         else if(t.key==='guide' && p.etcItems?.length){ progress = Math.round(p.etcItems.filter(x=>x.status==='완료').length/p.etcItems.length*100); }
         else if(t.key==='pass' && p.partners.length){ progress = Math.round(p.partners.filter(x=>x.status==='완료').length/p.partners.length*100); }
         else if(t.key==='report'){ const ri=p.reportItems||generateReportItems(p.start,p.end); progress=Math.round(ri.filter(r=>r.status==='완료').length/ri.length*100); }
@@ -2040,10 +2071,26 @@
       if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
       return '';
     }
+    function normalizeDraftStatus(v){
+      if(v==='제출완료') return '작성완료';
+      if(v==='작성완료') return '작성완료';
+      return v || '';
+    }
     function seoDraftStatus(item){
-      if(item.draftStatus) return item.draftStatus;
-      if(item.status==='완료' || item.publishStatus==='발행완료') return '제출완료';
-      return item.draft ? '미작성' : '미작성';
+      const st = normalizeDraftStatus(item.draftStatus);
+      if(st) return st;
+      if(item.status==='완료' || item.publishStatus==='발행완료') return '작성완료';
+      return '미작성';
+    }
+    function seoItemProgress(item){
+      let score = 0;
+      if(['작성중','작성완료'].includes(seoDraftStatus(item))) score += 50;
+      if(seoPublishStatus(item)==='발행완료' || item.status==='완료') score += 50;
+      return score;
+    }
+    function seoProgress(items){
+      if(!items || !items.length) return 0;
+      return Math.round(items.reduce((sum,item)=>sum+seoItemProgress(item),0)/items.length);
     }
     function seoReviewRequired(item){ return item.reviewRequired === false ? false : true; }
     function seoReviewStatus(item){
@@ -2051,13 +2098,13 @@
       if(item.reviewStatus) return item.reviewStatus;
       if(item.status==='완료' || item.publishStatus==='발행완료') return '승인';
       if(item.status && String(item.status).includes('검수')) return '검수중';
-      if(seoDraftStatus(item)==='제출완료') return '검수대기';
+      if(seoDraftStatus(item)==='작성완료') return '검수대기';
       return '검수대기';
     }
     function seoPublishStatus(item){
       if(item.publishStatus) return item.publishStatus;
       if(item.status==='완료') return '발행완료';
-      if(!seoReviewRequired(item) && seoDraftStatus(item)==='제출완료') return '발행대기';
+      if(!seoReviewRequired(item) && seoDraftStatus(item)==='작성완료') return '발행대기';
       if(seoReviewStatus(item)==='승인') return '발행대기';
       return '발행대기';
     }
@@ -2070,13 +2117,13 @@
       if(review==='검수중') return '검수중(발행대기)';
       if(review==='반려') return '반려';
       if(review==='검수대기' && draft==='제출완료') return '검수대기';
-      if(draft==='작성중') return '초안 작성중';
-      if(draft==='제출완료') return '초안 제출';
+      if(draft==='작성중') return '작성중';
+      if(draft==='작성완료') return '발행대기';
       return '대기중';
     }
     function seoStepChip(kind, value){
       let cls='';
-      if(kind==='draft') cls = value==='제출완료' ? 'draft-done' : (value==='작성중' ? 'draft-writing' : 'draft-empty');
+      if(kind==='draft') cls = value==='작성완료' ? 'draft-done' : (value==='작성중' ? 'draft-writing' : 'draft-empty');
       if(kind==='review') cls = value==='검수없음' ? 'review-none' : (value==='승인' ? 'review-ok' : (value==='검수중' ? 'review-active' : (value==='반려' ? 'review-reject' : 'review-wait')));
       if(kind==='publish') cls = value==='발행완료' ? 'publish-done' : 'publish-wait';
       return `<span class="seo-step-chip ${cls}">${escapeHtml(value)}</span>`;
@@ -2092,10 +2139,10 @@
       const draft = seoDraftStatus(item);
       const reviewRequired = seoReviewRequired(item);
       const review = seoReviewStatus(item);
-      if(draft!=='제출완료') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">초안 제출</button>`;
+      if(draft!=='작성완료') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">작성</button>`;
       if(reviewRequired && review==='검수대기') return `<button class="seo-action-btn orange seo-stage-btn" data-idx="${idx}" data-action="review-request" type="button">검수 요청</button>`;
       if(reviewRequired && review==='검수중') return `<button class="seo-action-btn green seo-stage-btn" data-idx="${idx}" data-action="review-approve" type="button">승인</button><button class="seo-action-btn red seo-stage-btn" data-idx="${idx}" data-action="review-reject" type="button">반려</button>`;
-      if(reviewRequired && review==='반려') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">재제출</button>`;
+      if(reviewRequired && review==='반려') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">다시 작성</button>`;
       return `<button class="seo-action-btn green seo-stage-btn" data-idx="${idx}" data-action="publish-complete" type="button">발행 완료</button>`;
     }
 
@@ -2109,12 +2156,12 @@
             <td colspan="9" style="padding:14px 16px">
               <div class="seo-edit-grid">
                 <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">회차</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="round" value="${escapeHtml(item.round||'')}" placeholder="SEO 1안" style="font-weight:700"/></div>
-                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">제목 / SEO 테마</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="theme" value="${escapeHtml(item.theme||'')}" placeholder="콘텐츠 제목 또는 SEO 테마"/></div>
+                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">주제 / SEO 테마</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="theme" value="${escapeHtml(item.theme||'')}" placeholder="콘텐츠 제목 또는 SEO 테마"/></div>
                 <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">담당</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="owner" value="${escapeHtml(item.owner||p.owner||'')}" placeholder="담당자"/></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 제출일</div><input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="draft" value="${toDateInput(item.draft)}" /></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 작성일</div><input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="draft" value="${toDateInput(item.draft)}" /></div>
                 <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 기간</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="review" value="${escapeHtml(item.review||'')}" placeholder="예: 7월 3일 ~ 7월 10일"/></div>
                 <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">공개일</div><input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="publish" value="${toDateInput(item.publish)}" /></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="draftStatus"><option ${seoDraftStatus(item)==='미작성'?'selected':''}>미작성</option><option ${seoDraftStatus(item)==='작성중'?'selected':''}>작성중</option><option ${seoDraftStatus(item)==='제출완료'?'selected':''}>제출완료</option></select></div>
+                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="draftStatus"><option ${seoDraftStatus(item)==='미작성'?'selected':''}>미작성</option><option ${seoDraftStatus(item)==='작성중'?'selected':''}>작성중</option><option ${seoDraftStatus(item)==='작성완료'?'selected':''}>작성완료</option></select></div>
                 <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 여부</div><select class="seo-review-required edit-field" data-idx="${idx}"><option value="true" ${seoReviewRequired(item)?'selected':''}>검수 필요</option><option value="false" ${!seoReviewRequired(item)?'selected':''}>검수 없음</option></select></div>
                 <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="reviewStatus"><option ${seoReviewStatus(item)==='검수대기'?'selected':''}>검수대기</option><option ${seoReviewStatus(item)==='검수중'?'selected':''}>검수중</option><option ${seoReviewStatus(item)==='승인'?'selected':''}>승인</option><option ${seoReviewStatus(item)==='반려'?'selected':''}>반려</option></select></div>
                 <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">발행 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="publishStatus"><option ${seoPublishStatus(item)==='발행대기'?'selected':''}>발행대기</option><option ${seoPublishStatus(item)==='발행완료'?'selected':''}>발행완료</option></select></div>
@@ -2132,7 +2179,7 @@
           <td><b>${escapeHtml(item.round||'-')}</b><br><small style="color:var(--muted)">${escapeHtml(item.owner || p.owner || '담당 미정')}</small></td>
           <td class="seo-title-cell"><b>${escapeHtml(item.theme || '-')}</b><br><small style="color:var(--muted)">${escapeHtml(item.draft || '-')} · ${escapeHtml(item.publish || '-')}</small></td>
           <td>${seoStepChip('draft', seoDraftStatus(item))}</td>
-          <td>${seoStepChip('review', seoReviewStatus(item))}<br><small style="color:var(--muted)">${escapeHtml(item.review || '')}</small></td>
+          <td class="seo-review-cell">${seoStepChip('review', seoReviewStatus(item))}${(item.review && !/^초안$/i.test(String(item.review).trim())) ? `<div class="seo-sub-text">${escapeHtml(item.review)}</div>` : ''}</td>
           <td>${seoStepChip('publish', seoPublishStatus(item))}</td>
           <td>${seoUrlCell(item)}</td>
           <td><span class="badge ${statusClass(autoStatus)}" style="font-size:12px;padding:5px 10px">${escapeHtml(autoStatus)}</span></td>
@@ -2143,7 +2190,7 @@
           </div></td>
         </tr>`;
       }).join('');
-      return `<table class="seo-stage-table"><thead><tr><th>회차</th><th>제목</th><th>초안</th><th>검수</th><th>발행</th><th>URL / 메모</th><th>상태</th><th>작업</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table class="seo-stage-table"><thead><tr><th>회차</th><th>주제</th><th>초안</th><th>검수</th><th>발행</th><th>URL / 메모</th><th>상태</th><th>작업</th></tr></thead><tbody>${rows}</tbody></table>`;
     }
     function calendarHtml(p){
       // 캘린더 표시 기준 월 (state는 data attr로 유지)
@@ -2167,8 +2214,6 @@
       ri.forEach(r => {
         addEv(r.date, {label: r.isFinal ? `🏁 ${r.label}` : `📊 ${r.label}`, cls: r.isFinal ? 'report-final' : 'report-ev', done: r.status==='완료'});
       });
-
-      mainCalendarEventMap = evMap;
 
       // 달력 그리기
       const firstDay = new Date(cy, cm, 1).getDay(); // 0=Sun
@@ -2209,7 +2254,7 @@
             <button class="cal-next" data-y="${nextY}" data-m="${nextM}">›</button>
           </div>
           <div class="cal-legend">
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dbeafe"></div>SEO 초안 제출</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dbeafe"></div>SEO 초안 작성</div>
             <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dcfce7"></div>SEO 공개</div>
             <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fef9c3"></div>월별 보고</div>
             <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fce7f3"></div>마무리 보고</div>
@@ -2619,7 +2664,7 @@
       // 렌더
       const wrap = document.getElementById('seoPreviewWrap');
       wrap.innerHTML = `
-        <div class="seo-preview-row"><span>회차</span><span>초안 제출일</span><span>검수 기간</span><span>공개일</span><span>SEO 테마</span></div>
+        <div class="seo-preview-row"><span>회차</span><span>초안 작성일</span><span>검수 기간</span><span>공개일</span><span>SEO 테마</span></div>
         ${items.map((it,idx)=>`<div class="seo-preview-row">
           <span>${escapeHtml(it.round)}</span>
           <span>${escapeHtml(it.draft)}</span>
@@ -2890,65 +2935,19 @@
       mainCalMonth++; if(mainCalMonth>11){mainCalMonth=0;mainCalYear++;} renderMainCalendar();
     });
 
-
-    function openCalendarDayModal(key){
-      const events = (mainCalendarEventMap && mainCalendarEventMap[key]) ? mainCalendarEventMap[key] : [];
-      if(!events.length) return;
-      const title = document.getElementById('calendarDayTitle');
-      const desc = document.getElementById('calendarDayDesc');
-      const list = document.getElementById('calendarDayList');
-      const label = key.replace(/-/g,'.');
-      if(title) title.textContent = label + ' 일정';
-      if(desc) desc.textContent = `${events.length}개 일정이 있습니다. 항목을 누르면 해당 프로젝트로 이동합니다.`;
-      if(list){
-        list.innerHTML = events.map((e, i) => `
-          <div class="calendar-day-item${e.done?' done-row':''}" data-pid="${escapeHtml(e.pid || '')}" data-tab="${escapeHtml(e.tab || 'overview')}">
-            <div class="cal-item-type">${escapeHtml(e.type || '일정')}</div>
-            <div class="cal-item-title">${escapeHtml(e.label || '')}</div>
-            ${e.desc ? `<div class="cal-item-meta">${escapeHtml(e.desc)}</div>` : ''}
-          </div>`).join('');
-      }
-      document.getElementById('calendarDayModal')?.classList.add('active');
-    }
-    function closeCalendarDayModal(){
-      document.getElementById('calendarDayModal')?.classList.remove('active');
-    }
-
     // 메인 캘린더 이벤트 클릭 → 해당 프로젝트 상세 + 탭으로 이동
     document.getElementById('mainCalGrid').addEventListener('click', e=>{
-      const more = e.target.closest('.cal-more');
-      if(more){
-        e.preventDefault();
-        e.stopPropagation();
-        openCalendarDayModal(more.dataset.key || more.closest('.cal-day')?.dataset.key);
-        return;
-      }
       const ev = e.target.closest('.cal-event-main');
       if(ev && ev.dataset.pid){
         selectedProjectId = ev.dataset.pid;
         currentTab = ev.dataset.tab || 'content';
         showDetail();
+        // 탭 렌더 후 해당 섹션 상단으로 스크롤
         requestAnimationFrame(() => {
           const tabContent = document.getElementById('tabContent');
           if(tabContent) tabContent.scrollIntoView({behavior:'smooth', block:'start'});
         });
-        return;
       }
-      const day = e.target.closest('.cal-day.has-event');
-      if(day && (mainCalendarEventMap[day.dataset.key] || []).length > 3){
-        openCalendarDayModal(day.dataset.key);
-      }
-    });
-
-    document.getElementById('calendarDayCloseBtn')?.addEventListener('click', closeCalendarDayModal);
-    document.getElementById('calendarDayModal')?.addEventListener('click', e=>{ if(e.target.id==='calendarDayModal') closeCalendarDayModal(); });
-    document.getElementById('calendarDayList')?.addEventListener('click', e=>{
-      const item = e.target.closest('.calendar-day-item');
-      if(!item || !item.dataset.pid) return;
-      selectedProjectId = item.dataset.pid;
-      currentTab = item.dataset.tab || 'overview';
-      closeCalendarDayModal();
-      showDetail();
     });
     document.getElementById('modalCloseBtn').addEventListener('click',closeModal);
     document.getElementById('cancelModalBtn').addEventListener('click',closeModal);
@@ -3047,7 +3046,7 @@
         const item=p.seoItems[idx]; if(!item) return;
         const action=seoStageBtn.dataset.action;
         if(action==='draft-submit'){
-          item.draftStatus='제출완료';
+          item.draftStatus='작성완료';
           if(seoReviewRequired(item)) item.reviewStatus='검수대기';
           else item.publishStatus='발행대기';
         }
