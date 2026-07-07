@@ -120,16 +120,6 @@
     .main-cal-legend-dot{width:9px;height:9px;border-radius:3px;display:inline-block;margin-right:4px;flex-shrink:0}
     .cal-more{font-size:11px;color:var(--muted);font-weight:700;cursor:pointer;padding:1px 4px}
     .cal-more:hover{color:var(--blue)}
-    .cal-event-main.review-ev{background:#fff7ed!important;color:#b45309!important;border:1px solid #fed7aa}
-    .calendar-day-list{display:grid;gap:8px;margin-top:14px}
-    .calendar-day-item{border:1px solid var(--line);border-left:5px solid #2563eb;border-radius:14px;padding:12px 14px;background:#fff;cursor:pointer;transition:.15s}
-    .calendar-day-item:hover{border-color:#93c5fd;background:#f8fbff}
-    .calendar-day-item.review{border-left-color:#f59e0b}
-    .calendar-day-item.publish{border-left-color:#22c55e}
-    .calendar-day-item.report{border-left-color:#ca8a04}
-    .calendar-day-item .meta{font-size:12px;color:var(--muted);font-weight:800;margin-bottom:3px}
-    .calendar-day-item .title{font-size:14px;font-weight:900;color:#0f172a}
-
     @media(max-width:760px){#mainCalGrid .cal-day{min-height:48px}#mainCalGrid .cal-event-main{display:none}}
     .cal-wrap{margin-bottom:18px}.cal-nav{display:flex;align-items:center;gap:14px;margin-bottom:14px}.cal-nav h3{margin:0;font-size:20px;flex:1;text-align:center}.cal-nav button{background:white;border:1px solid var(--line);border-radius:10px;padding:7px 14px;font-weight:900;cursor:pointer;font-size:16px}.cal-nav button:hover{background:#f1f5f9}.cal-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:3px}.cal-dow{text-align:center;font-size:12px;color:var(--muted);font-weight:700;padding:6px 0}.cal-day{min-height:88px;background:white;border:1px solid var(--line);border-radius:12px;padding:6px;position:relative}.cal-day.other-month{background:#f8fafc;opacity:.5}.cal-day.today{border-color:var(--blue);background:#eff6ff}.cal-day-num{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:4px}.cal-day.today .cal-day-num{color:var(--blue)}.cal-event{font-size:11px;font-weight:700;border-radius:6px;padding:2px 5px;margin-bottom:2px;line-height:1.3;cursor:default;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.cal-event.seo-draft{background:#dbeafe;color:#1d4ed8}.cal-event.seo-publish{background:#dcfce7;color:#15803d}.cal-event.report-ev{background:#fef9c3;color:#92400e}.cal-event.report-final{background:#fce7f3;color:#9d174d}.cal-legend{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:14px}.cal-legend-item{display:flex;align-items:center;gap:5px;font-size:12px;color:var(--muted)}.cal-legend-dot{width:10px;height:10px;border-radius:3px}
     @media(max-width:760px){.cal-day{min-height:60px}.cal-event{display:none}.cal-day::after{content:attr(data-count);font-size:10px;color:var(--blue);font-weight:700}}
@@ -824,154 +814,7 @@
     }
     .summary.pm-summary.blue-summary .pm-kpi-delay:hover .value{color:#dc2626 !important;}
 
-
-    /* SEO 단계형 운영 UI */
-    .seo-step-wrap{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
-    .seo-step-chip{display:inline-flex;align-items:center;justify-content:center;min-width:76px;border-radius:999px;padding:6px 10px;font-size:12px;font-weight:900;border:1px solid #e5e7eb;background:#f8fafc;color:#64748b;white-space:nowrap}
-    .seo-step-chip.draft-empty{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
-    .seo-step-chip.draft-writing{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
-    .seo-step-chip.draft-done{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}
-    .seo-step-chip.review-wait{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
-    .seo-step-chip.review-active{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
-    .seo-step-chip.review-ok{background:#ecfdf5;color:#15803d;border-color:#86efac}
-    .seo-step-chip.review-reject{background:#fef2f2;color:#dc2626;border-color:#fecaca}
-    .seo-step-chip.publish-wait{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}
-    .seo-step-chip.publish-done{background:#ecfdf5;color:#15803d;border-color:#86efac}
-    .seo-step-chip.review-none{background:#f1f5f9;color:#475569;border-color:#cbd5e1}
-    .seo-action-btn{border:1px solid #dbe7fb;background:#fff;color:#334155;border-radius:8px;padding:6px 9px;font-size:12px;font-weight:900;cursor:pointer;transition:.15s;white-space:nowrap}
-    .seo-action-btn:hover{border-color:#93c5fd;color:#1d4ed8;background:#eff6ff}
-    .seo-action-btn.primary{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
-    .seo-action-btn.green{background:#ecfdf5;color:#15803d;border-color:#bbf7d0}
-    .seo-action-btn.orange{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
-    .seo-action-btn.red{background:#fff5f5;color:#dc2626;border-color:#fecaca}
-    .seo-stage-table th,.seo-stage-table td{vertical-align:middle}
-    .seo-stage-table .seo-title-cell{max-width:230px;line-height:1.45}
-    .seo-edit-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;align-items:end}
-    .seo-edit-grid .wide{grid-column:span 2}
-    @media(max-width:1000px){.seo-edit-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-    @media(max-width:760px){.seo-edit-grid{grid-template-columns:1fr}.seo-edit-grid .wide{grid-column:auto}}
-
-  
-
-    /* SEO 단계형 표 정렬 및 진행률 기준 정리 */
-    .seo-stage-table th,
-    .seo-stage-table td{
-      vertical-align:middle !important;
-    }
-    .seo-stage-table th:nth-child(2),
-    .seo-stage-table td:nth-child(2){
-      min-width:180px;
-    }
-    .seo-stage-table th:nth-child(4),
-    .seo-stage-table td:nth-child(4){
-      min-width:126px;
-      text-align:left;
-    }
-    .seo-step-chip{
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      min-width:74px;
-      height:30px;
-      padding:0 12px;
-      border-radius:999px;
-      font-size:12px;
-      font-weight:900;
-      line-height:1;
-      border:1px solid #e5e7eb;
-      background:#f8fafc;
-      color:#475569;
-      white-space:nowrap;
-    }
-    .seo-step-chip.draft-empty{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
-    .seo-step-chip.draft-writing{background:#eff6ff;color:#2563eb;border-color:#bfdbfe}
-    .seo-step-chip.draft-done{background:#dbeafe;color:#1d4ed8;border-color:#93c5fd}
-    .seo-step-chip.review-wait{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
-    .seo-step-chip.review-active{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
-    .seo-step-chip.review-ok{background:#f0fdf4;color:#15803d;border-color:#86efac}
-    .seo-step-chip.review-reject{background:#fef2f2;color:#dc2626;border-color:#fecaca}
-    .seo-step-chip.review-none{background:#f8fafc;color:#64748b;border-color:#e5e7eb}
-    .seo-step-chip.publish-wait{background:#f5f3ff;color:#7c3aed;border-color:#ddd6fe}
-    .seo-step-chip.publish-done{background:#ecfdf5;color:#15803d;border-color:#86efac}
-    .seo-review-cell{line-height:1.2}
-    .seo-sub-text{
-      margin-top:7px;
-      color:#64748b;
-      font-size:12px;
-      line-height:1.35;
-      white-space:normal;
-    }
-    .seo-action-btn{
-      border:1px solid #dbe7fb;
-      background:#fff;
-      border-radius:8px;
-      padding:6px 10px;
-      font-size:12px;
-      font-weight:900;
-      color:#334155;
-      cursor:pointer;
-      white-space:nowrap;
-    }
-    .seo-action-btn.primary{background:#eff6ff;color:#1d4ed8;border-color:#bfdbfe}
-    .seo-action-btn.orange{background:#fff7ed;color:#c2410c;border-color:#fed7aa}
-    .seo-action-btn.green{background:#f0fdf4;color:#15803d;border-color:#86efac}
-    .seo-action-btn.red{background:#fef2f2;color:#dc2626;border-color:#fecaca}
-    .seo-action-btn:hover{filter:brightness(.98);border-color:#93c5fd}
-
   </style>
-
-
-<style id="calendar-overflow-size-fix">
-  /* Calendar size/overflow fix */
-  .compact-calendar-card{
-    overflow:hidden !important;
-  }
-  #mainCalGrid{
-    width:100% !important;
-    max-width:100% !important;
-    overflow:hidden !important;
-  }
-  #mainCalGrid .cal-grid,
-  .cal-wrap .cal-grid{
-    width:100% !important;
-    max-width:100% !important;
-    display:grid !important;
-    grid-template-columns:repeat(7,minmax(0,1fr)) !important;
-    gap:4px !important;
-  }
-  #mainCalGrid .cal-day,
-  .cal-wrap .cal-day{
-    min-width:0 !important;
-    width:100% !important;
-    overflow:hidden !important;
-  }
-  #mainCalGrid .cal-event-main,
-  .cal-wrap .cal-event,
-  .cal-more{
-    max-width:100% !important;
-    min-width:0 !important;
-    display:block !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-  #mainCalLegend{
-    min-width:0 !important;
-    max-width:100% !important;
-    overflow:hidden !important;
-  }
-  #mainCalLegend span{
-    max-width:140px !important;
-    white-space:nowrap !important;
-    overflow:hidden !important;
-    text-overflow:ellipsis !important;
-  }
-  @media(max-width:1100px){
-    #mainCalGrid .cal-day{min-height:78px !important; padding:5px !important;}
-    #mainCalGrid .cal-event-main{font-size:10px !important; padding:2px 4px !important;}
-  }
-</style>
-
 </head>
 <body>
   <!-- 로그인 화면 -->
@@ -1131,18 +974,6 @@
     </div>
   </div>
 
-
-
-  <div class="modal-backdrop" id="calendarDayModal">
-    <div class="modal" style="max-width:560px">
-      <div class="modal-head">
-        <div><h2 id="calendarDayTitle">일정 전체보기</h2><p id="calendarDayDesc">선택한 날짜의 전체 일정을 표시합니다.</p></div>
-        <button class="close" type="button" id="calendarDayCloseBtn">×</button>
-      </div>
-      <div id="calendarDayList" class="calendar-day-list"></div>
-    </div>
-  </div>
-
   <div class="modal-backdrop" id="projectModal">
     <div class="modal" style="max-width:820px">
       <div class="modal-head">
@@ -1192,7 +1023,7 @@
           <div class="form-grid" style="margin-bottom:16px">
             <div class="field"><label>총 회차 수</label><input id="seoCount" type="number" min="1" max="24" value="12" /></div>
             <div class="field"><label>발행 간격</label><select id="seoInterval"><option value="monthly">매월 1회</option><option value="bimonthly">격월 1회</option></select></div>
-            <div class="field"><label>초안 작성 기준 (매월 몇 일)</label><input id="seoDraftDay" type="number" min="1" max="28" value="5" /></div>
+            <div class="field"><label>초안 제출 기준 (매월 몇 일)</label><input id="seoDraftDay" type="number" min="1" max="28" value="5" /></div>
             <div class="field"><label>공개일 기준 (초안 후 며칠 뒤)</label><input id="seoPublishOffset" type="number" min="5" max="30" value="10" /></div>
           </div>
           <button class="btn btn-secondary btn-small" id="genSeoBtn" type="button">🔄 일정 미리보기 생성</button>
@@ -1207,7 +1038,7 @@
             <table style="width:100%;font-size:13px;border-collapse:collapse">
               <thead><tr style="background:var(--gray)">
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line);white-space:nowrap">회차</th>
-                <th style="padding:8px 10px;border-bottom:1px solid var(--line)">초안 작성일</th>
+                <th style="padding:8px 10px;border-bottom:1px solid var(--line)">초안 제출일</th>
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line)">검수 기간</th>
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line)">공개일</th>
                 <th style="padding:8px 10px;border-bottom:1px solid var(--line)">SEO 테마</th>
@@ -1390,10 +1221,10 @@
     let firebaseLoadedOnce = false;
     let suppressRemoteUntil = 0;
     let cloudSaveTimer = null;
-    let lastLocalProjectsJson = '';
-    let lastLocalTrashJson = '';
-    let pendingRemoteRenderTimer = null;
-    let cloudListenersAttached = false;
+    let firebaseProjectsListenerAttached = false;
+    let firebaseTrashListenerAttached = false;
+    let lastLocalWriteAt = 0;
+    let lastLocalWriteProjectCount = 0;
     let projects = [];
     let trash = [];
     let trashOpen = false;
@@ -1515,7 +1346,7 @@
     function buildAutoTasksFromData(data){
       const tasks = [];
       if(data.seoItems && data.seoItems.length){
-        tasks.push({key:'seo', name:'SEO 콘텐츠 운영', goal:'검색 유입 및 자연 유입 확대', status:'초안 준비', next:data.seoItems[0]?.draft ? `${data.seoItems[0].draft} 초안 작성` : ''});
+        tasks.push({key:'seo', name:'SEO 콘텐츠 운영', goal:'검색 유입 및 자연 유입 확대', status:'초안 준비', next:data.seoItems[0]?.draft ? `${data.seoItems[0].draft} 초안 제출` : ''});
       }
       if(data.etcItems && data.etcItems.length){
         tasks.push({key:'guide', name:'기타 업무', goal:'프로젝트 부가 업무 관리', status:'준비중', next:data.etcItems[0]?.next || data.etcItems[0]?.name || ''});
@@ -1540,14 +1371,7 @@
     }
     function parseDate(v){ const d = new Date(String(v).replace(/\./g,'-')); return isNaN(d) ? new Date('2999-12-31') : d; }
     function fmtDate(v){ return String(v || '-').replace(/-/g,'.'); }
-    function statusClass(status){
-      const st = String(status || '');
-      if(st==='완료'||st==='공개완료'||st==='보고완료'||st==='발행완료') return 'done';
-      if(st==='지연'||st==='반려') return 'risk';
-      if(st.includes('검수')||st==='조율중'||st==='승인') return 'review';
-      if(st==='진행중'||st==='초안 준비'||st==='초안 작성중'||st==='작성완료'||st==='제출완료'||st==='수정중'||st==='작성중'||st==='발행대기') return 'active';
-      return 'wait';
-    }
+    function statusClass(status){ if(status==='완료'||status==='공개완료'||status==='보고완료') return 'done'; if(status==='지연') return 'risk'; if(status==='검수중'||status==='조율중') return 'review'; if(status==='진행중'||status==='초안 준비'||status==='수정중'||status==='작성중') return 'active'; return 'wait'; }
 
     // 운영 기간으로 월별 보고 일정 자동 생성
     // 규칙: 시작월 다음달부터 매월 말 정기보고, 종료월 다음달에 마무리 보고
@@ -1605,41 +1429,6 @@
       return normalized;
     }
 
-    function normalizeProjectArray(data){
-      return (data && Array.isArray(data)) ? data.map(d => makeProject(d)) : [];
-    }
-    function currentRemoteProjectJson(){
-      try { return JSON.stringify(normalizeProjectArray(projects)); } catch(e) { return JSON.stringify(projects || []); }
-    }
-    function isUserEditingForm(){
-      const el = document.activeElement;
-      if(!el) return false;
-      const tag = (el.tagName || '').toUpperCase();
-      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
-    }
-    function renderAfterRemoteSync(){
-      clearTimeout(pendingRemoteRenderTimer);
-      if(isUserEditingForm()){
-        pendingRemoteRenderTimer = setTimeout(renderAfterRemoteSync, 800);
-        return;
-      }
-      const rid = getRouteProjectId();
-      if(rid && projects.some(p => p.id === rid)) selectedProjectId = rid;
-      if(!selectedProjectId || !projects.some(p => p.id === selectedProjectId)){
-        selectedProjectId = (rid && projects.some(p => p.id === rid)) ? rid : (projects[0]?.id || null);
-      }
-      renderSummary();
-      renderHome();
-      renderMainCalendar();
-      renderTrash();
-      if(document.getElementById('detailScreen').classList.contains('active') && selectedProjectId) renderDetail();
-      if(document.getElementById('allProjectsScreen').classList.contains('active')) showAllProjects(typeof currentAllFilter !== 'undefined' ? currentAllFilter : 'all');
-      if(document.getElementById('opsListScreen')?.classList.contains('active')){
-        const mode = (location.hash || '').startsWith('#ops=') ? decodeURIComponent(location.hash.replace('#ops=','')) : 'week';
-        showOpsList(mode);
-      }
-    }
-
     function load(){
       // 1) 우선 브라우저 localStorage에서 복구합니다. 현재 키가 비어 있으면 이전 버전 키도 확인합니다.
       try {
@@ -1666,37 +1455,43 @@
       // 2) 로그인 상태일 때만 Firebase Realtime Database를 읽습니다.
       //    로컬 모드에서는 Firebase에 쓰지 않습니다. 기존 클라우드 데이터를 덮어쓰는 것을 막기 위함입니다.
       const canUseCloud = db && !localMode && auth && auth.currentUser && auth.currentUser.email && auth.currentUser.email.endsWith('@' + ALLOWED_DOMAIN);
-      if(canUseCloud && !cloudListenersAttached){
-        cloudListenersAttached = true;
-        db.ref('dashboard/projects').on('value', snap => {
-          firebaseLoadedOnce = true;
-          const data = snap.val();
-          if(data && Array.isArray(data) && data.length > 0){
-            const incoming = normalizeProjectArray(data);
-            const incomingJson = JSON.stringify(incoming);
-            const currentJson = currentRemoteProjectJson();
-            // 내가 방금 저장한 값이 그대로 되돌아온 경우만 렌더링을 생략합니다.
-            // 다른 사용자가 같은 타이밍에 저장한 변경은 suppress 시간 안이어도 즉시 반영됩니다.
-            if(incomingJson === currentJson || incomingJson === lastLocalProjectsJson) return;
-            projects = incoming;
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-            renderAfterRemoteSync();
-          }
-          // 중요: Firebase가 비어 있어도 자동으로 localStorage 데이터를 업로드하지 않습니다.
-          // 사용자가 저장/수정 액션을 했을 때만 save()를 통해 반영합니다.
-        }, err => {
-          console.warn('Firebase 프로젝트 읽기 실패:', err);
-        });
-        db.ref('dashboard/trash').on('value', snap => {
-          const data = snap.val();
-          if(data && Array.isArray(data)){
-            const incomingJson = JSON.stringify(data);
-            if(incomingJson === JSON.stringify(trash) || incomingJson === lastLocalTrashJson) return;
-            trash = data;
-            localStorage.setItem(TRASH_KEY, JSON.stringify(trash));
-            renderTrash();
-          }
-        }, err => console.warn('Firebase 휴지통 읽기 실패:', err));
+      if(canUseCloud){
+        if(!firebaseProjectsListenerAttached){
+          firebaseProjectsListenerAttached = true;
+          db.ref('dashboard/projects').on('value', snap => {
+            firebaseLoadedOnce = true;
+            const data = snap.val();
+            const remoteProjects = (data && Array.isArray(data)) ? data.map(d => makeProject(d)) : [];
+
+            // 내가 방금 추가/수정한 직후 들어오는 오래된 Firebase 스냅샷은 무시합니다.
+            // 이 처리가 없으면 프로젝트 추가 직후 이전 클라우드 값이 화면을 덮어써서 생성이 안 된 것처럼 보입니다.
+            const recentLocalWrite = Date.now() - lastLocalWriteAt < 9000;
+            if(recentLocalWrite && remoteProjects.length < lastLocalWriteProjectCount) return;
+            if(Date.now() < suppressRemoteUntil && recentLocalWrite) return;
+
+            if(remoteProjects.length > 0){
+              projects = remoteProjects;
+              localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
+              const rid = getRouteProjectId();
+              if(rid && projects.some(p => p.id === rid)) selectedProjectId = rid;
+              if(!selectedProjectId || !projects.some(p => p.id === selectedProjectId)) {
+                selectedProjectId = (rid && projects.some(p => p.id === rid)) ? rid : (projects[0]?.id || null);
+              }
+              if(rid && selectedProjectId === rid){ routeAfterLoad(); }
+              else { renderSummary(); renderHome(); renderMainCalendar(); if(selectedProjectId && document.getElementById('detailScreen').classList.contains('active')) renderDetail(); }
+            }
+            // Firebase가 비어 있어도 localStorage 데이터를 자동 업로드하지 않습니다.
+          }, err => {
+            console.warn('Firebase 프로젝트 읽기 실패:', err);
+          });
+        }
+        if(!firebaseTrashListenerAttached){
+          firebaseTrashListenerAttached = true;
+          db.ref('dashboard/trash').on('value', snap => {
+            const data = snap.val();
+            if(data && Array.isArray(data)){ trash = data; localStorage.setItem(TRASH_KEY, JSON.stringify(trash)); renderTrash(); }
+          }, err => console.warn('Firebase 휴지통 읽기 실패:', err));
+        }
       }
 
       if(!Array.isArray(projects)) projects = [];
@@ -1708,19 +1503,19 @@
       return db && !localMode && auth && auth.currentUser && auth.currentUser.email && auth.currentUser.email.endsWith('@' + ALLOWED_DOMAIN);
     }
     function saveLocalOnly(){
-      lastLocalProjectsJson = currentRemoteProjectJson();
-      lastLocalTrashJson = JSON.stringify(trash || []);
+      lastLocalWriteAt = Date.now();
+      lastLocalWriteProjectCount = Array.isArray(projects) ? projects.length : 0;
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
       localStorage.setItem(TRASH_KEY, JSON.stringify(trash));
     }
     function pushCloudNow(){
       if(!canUseCloudNow()) return;
       try {
-        lastLocalProjectsJson = currentRemoteProjectJson();
-        lastLocalTrashJson = JSON.stringify(trash || []);
-        suppressRemoteUntil = Date.now() + 1200;
-        db.ref('dashboard/projects').set(projects);
-        db.ref('dashboard/trash').set(trash);
+        suppressRemoteUntil = Date.now() + 9000;
+        lastLocalWriteAt = Date.now();
+        lastLocalWriteProjectCount = Array.isArray(projects) ? projects.length : 0;
+        db.ref('dashboard/projects').set(projects).catch(e => console.warn('Firebase 프로젝트 저장 실패:', e));
+        db.ref('dashboard/trash').set(trash).catch(e => console.warn('Firebase 휴지통 저장 실패:', e));
       } catch(e){ console.warn('Firebase 저장 실패:', e); }
     }
     function save(){
@@ -1736,7 +1531,7 @@
 
     function taskProgress(project){
       const segs = [];
-      if(project.seoItems?.length) segs.push(seoProgress(project.seoItems));
+      if(project.seoItems?.length) segs.push(Math.round(project.seoItems.filter(x=>x.status==='완료').length/project.seoItems.length*100));
       if(project.partners?.length) segs.push(Math.round(project.partners.filter(x=>x.status==='완료').length/project.partners.length*100));
       if(project.etcItems?.length) segs.push(Math.round(project.etcItems.filter(x=>x.status==='완료').length/project.etcItems.length*100));
       const ri = project.reportItems?.length ? project.reportItems : (project.start&&project.end?generateReportItems(project.start,project.end):[]);
@@ -1783,67 +1578,6 @@
     ];
     let mainCalYear = new Date().getFullYear();
     let mainCalMonth = new Date().getMonth();
-    let mainCalendarEventMap = {};
-
-    function toCalKey(dateStr){
-      const key = String(dateStr || '').trim().replace(/\./g,'-');
-      return /^\d{4}-\d{2}-\d{2}$/.test(key) ? key : '';
-    }
-    function formatCalKeyLabel(key){
-      const m = String(key||'').match(/^(\d{4})-(\d{2})-(\d{2})$/);
-      return m ? `${m[1]}년 ${Number(m[2])}월 ${Number(m[3])}일` : key;
-    }
-    function reviewRangeKeys(reviewText, baseDate){
-      const review = String(reviewText || '').trim();
-      if(!review) return [];
-      const base = parseAnyDate(baseDate) || new Date();
-      const year = base.getFullYear();
-      const nums = [...review.matchAll(/(\d{1,2})\s*월\s*(\d{1,2})\s*일/g)].map(m => ({m:Number(m[1]), d:Number(m[2])}));
-      if(!nums.length){
-        const single = toCalKey(review);
-        return single ? [single] : [];
-      }
-      const start = new Date(year, nums[0].m - 1, nums[0].d);
-      const endRaw = nums[1] || nums[0];
-      let end = new Date(year, endRaw.m - 1, endRaw.d);
-      if(end < start) end = new Date(year + 1, endRaw.m - 1, endRaw.d);
-      const keys = [];
-      for(let d = new Date(start), guard=0; d <= end && guard < 21; d.setDate(d.getDate()+1), guard++){
-        keys.push(`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`);
-      }
-      return keys;
-    }
-    function openProjectTabFromCalendar(pid, tab){
-      if(!pid) return;
-      selectedProjectId = pid;
-      currentTab = tab || 'content';
-      const modal = document.getElementById('calendarDayModal');
-      if(modal) modal.classList.remove('active');
-      showDetail(true, currentTab);
-      requestAnimationFrame(() => {
-        const tabContent = document.getElementById('tabContent');
-        if(tabContent) tabContent.scrollIntoView({behavior:'smooth', block:'start'});
-      });
-    }
-    function showCalendarDayModal(key){
-      const evs = (mainCalendarEventMap && mainCalendarEventMap[key]) || [];
-      if(!evs.length) return;
-      const modal = document.getElementById('calendarDayModal');
-      const title = document.getElementById('calendarDayTitle');
-      const desc = document.getElementById('calendarDayDesc');
-      const list = document.getElementById('calendarDayList');
-      if(!modal || !list) return;
-      title.textContent = `${formatCalKeyLabel(key)} 일정`;
-      desc.textContent = `${evs.length}개의 일정이 있습니다.`;
-      list.innerHTML = evs.map((e, i) => {
-        const typeClass = e.type || 'draft';
-        return `<div class="calendar-day-item ${escapeHtml(typeClass)}" data-pid="${escapeHtml(e.pid)}" data-tab="${escapeHtml(e.tab||'content')}"><div class="meta">${escapeHtml(e.typeLabel || '일정')} · ${escapeHtml(e.projectName || '')}</div><div class="title">${escapeHtml(e.title || e.label || '')}</div></div>`;
-      }).join('');
-      list.querySelectorAll('.calendar-day-item').forEach(item => {
-        item.addEventListener('click', () => openProjectTabFromCalendar(item.dataset.pid, item.dataset.tab));
-      });
-      modal.classList.add('active');
-    }
 
     function renderMainCalendar(){
       const cy = mainCalYear, cm = mainCalMonth;
@@ -1851,39 +1585,28 @@
       const todayStr = `${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')}`;
       document.getElementById('mainCalTitle').textContent = `${cy}년 ${cm+1}월`;
 
-      // 이벤트 맵 key=YYYY-MM-DD → 일정 배열
+      // 이벤트 맵 key=YYYY-MM-DD → [{label, color, done, projectId}]
       const evMap = {};
       const addEv = (dateStr, ev) => {
-        const key = toCalKey(dateStr);
-        if(!key) return;
+        const key = String(dateStr).replace(/\./g,'-');
+        if(!/^\d{4}-\d{2}-\d{2}$/.test(key)) return;
         if(!evMap[key]) evMap[key]=[];
         evMap[key].push(ev);
       };
 
       projects.forEach((p, pi) => {
         const col = PROJECT_COLORS[pi % PROJECT_COLORS.length];
-        (p.seoItems || []).forEach(item => {
-          const round = item.round || 'SEO';
-          const theme = item.theme ? ` · ${item.theme}` : '';
-          if(item.draft) addEv(item.draft, {
-            label:`${p.name} · ${round} 작성`, title:`${round} 작성${theme}`, type:'draft', typeLabel:'초안 작성',
-            col, done:seoPublishStatus(item)==='발행완료' || item.status==='완료', pid:p.id, tab:'content', projectName:p.name
-          });
-          reviewRangeKeys(item.review, item.draft || item.publish).forEach(key => addEv(key, {
-            label:`${p.name} · ${round} 검수 기간`, title:`${round} 검수 기간${theme}`, type:'review', typeLabel:'검수 기간',
-            col:{bg:'#fff7ed',text:'#b45309'}, done:seoPublishStatus(item)==='발행완료' || item.status==='완료', pid:p.id, tab:'content', projectName:p.name
-          }));
-          if(item.publish) addEv(item.publish, {
-            label:`${p.name} · ${round} 공개`, title:`${round} 공개${theme}`, type:'publish', typeLabel:'공개일',
-            col:{bg:'#dcfce7',text:'#15803d'}, done:seoPublishStatus(item)==='발행완료' || item.status==='완료', pid:p.id, tab:'content', projectName:p.name
-          });
+        // SEO 초안/공개
+        p.seoItems.forEach(item => {
+          if(item.draft)   addEv(item.draft,   {label:`📝 ${p.name} · ${item.round} 초안`, col, done:item.status==='완료', pid:p.id, tab:'content'});
+          if(item.publish) addEv(item.publish, {label:`🚀 ${p.name} · ${item.round} 공개`, col, done:item.status==='완료', pid:p.id, tab:'content'});
         });
+        // 결과 보고
         const ri = p.reportItems || generateReportItems(p.start, p.end);
         ri.forEach(r => {
-          addEv(r.date, {label:`${p.name} · ${r.isFinal?'마무리 보고':'결과 보고'}`, title:r.label || '결과 보고', type:'report', typeLabel:r.isFinal?'마무리 보고':'결과 보고', col:{bg:'#fef9c3',text:'#854d0e'}, done:r.status==='완료', pid:p.id, tab:'report', projectName:p.name});
+          addEv(r.date, {label:`📊 ${p.name} · ${r.isFinal?'마무리 보고':'결과 보고'}`, col:{bg:'#fef9c3',text:'#854d0e'}, done:r.status==='완료', pid:p.id, tab:'report'});
         });
       });
-      mainCalendarEventMap = evMap;
 
       // 달력 그리기
       const firstDay = new Date(cy, cm, 1).getDay();
@@ -1905,8 +1628,8 @@
         const shown = evs.slice(0,MAX_SHOW);
         const more = evs.length - MAX_SHOW;
         const evHtml = shown.map(e =>
-          `<div class="cal-event-main ${e.type||''}${e.done?' done-ev':''}" style="background:${e.col.bg};color:${e.col.text}" data-pid="${e.pid}" data-tab="${e.tab}" data-key="${key}" title="${escapeHtml(e.label)}">${escapeHtml(e.label)}</div>`
-        ).join('') + (more>0 ? `<div class="cal-more" data-key="${key}">+${more}개 더</div>` : '');
+          `<div class="cal-event-main${e.done?' done-ev':''}" style="background:${e.col.bg};color:${e.col.text}" data-pid="${e.pid}" data-tab="${e.tab}" title="${escapeHtml(e.label)}">${escapeHtml(e.label)}</div>`
+        ).join('') + (more>0 ? `<div class="cal-more">+${more}개 더</div>` : '');
         cells += `<div class="cal-day${isToday?' today':''}${evs.length?' has-event':''}" data-key="${key}"><div class="cal-day-num">${d}</div>${evHtml}</div>`;
       }
       const trailing = (firstDay+daysInMonth)%7===0 ? 0 : 7-((firstDay+daysInMonth)%7);
@@ -2161,12 +1884,12 @@
       const seoTask = p.tasks.find(t=>t.key==='seo');
       if(seoTask){
         const pending = p.seoItems.filter(i=>i.status!=='완료').sort((a,b)=>parseDate(a.draft)-parseDate(b.draft));
-        seoTask.next = pending.length ? `${pending[0].draft} 초안 작성 (${pending[0].round})` : '전 회차 완료';
-        const progress = seoProgress(p.seoItems);
+        seoTask.next = pending.length ? `${pending[0].draft} 초안 제출 (${pending[0].round})` : '전 회차 완료';
+        const doneCnt = p.seoItems.filter(i=>i.status==='완료').length;
         const total = p.seoItems.length;
         if(total===0) seoTask.status = '대기중';
-        else if(progress===0) seoTask.status = '대기중';
-        else if(progress>=100) seoTask.status = '완료';
+        else if(doneCnt===0) seoTask.status = '초안 준비';
+        else if(doneCnt===total) seoTask.status = '완료';
         else seoTask.status = '진행중';
       }
       // 플라잉패스 — 파트너 상태 기반
@@ -2216,7 +1939,7 @@
       const autoKeys = new Set(['seo','guide','pass','report']);
       const rows = p.tasks.map((t,i) => {
         let progress;
-        if(t.key==='seo' && p.seoItems.length){ progress = seoProgress(p.seoItems); }
+        if(t.key==='seo' && p.seoItems.length){ progress = Math.round(p.seoItems.filter(x=>x.status==='완료').length/p.seoItems.length*100); }
         else if(t.key==='guide' && p.etcItems?.length){ progress = Math.round(p.etcItems.filter(x=>x.status==='완료').length/p.etcItems.length*100); }
         else if(t.key==='pass' && p.partners.length){ progress = Math.round(p.partners.filter(x=>x.status==='완료').length/p.partners.length*100); }
         else if(t.key==='report'){ const ri=p.reportItems||generateReportItems(p.start,p.end); progress=Math.round(ri.filter(r=>r.status==='완료').length/ri.length*100); }
@@ -2250,7 +1973,7 @@
         : '<div class="empty card" style="margin-top:12px">완료된 콘텐츠가 없습니다.</div>';
       return `
         <section class="panel">
-          <div class="panel-title"><h3>콘텐츠 관리</h3><small>초안·검수·발행 단계를 분리해서 관리합니다.</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">+ SEO 추가</button></div>
+          <div class="panel-title"><h3>콘텐츠 관리</h3><small>진행중/대기중만 우선 표시하고, 완료 항목은 접어서 관리합니다.</small><button class="btn btn-secondary btn-small" id="addSeoItemBtn" type="button">+ SEO 추가</button></div>
           <div class="summary" style="grid-template-columns:repeat(3,1fr)">
             <div class="card"><div class="label">SEO 발행 회차</div><div class="value">${p.seoItems.length}회차</div></div>
             <div class="card"><div class="label">대기중</div><div class="value">${pending.length}건</div></div>
@@ -2267,126 +1990,68 @@
       if(m) return `${m[1]}-${m[2].padStart(2,'0')}-${m[3].padStart(2,'0')}`;
       return '';
     }
-    function normalizeDraftStatus(v){
-      if(v==='제출완료') return '작성완료';
-      if(v==='작성완료') return '작성완료';
-      return v || '';
-    }
-    function seoDraftStatus(item){
-      const st = normalizeDraftStatus(item.draftStatus);
-      if(st) return st;
-      if(item.status==='완료' || item.publishStatus==='발행완료') return '작성완료';
-      return '미작성';
-    }
-    function seoItemProgress(item){
-      let score = 0;
-      if(['작성중','작성완료'].includes(seoDraftStatus(item))) score += 50;
-      if(seoPublishStatus(item)==='발행완료' || item.status==='완료') score += 50;
-      return score;
-    }
-    function seoProgress(items){
-      if(!items || !items.length) return 0;
-      return Math.round(items.reduce((sum,item)=>sum+seoItemProgress(item),0)/items.length);
-    }
-    function seoReviewRequired(item){ return item.reviewRequired === false ? false : true; }
-    function seoReviewStatus(item){
-      if(!seoReviewRequired(item)) return '검수없음';
-      if(item.reviewStatus) return item.reviewStatus;
-      if(item.status==='완료' || item.publishStatus==='발행완료') return '승인';
-      if(item.status && String(item.status).includes('검수')) return '검수중';
-      if(seoDraftStatus(item)==='작성완료') return '검수대기';
-      return '검수대기';
-    }
-    function seoPublishStatus(item){
-      if(item.publishStatus) return item.publishStatus;
-      if(item.status==='완료') return '발행완료';
-      if(!seoReviewRequired(item) && seoDraftStatus(item)==='작성완료') return '발행대기';
-      if(seoReviewStatus(item)==='승인') return '발행대기';
-      return '발행대기';
-    }
-    function deriveSeoStatus(item){
-      if(seoPublishStatus(item)==='발행완료') return '완료';
-      const draft = seoDraftStatus(item);
-      const review = seoReviewStatus(item);
-      const publish = seoPublishStatus(item);
-      if(publish==='발행대기' && (review==='승인' || !seoReviewRequired(item))) return '발행대기';
-      if(review==='검수중') return '검수중(발행대기)';
-      if(review==='반려') return '반려';
-      if(review==='검수대기' && draft==='제출완료') return '검수대기';
-      if(draft==='작성중') return '작성중';
-      if(draft==='작성완료') return '발행대기';
-      return '대기중';
-    }
-    function seoStepChip(kind, value){
-      let cls='';
-      if(kind==='draft') cls = value==='작성완료' ? 'draft-done' : (value==='작성중' ? 'draft-writing' : 'draft-empty');
-      if(kind==='review') cls = value==='검수없음' ? 'review-none' : (value==='승인' ? 'review-ok' : (value==='검수중' ? 'review-active' : (value==='반려' ? 'review-reject' : 'review-wait')));
-      if(kind==='publish') cls = value==='발행완료' ? 'publish-done' : 'publish-wait';
-      return `<span class="seo-step-chip ${cls}">${escapeHtml(value)}</span>`;
-    }
-    function seoUrlCell(item){
-      const url = safeUrl(item.contentUrl || item.url || '');
-      const memo = item.note ? `<div style="margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45;max-width:220px;white-space:normal">${escapeHtml(item.note)}</div>` : `<div style="margin-top:6px;color:var(--muted);font-size:12px">메모 없음</div>`;
-      const link = url ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="btn btn-secondary btn-small" style="display:inline-flex;text-decoration:none;padding:5px 9px">URL 열기</a>` : `<span style="color:var(--muted);font-size:12px">URL 없음</span>`;
-      return `${link}${memo}`;
-    }
-    function seoNextActionButtons(item, idx){
-      if(seoPublishStatus(item)==='발행완료') return `<button class="seo-action-btn seo-stage-btn" data-idx="${idx}" data-action="publish-undo" type="button">발행 취소</button>`;
-      const draft = seoDraftStatus(item);
-      const reviewRequired = seoReviewRequired(item);
-      const review = seoReviewStatus(item);
-      if(draft!=='작성완료') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">작성</button>`;
-      if(reviewRequired && review==='검수대기') return `<button class="seo-action-btn orange seo-stage-btn" data-idx="${idx}" data-action="review-request" type="button">검수 요청</button>`;
-      if(reviewRequired && review==='검수중') return `<button class="seo-action-btn green seo-stage-btn" data-idx="${idx}" data-action="review-approve" type="button">승인</button><button class="seo-action-btn red seo-stage-btn" data-idx="${idx}" data-action="review-reject" type="button">반려</button>`;
-      if(reviewRequired && review==='반려') return `<button class="seo-action-btn primary seo-stage-btn" data-idx="${idx}" data-action="draft-submit" type="button">다시 작성</button>`;
-      return `<button class="seo-action-btn green seo-stage-btn" data-idx="${idx}" data-action="publish-complete" type="button">발행 완료</button>`;
-    }
-
     function seoTable(p,items){
       const rows = items.map(item => {
-        const idx=p.seoItems.indexOf(item); const isDone=seoPublishStatus(item)==='발행완료' || item.status==='완료';
-        const autoStatus = deriveSeoStatus(item);
-        if(!item.status || item.status==='대기중' || item.status==='진행중' || item.status==='검수중' || item.status==='완료') item.status = autoStatus;
+        const idx=p.seoItems.indexOf(item); const isDone=item.status==='완료';
+        const url = safeUrl(item.contentUrl || item.url || '');
+        const urlView = url
+          ? `<a href="${escapeHtml(url)}" target="_blank" rel="noopener" class="btn btn-secondary btn-small" style="display:inline-flex;text-decoration:none;padding:5px 9px">URL 열기</a>`
+          : `<span style="color:var(--muted);font-size:12px">URL 없음</span>`;
+        const noteView = item.note
+          ? `<div style="margin-top:6px;color:var(--muted);font-size:12px;line-height:1.45;max-width:220px;white-space:normal">${escapeHtml(item.note)}</div>`
+          : `<div style="margin-top:6px;color:var(--muted);font-size:12px">메모 없음</div>`;
         if(item._editing){
           return `<tr style="background:#f8fafc;border-left:3px solid var(--blue)">
-            <td colspan="9" style="padding:14px 16px">
-              <div class="seo-edit-grid">
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">회차</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="round" value="${escapeHtml(item.round||'')}" placeholder="SEO 1안" style="font-weight:700"/></div>
-                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">주제 / SEO 테마</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="theme" value="${escapeHtml(item.theme||'')}" placeholder="콘텐츠 제목 또는 SEO 테마"/></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">담당</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="owner" value="${escapeHtml(item.owner||p.owner||'')}" placeholder="담당자"/></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 작성일</div><input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="draft" value="${toDateInput(item.draft)}" /></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 기간</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="review" value="${escapeHtml(item.review||'')}" placeholder="예: 7월 3일 ~ 7월 10일"/></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">공개일</div><input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="publish" value="${toDateInput(item.publish)}" /></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="draftStatus"><option ${seoDraftStatus(item)==='미작성'?'selected':''}>미작성</option><option ${seoDraftStatus(item)==='작성중'?'selected':''}>작성중</option><option ${seoDraftStatus(item)==='작성완료'?'selected':''}>작성완료</option></select></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 여부</div><select class="seo-review-required edit-field" data-idx="${idx}"><option value="true" ${seoReviewRequired(item)?'selected':''}>검수 필요</option><option value="false" ${!seoReviewRequired(item)?'selected':''}>검수 없음</option></select></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="reviewStatus"><option ${seoReviewStatus(item)==='검수대기'?'selected':''}>검수대기</option><option ${seoReviewStatus(item)==='검수중'?'selected':''}>검수중</option><option ${seoReviewStatus(item)==='승인'?'selected':''}>승인</option><option ${seoReviewStatus(item)==='반려'?'selected':''}>반려</option></select></div>
-                <div><div style="font-size:11px;color:var(--muted);margin-bottom:4px">발행 상태</div><select class="seo-edit-input edit-field" data-idx="${idx}" data-field="publishStatus"><option ${seoPublishStatus(item)==='발행대기'?'selected':''}>발행대기</option><option ${seoPublishStatus(item)==='발행완료'?'selected':''}>발행완료</option></select></div>
-                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">콘텐츠 URL</div><input class="seo-edit-input edit-field" data-idx="${idx}" data-field="contentUrl" value="${escapeHtml(item.contentUrl || item.url || '')}" placeholder="https://..."/></div>
-                <div class="wide"><div style="font-size:11px;color:var(--muted);margin-bottom:4px">메모</div><textarea class="seo-edit-input edit-field" data-idx="${idx}" data-field="note" placeholder="콘텐츠 관련 메모" style="min-height:64px;resize:vertical">${escapeHtml(item.note || '')}</textarea></div>
-                <div style="display:flex;gap:6px;justify-content:flex-end;align-items:end">
-                  <button class="btn btn-primary btn-small seo-save-btn" data-idx="${idx}" type="button">저장</button>
-                  <button class="btn btn-secondary btn-small seo-cancel-btn" data-idx="${idx}" type="button">취소</button>
-                </div>
-              </div>
+            <td style="padding:10px 8px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">회차명</div>
+              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="round" value="${escapeHtml(item.round)}" placeholder="SEO 1안" style="font-weight:700"/>
+            </td>
+            <td style="padding:10px 8px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">초안 제출일</div>
+              <input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="draft" value="${toDateInput(item.draft)}" style="width:100%"/>
+            </td>
+            <td style="padding:10px 8px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">검수 기간</div>
+              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="review" value="${escapeHtml(item.review)}" placeholder="예: ~3월 13일"/>
+            </td>
+            <td style="padding:10px 8px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">공개일</div>
+              <input type="date" class="seo-edit-date edit-field" data-idx="${idx}" data-field="publish" value="${toDateInput(item.publish)}" style="width:100%"/>
+            </td>
+            <td style="padding:10px 8px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">SEO 테마</div>
+              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="theme" value="${escapeHtml(item.theme)}" placeholder="테마"/>
+            </td>
+            <td style="padding:10px 8px;min-width:210px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">콘텐츠 URL</div>
+              <input class="seo-edit-input edit-field" data-idx="${idx}" data-field="contentUrl" value="${escapeHtml(item.contentUrl || item.url || '')}" placeholder="https://..."/>
+              <div style="font-size:11px;color:var(--muted);margin:8px 0 4px">메모</div>
+              <textarea class="seo-edit-input edit-field" data-idx="${idx}" data-field="note" placeholder="콘텐츠 관련 메모" style="min-height:64px;resize:vertical">${escapeHtml(item.note || '')}</textarea>
+            </td>
+            <td style="padding:10px 8px">
+              <div style="font-size:11px;color:var(--muted);margin-bottom:4px">상태</div>
+              ${statusSelect('seo',idx,item.status)}
+            </td>
+            <td style="padding:10px 8px;white-space:nowrap;vertical-align:bottom">
+              <button class="btn btn-primary btn-small seo-save-btn" data-idx="${idx}" type="button">저장</button>
+              <button class="btn btn-secondary btn-small seo-cancel-btn" data-idx="${idx}" type="button">취소</button>
             </td>
           </tr>`;
         }
         return `<tr class="${isDone?'done-row':''}">
-          <td><b>${escapeHtml(item.round||'-')}</b><br><small style="color:var(--muted)">${escapeHtml(item.owner || p.owner || '담당 미정')}</small></td>
-          <td class="seo-title-cell"><b>${escapeHtml(item.theme || '-')}</b><br><small style="color:var(--muted)">${escapeHtml(item.draft || '-')} · ${escapeHtml(item.publish || '-')}</small></td>
-          <td>${seoStepChip('draft', seoDraftStatus(item))}</td>
-          <td class="seo-review-cell">${seoStepChip('review', seoReviewStatus(item))}${(item.review && !/^초안$/i.test(String(item.review).trim())) ? `<div class="seo-sub-text">${escapeHtml(item.review)}</div>` : ''}</td>
-          <td>${seoStepChip('publish', seoPublishStatus(item))}</td>
-          <td>${seoUrlCell(item)}</td>
-          <td><span class="badge ${statusClass(autoStatus)}" style="font-size:12px;padding:5px 10px">${escapeHtml(autoStatus)}</span></td>
+          <td><b>${escapeHtml(item.round)}</b><br><small style="color:var(--muted)">${escapeHtml(p.owner)}</small></td>
+          <td>${escapeHtml(item.draft)}</td><td>${escapeHtml(item.review)}</td><td>${escapeHtml(item.publish)}</td>
+          <td style="max-width:180px">${escapeHtml(item.theme)}</td>
+          <td>${urlView}${noteView}</td>
+          <td><span class="badge ${statusClass(item.status)}" style="font-size:12px;padding:5px 10px">${escapeHtml(item.status || '대기중')}</span></td>
           <td><div class="row-actions">
             <button class="row-edit-btn seo-edit-btn" data-idx="${idx}" type="button">수정</button>
-            ${seoNextActionButtons(item,idx)}
+            ${isDone ? `<button class="row-toggle-btn undo seo-undo" data-idx="${idx}" type="button">미완료</button>` : `<button class="row-toggle-btn seo-complete" data-idx="${idx}" type="button">완료</button>`}
             <button class="row-delete-btn seo-del-btn" data-idx="${idx}" type="button">삭제</button>
           </div></td>
         </tr>`;
       }).join('');
-      return `<table class="seo-stage-table"><thead><tr><th>회차</th><th>주제</th><th>초안</th><th>검수</th><th>발행</th><th>URL / 메모</th><th>상태</th><th>작업</th></tr></thead><tbody>${rows}</tbody></table>`;
+      return `<table><thead><tr><th>회차</th><th>초안 제출일</th><th>검수 기간</th><th>공개일</th><th>SEO 테마</th><th>URL / 메모</th><th>상태</th><th></th></tr></thead><tbody>${rows}</tbody></table>`;
     }
     function calendarHtml(p){
       // 캘린더 표시 기준 월 (state는 data attr로 유지)
@@ -2403,10 +2068,8 @@
         evMap[key].push(ev);
       };
       p.seoItems.forEach(item => {
-        const done = seoPublishStatus(item)==='발행완료' || item.status==='완료';
-        if(item.draft)   addEv(item.draft,   {label:`${item.round} 작성`, cls:'seo-draft', done});
-        reviewRangeKeys(item.review, item.draft || item.publish).forEach(key => addEv(key, {label:`${item.round} 검수 기간`, cls:'report-ev', done}));
-        if(item.publish) addEv(item.publish, {label:`${item.round} 공개`, cls:'seo-publish', done});
+        if(item.draft)   addEv(item.draft,   {label:`📝 ${item.round} 초안`, cls:'seo-draft', done: item.status==='완료'});
+        if(item.publish) addEv(item.publish, {label:`🚀 ${item.round} 공개`, cls:'seo-publish', done: item.status==='완료'});
       });
       const ri = p.reportItems || generateReportItems(p.start, p.end);
       ri.forEach(r => {
@@ -2452,7 +2115,7 @@
             <button class="cal-next" data-y="${nextY}" data-m="${nextM}">›</button>
           </div>
           <div class="cal-legend">
-            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dbeafe"></div>SEO 초안 작성</div>
+            <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dbeafe"></div>SEO 초안 제출</div>
             <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#dcfce7"></div>SEO 공개</div>
             <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fef9c3"></div>월별 보고</div>
             <div class="cal-legend-item"><div class="cal-legend-dot" style="background:#fce7f3"></div>마무리 보고</div>
@@ -2862,7 +2525,7 @@
       // 렌더
       const wrap = document.getElementById('seoPreviewWrap');
       wrap.innerHTML = `
-        <div class="seo-preview-row"><span>회차</span><span>초안 작성일</span><span>검수 기간</span><span>공개일</span><span>SEO 테마</span></div>
+        <div class="seo-preview-row"><span>회차</span><span>초안 제출일</span><span>검수 기간</span><span>공개일</span><span>SEO 테마</span></div>
         ${items.map((it,idx)=>`<div class="seo-preview-row">
           <span>${escapeHtml(it.round)}</span>
           <span>${escapeHtml(it.draft)}</span>
@@ -2998,7 +2661,9 @@
       inp.addEventListener('change',()=>{if(inp.files[0]) parseDocxIntoModal(inp.files[0]);inp.value='';});
     })();
     function saveModal(){
-      if(!document.getElementById('adName').value.trim()){
+      try {
+      const nameEl = document.getElementById('adName');
+      if(!nameEl || !nameEl.value.trim()){
         customConfirm('광고명 확인', '프로젝트명을 입력해주세요. 문서로 등록하는 경우에는 DOCX 업로드를 이용해주세요.', '확인', 'btn-primary', () => {});
         return;
       }
@@ -3033,7 +2698,16 @@
         projects.push(p);
         selectedProjectId = p.id;
       }
-      save(); closeModal(); showDetail();
+      save();
+      closeModal();
+      renderSummary();
+      renderHome();
+      renderMainCalendar();
+      showDetail(true, currentTab || 'overview');
+      } catch(err) {
+        console.error('프로젝트 저장 실패:', err);
+        customConfirm('저장 오류', '프로젝트 저장 중 오류가 발생했습니다. 콘솔 오류를 확인해주세요.\n' + (err && err.message ? err.message : err), '확인', 'btn-primary', () => {});
+      }
     }
 
     // ── 모달 탭 이벤트 위임 ──
@@ -3133,31 +2807,35 @@
       mainCalMonth++; if(mainCalMonth>11){mainCalMonth=0;mainCalYear++;} renderMainCalendar();
     });
 
-    // 메인 캘린더 클릭 처리: 일정 클릭 / +N개 더 / 날짜칸 전체보기
+    // 메인 캘린더 이벤트 클릭 → 해당 프로젝트 상세 + 탭으로 이동
     document.getElementById('mainCalGrid').addEventListener('click', e=>{
-      const moreBtn = e.target.closest('.cal-more');
-      if(moreBtn){
-        e.preventDefault(); e.stopPropagation();
-        showCalendarDayModal(moreBtn.dataset.key);
-        return;
-      }
       const ev = e.target.closest('.cal-event-main');
       if(ev && ev.dataset.pid){
-        e.preventDefault(); e.stopPropagation();
-        openProjectTabFromCalendar(ev.dataset.pid, ev.dataset.tab || 'content');
-        return;
-      }
-      const day = e.target.closest('.cal-day.has-event');
-      if(day && day.dataset.key && (mainCalendarEventMap[day.dataset.key] || []).length > 3){
-        showCalendarDayModal(day.dataset.key);
+        selectedProjectId = ev.dataset.pid;
+        currentTab = ev.dataset.tab || 'content';
+        showDetail();
+        // 탭 렌더 후 해당 섹션 상단으로 스크롤
+        requestAnimationFrame(() => {
+          const tabContent = document.getElementById('tabContent');
+          if(tabContent) tabContent.scrollIntoView({behavior:'smooth', block:'start'});
+        });
       }
     });
-    document.getElementById('calendarDayCloseBtn')?.addEventListener('click', () => document.getElementById('calendarDayModal')?.classList.remove('active'));
-    document.getElementById('calendarDayModal')?.addEventListener('click', e => { if(e.target.id === 'calendarDayModal') e.currentTarget.classList.remove('active'); });
-    document.addEventListener('keydown', e => { if(e.key === 'Escape') document.getElementById('calendarDayModal')?.classList.remove('active'); });
     document.getElementById('modalCloseBtn').addEventListener('click',closeModal);
     document.getElementById('cancelModalBtn').addEventListener('click',closeModal);
     document.getElementById('saveProjectBtn').addEventListener('click',saveModal);
+    window.addEventListener('storage', (ev) => {
+      if(ev.key === STORAGE_KEY && ev.newValue){
+        try {
+          const incoming = JSON.parse(ev.newValue);
+          if(Array.isArray(incoming)){
+            projects = incoming.map(d => makeProject(d));
+            renderSummary(); renderHome(); renderMainCalendar();
+            if(selectedProjectId && document.getElementById('detailScreen').classList.contains('active')) renderDetail();
+          }
+        } catch(e){}
+      }
+    });
     document.getElementById('backHomeBtn')?.addEventListener('click',showHome);
     document.getElementById('searchInput').addEventListener('input',renderHome);
     // 상태 필터 버튼 렌더링
@@ -3209,20 +2887,9 @@
       if(seoEditBtn){ const p=getProject(); if(!p) return; const idx=Number(seoEditBtn.dataset.idx); p.seoItems.forEach((s,i)=>s._editing=(i===idx)); renderDetail(); return; }
       const seoSaveBtn = t.closest('.seo-save-btn');
       if(seoSaveBtn){ const p=getProject(); if(!p) return; const idx=Number(seoSaveBtn.dataset.idx);
-        const row = seoSaveBtn.closest('tr');
-        row.querySelectorAll('.seo-edit-input').forEach(inp=>{ if(p.seoItems[idx]) p.seoItems[idx][inp.dataset.field]=inp.value; });
-        row.querySelectorAll('.seo-edit-date').forEach(inp=>{ if(p.seoItems[idx]&&inp.value) p.seoItems[idx][inp.dataset.field]=inp.value.replace(/-/g,'.'); });
-        const req = row.querySelector('.seo-review-required');
-        if(req && p.seoItems[idx]) p.seoItems[idx].reviewRequired = req.value === 'true';
-        if(p.seoItems[idx]){
-          const item = p.seoItems[idx];
-          if(!seoReviewRequired(item)) item.reviewStatus = '검수없음';
-          item.status = deriveSeoStatus(item);
-          if(seoPublishStatus(item)==='발행완료') { item.status='완료'; if(!item.completedAt) item.completedAt=new Date().toISOString(); }
-          else { delete item.completedAt; }
-          item._editing=false;
-        }
-        syncAllTasks(p); save(); renderDetail(); renderSummary(); renderMainCalendar(); return; }
+        seoSaveBtn.closest('tr').querySelectorAll('.seo-edit-input').forEach(inp=>{ if(p.seoItems[idx]) p.seoItems[idx][inp.dataset.field]=inp.value; });
+        seoSaveBtn.closest('tr').querySelectorAll('.seo-edit-date').forEach(inp=>{ if(p.seoItems[idx]&&inp.value) p.seoItems[idx][inp.dataset.field]=inp.value.replace(/-/g,'.'); });
+        if(p.seoItems[idx]) p.seoItems[idx]._editing=false; save(); renderDetail(); renderSummary(); return; }
       const seoCancelBtn = t.closest('.seo-cancel-btn');
       if(seoCancelBtn){ const p=getProject(); if(!p) return; const idx=Number(seoCancelBtn.dataset.idx); if(p.seoItems[idx]){
           const item=p.seoItems[idx];
@@ -3244,28 +2911,6 @@
           else item._editing=false;
         }
         save(); renderDetail(); renderSummary(); return; }
-      // SEO 단계 버튼
-      const seoStageBtn = t.closest('.seo-stage-btn');
-      if(seoStageBtn){
-        const p=getProject(); if(!p) return;
-        const idx=Number(seoStageBtn.dataset.idx);
-        const item=p.seoItems[idx]; if(!item) return;
-        const action=seoStageBtn.dataset.action;
-        if(action==='draft-submit'){
-          item.draftStatus='작성완료';
-          if(seoReviewRequired(item)) item.reviewStatus='검수대기';
-          else item.publishStatus='발행대기';
-        }
-        if(action==='review-request') item.reviewStatus='검수중';
-        if(action==='review-approve') { item.reviewStatus='승인'; item.publishStatus='발행대기'; }
-        if(action==='review-reject') item.reviewStatus='반려';
-        if(action==='publish-complete') { item.publishStatus='발행완료'; item.status='완료'; item.completedAt=new Date().toISOString(); }
-        if(action==='publish-undo') { item.publishStatus='발행대기'; item.status=deriveSeoStatus(item); delete item.completedAt; }
-        if(action!=='publish-complete') item.status=deriveSeoStatus(item);
-        syncAllTasks(p); save(); renderDetail(); renderSummary(); renderMainCalendar();
-        return;
-      }
-
       // SEO 삭제
       const seoDelBtn = t.closest('.seo-del-btn');
       if(seoDelBtn){ const p=getProject(); if(!p) return; const idx=Number(seoDelBtn.dataset.idx); confirmRowDelete('콘텐츠 항목',()=>{ if(idx>=0&&idx<p.seoItems.length) p.seoItems.splice(idx,1); syncAllTasks(p); save(); renderDetail(); renderSummary(); }); return; }
@@ -3992,22 +3637,6 @@
     }
     // ─────────────────────────────────────────────────────────
 
-
-    window.addEventListener('storage', (e) => {
-      if(e.key === STORAGE_KEY && e.newValue){
-        try{
-          const incoming = JSON.parse(e.newValue).map(d => makeProject(d));
-          const incomingJson = JSON.stringify(incoming);
-          if(incomingJson !== currentRemoteProjectJson()){
-            projects = incoming;
-            renderAfterRemoteSync();
-          }
-        }catch(err){ console.warn('로컬 프로젝트 동기화 실패:', err); }
-      }
-      if(e.key === TRASH_KEY && e.newValue){
-        try{ trash = JSON.parse(e.newValue); renderTrash(); }catch(err){ console.warn('로컬 휴지통 동기화 실패:', err); }
-      }
-    });
 
     window.addEventListener('hashchange', () => { if(projects && projects.length) routeAfterLoad(); });
     if(!auth){ load(); routeAfterLoad(); }
