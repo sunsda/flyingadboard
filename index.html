@@ -919,6 +919,59 @@
     .seo-action-btn:hover{filter:brightness(.98);border-color:#93c5fd}
 
   </style>
+
+
+<style id="calendar-overflow-size-fix">
+  /* Calendar size/overflow fix */
+  .compact-calendar-card{
+    overflow:hidden !important;
+  }
+  #mainCalGrid{
+    width:100% !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+  }
+  #mainCalGrid .cal-grid,
+  .cal-wrap .cal-grid{
+    width:100% !important;
+    max-width:100% !important;
+    display:grid !important;
+    grid-template-columns:repeat(7,minmax(0,1fr)) !important;
+    gap:4px !important;
+  }
+  #mainCalGrid .cal-day,
+  .cal-wrap .cal-day{
+    min-width:0 !important;
+    width:100% !important;
+    overflow:hidden !important;
+  }
+  #mainCalGrid .cal-event-main,
+  .cal-wrap .cal-event,
+  .cal-more{
+    max-width:100% !important;
+    min-width:0 !important;
+    display:block !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  #mainCalLegend{
+    min-width:0 !important;
+    max-width:100% !important;
+    overflow:hidden !important;
+  }
+  #mainCalLegend span{
+    max-width:140px !important;
+    white-space:nowrap !important;
+    overflow:hidden !important;
+    text-overflow:ellipsis !important;
+  }
+  @media(max-width:1100px){
+    #mainCalGrid .cal-day{min-height:78px !important; padding:5px !important;}
+    #mainCalGrid .cal-event-main{font-size:10px !important; padding:2px 4px !important;}
+  }
+</style>
+
 </head>
 <body>
   <!-- 로그인 화면 -->
@@ -1337,6 +1390,10 @@
     let firebaseLoadedOnce = false;
     let suppressRemoteUntil = 0;
     let cloudSaveTimer = null;
+    let lastLocalProjectsJson = '';
+    let lastLocalTrashJson = '';
+    let pendingRemoteRenderTimer = null;
+    let cloudListenersAttached = false;
     let projects = [];
     let trash = [];
     let trashOpen = false;
@@ -1548,6 +1605,41 @@
       return normalized;
     }
 
+    function normalizeProjectArray(data){
+      return (data && Array.isArray(data)) ? data.map(d => makeProject(d)) : [];
+    }
+    function currentRemoteProjectJson(){
+      try { return JSON.stringify(normalizeProjectArray(projects)); } catch(e) { return JSON.stringify(projects || []); }
+    }
+    function isUserEditingForm(){
+      const el = document.activeElement;
+      if(!el) return false;
+      const tag = (el.tagName || '').toUpperCase();
+      return tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || el.isContentEditable;
+    }
+    function renderAfterRemoteSync(){
+      clearTimeout(pendingRemoteRenderTimer);
+      if(isUserEditingForm()){
+        pendingRemoteRenderTimer = setTimeout(renderAfterRemoteSync, 800);
+        return;
+      }
+      const rid = getRouteProjectId();
+      if(rid && projects.some(p => p.id === rid)) selectedProjectId = rid;
+      if(!selectedProjectId || !projects.some(p => p.id === selectedProjectId)){
+        selectedProjectId = (rid && projects.some(p => p.id === rid)) ? rid : (projects[0]?.id || null);
+      }
+      renderSummary();
+      renderHome();
+      renderMainCalendar();
+      renderTrash();
+      if(document.getElementById('detailScreen').classList.contains('active') && selectedProjectId) renderDetail();
+      if(document.getElementById('allProjectsScreen').classList.contains('active')) showAllProjects(typeof currentAllFilter !== 'undefined' ? currentAllFilter : 'all');
+      if(document.getElementById('opsListScreen')?.classList.contains('active')){
+        const mode = (location.hash || '').startsWith('#ops=') ? decodeURIComponent(location.hash.replace('#ops=','')) : 'week';
+        showOpsList(mode);
+      }
+    }
+
     function load(){
       // 1) 우선 브라우저 localStorage에서 복구합니다. 현재 키가 비어 있으면 이전 버전 키도 확인합니다.
       try {
@@ -1574,21 +1666,21 @@
       // 2) 로그인 상태일 때만 Firebase Realtime Database를 읽습니다.
       //    로컬 모드에서는 Firebase에 쓰지 않습니다. 기존 클라우드 데이터를 덮어쓰는 것을 막기 위함입니다.
       const canUseCloud = db && !localMode && auth && auth.currentUser && auth.currentUser.email && auth.currentUser.email.endsWith('@' + ALLOWED_DOMAIN);
-      if(canUseCloud){
+      if(canUseCloud && !cloudListenersAttached){
+        cloudListenersAttached = true;
         db.ref('dashboard/projects').on('value', snap => {
           firebaseLoadedOnce = true;
-          // 내가 방금 저장한 값이 Firebase에서 되돌아오는 동안에는 화면을 다시 그리지 않습니다.
-          // 메모/텍스트 입력 중 포커스가 끊기는 현상을 막기 위한 처리입니다.
-          if(Date.now() < suppressRemoteUntil) return;
           const data = snap.val();
           if(data && Array.isArray(data) && data.length > 0){
-            projects = data.map(d => makeProject(d));
+            const incoming = normalizeProjectArray(data);
+            const incomingJson = JSON.stringify(incoming);
+            const currentJson = currentRemoteProjectJson();
+            // 내가 방금 저장한 값이 그대로 되돌아온 경우만 렌더링을 생략합니다.
+            // 다른 사용자가 같은 타이밍에 저장한 변경은 suppress 시간 안이어도 즉시 반영됩니다.
+            if(incomingJson === currentJson || incomingJson === lastLocalProjectsJson) return;
+            projects = incoming;
             localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
-            const rid = getRouteProjectId();
-            if(rid && projects.some(p => p.id === rid)) selectedProjectId = rid;
-            if(!selectedProjectId || !projects.some(p => p.id === selectedProjectId)) { const rid = getRouteProjectId(); selectedProjectId = (rid && projects.some(p => p.id === rid)) ? rid : (projects[0]?.id || null); }
-            if(rid && selectedProjectId === rid){ routeAfterLoad(); }
-            else { renderSummary(); renderHome(); renderMainCalendar(); if(selectedProjectId && document.getElementById('detailScreen').classList.contains('active')) renderDetail(); }
+            renderAfterRemoteSync();
           }
           // 중요: Firebase가 비어 있어도 자동으로 localStorage 데이터를 업로드하지 않습니다.
           // 사용자가 저장/수정 액션을 했을 때만 save()를 통해 반영합니다.
@@ -1597,7 +1689,13 @@
         });
         db.ref('dashboard/trash').on('value', snap => {
           const data = snap.val();
-          if(data && Array.isArray(data)){ trash = data; localStorage.setItem(TRASH_KEY, JSON.stringify(trash)); renderTrash(); }
+          if(data && Array.isArray(data)){
+            const incomingJson = JSON.stringify(data);
+            if(incomingJson === JSON.stringify(trash) || incomingJson === lastLocalTrashJson) return;
+            trash = data;
+            localStorage.setItem(TRASH_KEY, JSON.stringify(trash));
+            renderTrash();
+          }
         }, err => console.warn('Firebase 휴지통 읽기 실패:', err));
       }
 
@@ -1610,13 +1708,17 @@
       return db && !localMode && auth && auth.currentUser && auth.currentUser.email && auth.currentUser.email.endsWith('@' + ALLOWED_DOMAIN);
     }
     function saveLocalOnly(){
+      lastLocalProjectsJson = currentRemoteProjectJson();
+      lastLocalTrashJson = JSON.stringify(trash || []);
       localStorage.setItem(STORAGE_KEY, JSON.stringify(projects));
       localStorage.setItem(TRASH_KEY, JSON.stringify(trash));
     }
     function pushCloudNow(){
       if(!canUseCloudNow()) return;
       try {
-        suppressRemoteUntil = Date.now() + 2500;
+        lastLocalProjectsJson = currentRemoteProjectJson();
+        lastLocalTrashJson = JSON.stringify(trash || []);
+        suppressRemoteUntil = Date.now() + 1200;
         db.ref('dashboard/projects').set(projects);
         db.ref('dashboard/trash').set(trash);
       } catch(e){ console.warn('Firebase 저장 실패:', e); }
@@ -3890,6 +3992,22 @@
     }
     // ─────────────────────────────────────────────────────────
 
+
+    window.addEventListener('storage', (e) => {
+      if(e.key === STORAGE_KEY && e.newValue){
+        try{
+          const incoming = JSON.parse(e.newValue).map(d => makeProject(d));
+          const incomingJson = JSON.stringify(incoming);
+          if(incomingJson !== currentRemoteProjectJson()){
+            projects = incoming;
+            renderAfterRemoteSync();
+          }
+        }catch(err){ console.warn('로컬 프로젝트 동기화 실패:', err); }
+      }
+      if(e.key === TRASH_KEY && e.newValue){
+        try{ trash = JSON.parse(e.newValue); renderTrash(); }catch(err){ console.warn('로컬 휴지통 동기화 실패:', err); }
+      }
+    });
 
     window.addEventListener('hashchange', () => { if(projects && projects.length) routeAfterLoad(); });
     if(!auth){ load(); routeAfterLoad(); }
